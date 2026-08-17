@@ -55,6 +55,7 @@ FUNC_NAME_POOLS = {
     "sorting": ["sort_array", "merge_sort", "quick_sort", "sort_solve"],
     "union_find": ["solve", "process_edges", "count_components", "union_find_solve"],
     "monotonic_stack": ["solve_stack", "next_greater", "stack_solve", "process"],
+    "linked_list": ["insert_node", "modify_list", "process_list", "update_list"],
 }
 
 

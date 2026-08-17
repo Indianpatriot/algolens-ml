@@ -42,6 +42,9 @@ FEATURE_NAMES = [
     "uses_adjacency_structure",
     "uses_bit_manipulation",
     "has_linked_list_pattern",
+    "has_ll_insert_pattern",
+    "has_ll_delete_pattern",
+    "has_ll_reverse_pattern",
     "has_tree_pattern",
     "has_prefix_pattern",
     "has_backtracking_undo_pattern",
@@ -106,6 +109,9 @@ class _StructuralVisitor(ast.NodeVisitor):
         # batch 2 features
         self.uses_bit_manipulation = False
         self.has_linked_list_pattern = False
+        self.has_ll_insert_pattern = False
+        self.has_ll_delete_pattern = False
+        self.has_ll_reverse_pattern = False
         self.has_tree_pattern = False
         self.has_prefix_pattern = False
 
@@ -130,7 +136,81 @@ class _StructuralVisitor(ast.NodeVisitor):
     def visit_Module(self, node):
         self._scan_union_find(node)
         self._scan_topological_sort(node)
+        self._scan_linked_list_operation(node)
         self.generic_visit(node)
+
+    def _scan_linked_list_operation(self, tree):
+        """
+        Distinguishes which Linked List operation is being performed,
+        purely from structure - no naming/keyword matching (deliberately
+        avoids the fragility of name-based detection, e.g. a function
+        called 'solve' would still be correctly classified here).
+
+        Priority order (checked in this order since some overlap):
+        1. INSERT: a constructor call (Name(...) matching a locally
+           defined class, e.g. Node(...)) assigned to a variable, whose
+           .next attribute is later set. Presence of node construction is
+           the strongest, least ambiguous signal - insertion is the only
+           operation that creates a NEW node.
+        2. DELETE: a "skip-link" assignment of the shape
+           `X.next = Y.next` (attribute assigned directly from another
+           attribute access) with no node construction - this is the
+           bypass-the-deleted-node pattern.
+        3. REVERSE: a loop containing 3+ variables that all get
+           reassigned every iteration (the classic prev/current/next
+           rotation), with no node construction and no skip-link.
+        """
+        class_names = {n.name for n in ast.walk(tree) if isinstance(n, ast.ClassDef)}
+
+        # Guard: only attempt insert/delete/reverse sub-classification if
+        # the code actually touches a `.next` attribute somewhere - without
+        # this, the reverse-pattern check below (3+ reassigned variables in
+        # a loop) would false-positive on unrelated multi-variable loops
+        # like binary search's lo/hi/mid.
+        has_next_attr_access = any(
+            isinstance(n, ast.Attribute) and n.attr == "next" for n in ast.walk(tree)
+        )
+        if not has_next_attr_access:
+            return
+
+        has_constructor_call = False
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id in class_names:
+                has_constructor_call = True
+                break
+
+        if has_constructor_call:
+            self.has_ll_insert_pattern = True
+            return
+
+        has_skip_link = False
+        for n in ast.walk(tree):
+            if (
+                isinstance(n, ast.Assign)
+                and len(n.targets) == 1
+                and isinstance(n.targets[0], ast.Attribute)
+                and n.targets[0].attr == "next"
+                and isinstance(n.value, ast.Attribute)
+                and n.value.attr == "next"
+            ):
+                has_skip_link = True
+                break
+
+        if has_skip_link:
+            self.has_ll_delete_pattern = True
+            return
+
+        for n in ast.walk(tree):
+            if isinstance(n, (ast.While, ast.For)):
+                reassigned_names = set()
+                for stmt in ast.walk(ast.Module(body=n.body, type_ignores=[])):
+                    if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1:
+                        target = stmt.targets[0]
+                        if isinstance(target, ast.Name):
+                            reassigned_names.add(target.id)
+                if len(reassigned_names) >= 3:
+                    self.has_ll_reverse_pattern = True
+                    return
 
     def _scan_union_find(self, tree):
         """
@@ -619,6 +699,9 @@ def extract_features(code: str) -> Dict[str, float]:
         "uses_adjacency_structure": float(visitor.uses_adjacency_structure),
         "uses_bit_manipulation": float(visitor.uses_bit_manipulation),
         "has_linked_list_pattern": float(visitor.has_linked_list_pattern),
+        "has_ll_insert_pattern": float(visitor.has_ll_insert_pattern),
+        "has_ll_delete_pattern": float(visitor.has_ll_delete_pattern),
+        "has_ll_reverse_pattern": float(visitor.has_ll_reverse_pattern),
         "has_tree_pattern": float(visitor.has_tree_pattern),
         "has_prefix_pattern": float(visitor.has_prefix_pattern),
         "has_backtracking_undo_pattern": float(visitor.has_backtracking_undo_pattern),

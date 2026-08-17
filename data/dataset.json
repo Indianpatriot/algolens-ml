@@ -720,6 +720,86 @@
     "label": "Monotonic Stack"
   },
   {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef insert_node(head, target):\n    new_node = Node(target)\n    new_node.next = head\n    return new_node\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef modify_list(head, goal):\n    new_node = Node(goal)\n    new_node.next = head\n    return new_node\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef process_list(head, want):\n    new_node = Node(want)\n    new_node.next = head\n    return new_node\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef update_list(head, needle):\n    new_node = Node(needle)\n    new_node.next = head\n    return new_node\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef insert_node(head, tgt):\n    new_node = Node(tgt)\n    new_node.next = head\n    return new_node\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef modify_list(head, goal, position):\n    new_node = Node(goal)\n\n    if position == 0:\n        new_node.next = head\n        return new_node\n\n    current = head\n    for _ in range(position - 1):\n        if current is None:\n            return head\n        current = current.next\n\n    if current is None:\n        return head\n\n    new_node.next = current.next\n    current.next = new_node\n    return head\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef process_list(head, want, position):\n    new_node = Node(want)\n\n    if position == 0:\n        new_node.next = head\n        return new_node\n\n    current = head\n    for _ in range(position - 1):\n        if current is None:\n            return head\n        current = current.next\n\n    if current is None:\n        return head\n\n    new_node.next = current.next\n    current.next = new_node\n    return head\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef update_list(head, needle, position):\n    new_node = Node(needle)\n\n    if position == 0:\n        new_node.next = head\n        return new_node\n\n    current = head\n    for _ in range(position - 1):\n        if current is None:\n            return head\n        current = current.next\n\n    if current is None:\n        return head\n\n    new_node.next = current.next\n    current.next = new_node\n    return head\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef insert_node(head, tgt, position):\n    new_node = Node(tgt)\n\n    if position == 0:\n        new_node.next = head\n        return new_node\n\n    current = head\n    for _ in range(position - 1):\n        if current is None:\n            return head\n        current = current.next\n\n    if current is None:\n        return head\n\n    new_node.next = current.next\n    current.next = new_node\n    return head\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef modify_list(head, target, position):\n    new_node = Node(target)\n\n    if position == 0:\n        new_node.next = head\n        return new_node\n\n    current = head\n    for _ in range(position - 1):\n        if current is None:\n            return head\n        current = current.next\n\n    if current is None:\n        return head\n\n    new_node.next = current.next\n    current.next = new_node\n    return head\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef process_list(head, want):\n    if head is None:\n        return None\n\n    if head.data == want:\n        return head.next\n\n    prev = head\n    current = head.next\n    while current is not None:\n        if current.data == want:\n            prev.next = current.next\n            return head\n        prev = current\n        current = current.next\n\n    return head\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef update_list(head, needle):\n    if head is None:\n        return None\n\n    if head.data == needle:\n        return head.next\n\n    prev = head\n    current = head.next\n    while current is not None:\n        if current.data == needle:\n            prev.next = current.next\n            return head\n        prev = current\n        current = current.next\n\n    return head\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef insert_node(head, tgt):\n    if head is None:\n        return None\n\n    if head.data == tgt:\n        return head.next\n\n    prev = head\n    current = head.next\n    while current is not None:\n        if current.data == tgt:\n            prev.next = current.next\n            return head\n        prev = current\n        current = current.next\n\n    return head\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef modify_list(head, target):\n    if head is None:\n        return None\n\n    if head.data == target:\n        return head.next\n\n    prev = head\n    current = head.next\n    while current is not None:\n        if current.data == target:\n            prev.next = current.next\n            return head\n        prev = current\n        current = current.next\n\n    return head\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef process_list(head, goal):\n    if head is None:\n        return None\n\n    if head.data == goal:\n        return head.next\n\n    prev = head\n    current = head.next\n    while current is not None:\n        if current.data == goal:\n            prev.next = current.next\n            return head\n        prev = current\n        current = current.next\n\n    return head\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef update_list(head):\n    prev = None\n    current = head\n    while current is not None:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    return prev\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef insert_node(head):\n    prev = None\n    current = head\n    while current is not None:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    return prev\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef modify_list(head):\n    prev = None\n    current = head\n    while current is not None:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    return prev\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef process_list(head):\n    prev = None\n    current = head\n    while current is not None:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    return prev\n",
+    "label": "Linked List Operations"
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef update_list(head):\n    prev = None\n    current = head\n    while current is not None:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    return prev\n",
+    "label": "Linked List Operations"
+  },
+  {
     "code": "def sort_array(arr):\n    # bubble sort - repeated adjacent swaps, early exit if sorted\n    n = len(arr)\n    for i in range(n):\n        swapped = False\n        for j in range(0, n - i - 1):\n            if arr[j] > arr[j + 1]:\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\n                swapped = True\n        if not swapped:\n            break\n    return arr\n",
     "label": "In-Place Nested-Loop Swap Sort"
   },
