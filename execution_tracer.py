@@ -275,13 +275,159 @@ def _snapshot(
     if 1 <= line_number <= len(source_lines):
         line_text = source_lines[line_number - 1]
 
-    return {
+    snapshot: dict[str, Any] = {
         "line_number": line_number,
         "line_text": line_text,
         "locals": _safe_locals(frame.f_locals),
         "call_depth": call_depth,
         "event": event,
     }
+
+    op_info = _detect_ds_operation(line_text, frame.f_locals)
+    if op_info:
+        snapshot["operation"] = op_info.get("operation")
+        snapshot["ds_type"] = op_info.get("type")
+        if "data" in op_info:
+            snapshot["data"] = op_info["data"]
+        if "active_indices" in op_info:
+            snapshot["active_indices"] = op_info["active_indices"]
+        if "pointer_indices" in op_info:
+            snapshot["pointer_indices"] = op_info["pointer_indices"]
+        if "log" in op_info:
+            snapshot["log"] = op_info["log"]
+
+    return snapshot
+
+
+def _detect_ds_operation(line_text: str, locals_dict: dict[str, Any]) -> dict[str, Any] | None:
+    import re as _re
+
+    trimmed = line_text.strip()
+    if not trimmed:
+        return None
+
+    # ------------------------------------------------------------------ #
+    # Helper: extract numeric/string argument from a method call            #
+    # e.g.  stack.append(42)  -> "42",  q.append("hello") -> "hello"       #
+    # ------------------------------------------------------------------ #
+    def _extract_arg(text: str) -> Any:
+        m = _re.search(r'\.\w+\(\s*([^\)]+?)\s*\)', text)
+        if not m:
+            return None
+        raw = m.group(1).strip().strip("'\"")
+        try:
+            return int(raw)
+        except ValueError:
+            pass
+        try:
+            return float(raw)
+        except ValueError:
+            pass
+        # Try to resolve variable name from locals
+        if raw in locals_dict:
+            return locals_dict[raw]
+        return raw
+
+    # ------------------------------------------------------------------ #
+    # Queue dequeue: .popleft() or .pop(0)                                  #
+    # ------------------------------------------------------------------ #
+    if ".popleft(" in trimmed or ".pop(0)" in trimmed:
+        for k, v in locals_dict.items():
+            if isinstance(v, (list, collections.deque)):
+                data = list(v)
+                front_val = data[0] if data else None
+                return {
+                    "operation": "dequeue",
+                    "type": "queue",
+                    "value": front_val,
+                    "data": data[:20],
+                    "active_indices": [0] if data else [],
+                    "pointer_indices": {"front": 0 if data else -1, "rear": len(data) - 1 if data else -1},
+                    "log": f"Dequeued {front_val} from queue. Queue is now: {data[1:20]}",
+                }
+        return {"operation": "dequeue", "type": "queue", "log": "Dequeued from queue."}
+
+    # ------------------------------------------------------------------ #
+    # Stack pop: .pop() with no argument (distinguish from .pop(0))        #
+    # ------------------------------------------------------------------ #
+    if _re.search(r'\.pop\(\s*\)', trimmed) and ".pop(0)" not in trimmed:
+        for k, v in locals_dict.items():
+            if isinstance(v, list) and ("stack" in k or "stk" in k or "arr" in k.lower() or "s" == k):
+                data = list(v)
+                top = len(data) - 1
+                top_val = data[top] if top >= 0 else None
+                return {
+                    "operation": "pop",
+                    "type": "stack",
+                    "value": top_val,
+                    "data": data[:20],
+                    "active_indices": [top] if top >= 0 else [],
+                    "pointer_indices": {"top": top},
+                    "log": f"Popped {top_val} from stack. Stack is now: {data[:top]}",
+                }
+        # Fall back to any list variable
+        for k, v in locals_dict.items():
+            if isinstance(v, list) and k not in {"result", "res", "output", "ans"}:
+                data = list(v)
+                top = len(data) - 1
+                top_val = data[top] if top >= 0 else None
+                return {
+                    "operation": "pop",
+                    "type": "stack",
+                    "value": top_val,
+                    "data": data[:20],
+                    "active_indices": [top] if top >= 0 else [],
+                    "pointer_indices": {"top": top},
+                    "log": f"Popped {top_val} from stack. Stack is now: {data[:top]}",
+                }
+        return {"operation": "pop", "type": "stack", "log": "Popped from stack."}
+
+    # ------------------------------------------------------------------ #
+    # Queue enqueue: .append() on a queue/deque variable                   #
+    # ------------------------------------------------------------------ #
+    if (
+        _re.search(r'\b(queue|deque|q|frontier)\b', trimmed)
+        and ".append(" in trimmed
+    ):
+        pushed_val = _extract_arg(trimmed)
+        for k, v in locals_dict.items():
+            if isinstance(v, (list, collections.deque)):
+                data = list(v)
+                return {
+                    "operation": "enqueue",
+                    "type": "queue",
+                    "value": pushed_val,
+                    "data": data[:20],
+                    "active_indices": [len(data) - 1] if data else [],
+                    "pointer_indices": {"front": 0 if data else -1, "rear": len(data) - 1 if data else -1},
+                    "log": f"Enqueued {pushed_val} to queue. Queue is now: {data[:20]}",
+                }
+        return {"operation": "enqueue", "type": "queue", "value": pushed_val, "log": f"Enqueued {pushed_val} to queue."}
+
+    # ------------------------------------------------------------------ #
+    # Stack push: .append() or .push() on a stack variable                 #
+    # ------------------------------------------------------------------ #
+    if (
+        _re.search(r'\b(stack|stk)\b', trimmed)
+        and _re.search(r'\.(append|push)\(', trimmed)
+    ):
+        pushed_val = _extract_arg(trimmed)
+        for k, v in locals_dict.items():
+            if isinstance(v, list) and ("stack" in k or "stk" in k):
+                data = list(v)
+                top = len(data) - 1
+                return {
+                    "operation": "push",
+                    "type": "stack",
+                    "value": pushed_val,
+                    "data": data[:20],
+                    "active_indices": [top] if top >= 0 else [],
+                    "pointer_indices": {"top": top},
+                    "log": f"Pushed {pushed_val} to stack. Stack is now: {data[:20]}",
+                }
+        return {"operation": "push", "type": "stack", "value": pushed_val, "log": f"Pushed {pushed_val} to stack."}
+
+    return None
 
 
 def _safe_locals(locals_dict: dict[str, Any]) -> dict[str, Any]:

@@ -142,65 +142,54 @@ class _StructuralVisitor(ast.NodeVisitor):
     def _scan_linked_list_operation(self, tree):
         """
         Distinguishes which Linked List operation is being performed,
-        purely from structure - no naming/keyword matching (deliberately
-        avoids the fragility of name-based detection, e.g. a function
-        called 'solve' would still be correctly classified here).
+        purely from structure - no naming/keyword matching.
 
-        Priority order (checked in this order since some overlap):
-        1. INSERT: a constructor call (Name(...) matching a locally
-           defined class, e.g. Node(...)) assigned to a variable, whose
-           .next attribute is later set. Presence of node construction is
-           the strongest, least ambiguous signal - insertion is the only
-           operation that creates a NEW node.
-        2. DELETE: a "skip-link" assignment of the shape
-           `X.next = Y.next` (attribute assigned directly from another
-           attribute access) with no node construction - this is the
-           bypass-the-deleted-node pattern.
-        3. REVERSE: a loop containing 3+ variables that all get
-           reassigned every iteration (the classic prev/current/next
-           rotation), with no node construction and no skip-link.
+        CRITICAL SCOPING: only scans inside top-level function bodies
+        (the actual algorithm implementations), never top-level module
+        script/setup code. Without this, boilerplate test-setup lines
+        like `head = Node(10)` (needed to build a list before calling
+        delete/reverse on it) would look identical to a real insert
+        operation, since they also construct nodes - this would force
+        every sample toward "insert" regardless of the actual function.
         """
         class_names = {n.name for n in ast.walk(tree) if isinstance(n, ast.ClassDef)}
 
-        # Guard: only attempt insert/delete/reverse sub-classification if
-        # the code actually touches a `.next` attribute somewhere - without
-        # this, the reverse-pattern check below (3+ reassigned variables in
-        # a loop) would false-positive on unrelated multi-variable loops
-        # like binary search's lo/hi/mid.
+        top_level_functions = [n for n in tree.body if isinstance(n, ast.FunctionDef)]
+        if not top_level_functions:
+            return
+
+        search_nodes = [n for func in top_level_functions for n in ast.walk(func)]
+
         has_next_attr_access = any(
-            isinstance(n, ast.Attribute) and n.attr == "next" for n in ast.walk(tree)
+            isinstance(n, ast.Attribute) and n.attr == "next" for n in search_nodes
         )
         if not has_next_attr_access:
             return
 
-        has_constructor_call = False
-        for n in ast.walk(tree):
-            if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id in class_names:
-                has_constructor_call = True
-                break
+        has_constructor_call = any(
+            isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id in class_names
+            for n in search_nodes
+        )
 
         if has_constructor_call:
             self.has_ll_insert_pattern = True
             return
 
-        has_skip_link = False
-        for n in ast.walk(tree):
-            if (
-                isinstance(n, ast.Assign)
-                and len(n.targets) == 1
-                and isinstance(n.targets[0], ast.Attribute)
-                and n.targets[0].attr == "next"
-                and isinstance(n.value, ast.Attribute)
-                and n.value.attr == "next"
-            ):
-                has_skip_link = True
-                break
+        has_skip_link = any(
+            isinstance(n, ast.Assign)
+            and len(n.targets) == 1
+            and isinstance(n.targets[0], ast.Attribute)
+            and n.targets[0].attr == "next"
+            and isinstance(n.value, ast.Attribute)
+            and n.value.attr == "next"
+            for n in search_nodes
+        )
 
         if has_skip_link:
             self.has_ll_delete_pattern = True
             return
 
-        for n in ast.walk(tree):
+        for n in search_nodes:
             if isinstance(n, (ast.While, ast.For)):
                 reassigned_names = set()
                 for stmt in ast.walk(ast.Module(body=n.body, type_ignores=[])):
