@@ -71,6 +71,10 @@ FEATURE_NAMES = [
     "has_heap_child_math",
     "has_frequency_array",
     "has_radix_exp_scaling",
+    # Search-specific features to distinguish Binary Search from Merge Sort
+    "has_target_comparison",
+    "has_directional_pointer_adjustment",
+    "has_single_path_search",
 ]
 
 _BITWISE_OPS = (ast.BitXor, ast.BitAnd, ast.BitOr, ast.LShift, ast.RShift)
@@ -156,6 +160,11 @@ class _StructuralVisitor(ast.NodeVisitor):
         self.has_heap_child_math = False
         self.has_frequency_array = False
         self.has_radix_exp_scaling = False
+        
+        # Search-specific features to distinguish Binary Search from Merge Sort
+        self.has_target_comparison = False
+        self.has_directional_pointer_adjustment = False
+        self.has_single_path_search = False
 
         self._union_find_scanned = False
 
@@ -165,7 +174,94 @@ class _StructuralVisitor(ast.NodeVisitor):
         self._scan_topological_sort(node)
         self._scan_linked_list_operation(node)
         self._scan_sorting_structures(node)
+        self._scan_binary_search_structure(node)  # must run before loop visitors
         self.generic_visit(node)
+
+    def _scan_binary_search_structure(self, tree):
+        """
+        High-priority pre-scan for canonical iterative binary search.
+
+        Detects the four structural signals together so that they cannot
+        be confused with a general two-pointer or merge-sort pattern:
+
+          1. while <lo> <= <hi>:          → single-path search condition
+          2. mid = (<lo> + <hi>) // 2     → midpoint calculation
+          3. arr[mid] == <target>          → target equality comparison
+          4. <lo> = mid + 1 / <hi> = mid - 1  → directional pointer adjustment
+
+        Setting all three features atomically here means the rule-based
+        complexity estimator and the ML classifier both see an unambiguous
+        signal regardless of how the loop-level visitors run.
+        """
+        _LO_NAMES  = {"lo", "left", "l", "low", "start", "begin"}
+        _HI_NAMES  = {"hi", "right", "r", "high", "end", "finish"}
+        _MID_NAMES = {"mid", "middle", "center", "m"}
+        _TGT_NAMES = {"target", "x", "key", "search", "val", "value", "query", "k"}
+
+        for while_node in ast.walk(tree):
+            if not isinstance(while_node, ast.While):
+                continue
+
+            # ── Signal 1: while lo <= hi ──────────────────────────────────────
+            test = while_node.test
+            if not isinstance(test, ast.Compare):
+                continue
+            lo_node = test.left
+            if not isinstance(lo_node, ast.Name):
+                continue
+            if lo_node.id.lower() not in _LO_NAMES:
+                continue
+            comparators = test.comparators
+            if not comparators or not isinstance(comparators[0], ast.Name):
+                continue
+            if comparators[0].id.lower() not in _HI_NAMES:
+                continue
+            has_single_path = True
+
+            # ── Signals 2, 3, 4: scan the loop body ──────────────────────────
+            has_midpoint = False
+            has_target_cmp = False
+            has_dir_adjust = False
+
+            for n in ast.walk(ast.Module(body=while_node.body, type_ignores=[])):
+                # Signal 2: mid = (lo + hi) // 2   or   mid = lo + (hi - lo) // 2
+                if isinstance(n, ast.Assign):
+                    for tgt in n.targets:
+                        if (
+                            isinstance(tgt, ast.Name)
+                            and tgt.id.lower() in _MID_NAMES
+                            and isinstance(n.value, ast.BinOp)
+                            and isinstance(n.value.op, (ast.FloorDiv, ast.RShift, ast.Add))
+                        ):
+                            has_midpoint = True
+
+                # Signal 3: arr[mid] == target
+                if isinstance(n, ast.Compare):
+                    for side in [n.left, *n.comparators]:
+                        if isinstance(side, ast.Subscript):
+                            sl = side.slice
+                            if isinstance(sl, ast.Name) and sl.id.lower() in _MID_NAMES:
+                                other = n.comparators[0] if side is n.left else n.left
+                                if isinstance(other, ast.Name) and other.id.lower() in _TGT_NAMES:
+                                    has_target_cmp = True
+
+                # Signal 4: lo = mid + 1  or  hi = mid - 1
+                if isinstance(n, ast.Assign):
+                    for tgt in n.targets:
+                        if isinstance(tgt, ast.Name) and tgt.id.lower() in (_LO_NAMES | _HI_NAMES):
+                            val = n.value
+                            if isinstance(val, ast.BinOp) and isinstance(val.op, (ast.Add, ast.Sub)):
+                                if isinstance(val.left, ast.Name) and val.left.id.lower() in _MID_NAMES:
+                                    if isinstance(val.right, ast.Constant) and val.right.value == 1:
+                                        has_dir_adjust = True
+
+            # All four signals present → binary search confirmed
+            if has_single_path and has_midpoint and has_target_cmp and has_dir_adjust:
+                self.has_target_comparison = True
+                self.has_directional_pointer_adjustment = True
+                self.has_single_path_search = True
+                self.has_midpoint_calculation = True  # also set by visit_Assign, but set here too
+                return  # short-circuit: no need to scan more While loops
 
     def _scan_sorting_structures(self, tree):
         """Scans module AST for sorting structural keywords and patterns."""
@@ -386,6 +482,7 @@ class _StructuralVisitor(ast.NodeVisitor):
         self._check_key_and_shifting_in_loop(node.body)
         self._check_auxiliary_merging_in_body(node.body)
         self._check_gap_in_while(node)
+        self._check_single_path_search(node)
         self.generic_visit(node)
         self._exit_loop()
 
@@ -399,6 +496,29 @@ class _StructuralVisitor(ast.NodeVisitor):
             for v in node.test.values:
                 if isinstance(v, ast.Compare) and isinstance(v.left, ast.Name) and "gap" in v.left.id.lower():
                     self.has_gap_reduction = True
+
+    def _check_single_path_search(self, node):
+        """Detects Binary Search single-path execution: while left <= right with no merging"""
+        # Binary Search typically has a while loop with left <= right condition
+        # and does NOT have auxiliary merging (which Merge Sort does)
+        if isinstance(node.test, ast.Compare):
+            left = node.test.left
+            comparators = node.test.comparators
+            # Check for left <= right pattern
+            if isinstance(left, ast.Name) and left.id.lower() in ("left", "lo", "l", "low"):
+                if comparators and isinstance(comparators[0], ast.Name):
+                    right_name = comparators[0].id.lower()
+                    if right_name in ("right", "hi", "r", "high"):
+                        # This is a two-pointer while loop, likely Binary Search
+                        # Check if there's no auxiliary merging in the body
+                        has_merging = False
+                        for n in ast.walk(ast.Module(body=node.body, type_ignores=[])):
+                            if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute):
+                                if n.func.attr in ("append", "extend"):
+                                    has_merging = True
+                                    break
+                        if not has_merging and not self.has_auxiliary_merging:
+                            self.has_single_path_search = True
 
     def _check_key_and_shifting_in_loop(self, body):
         """Detects insertion sort / shell sort shifting and key element assignments."""
@@ -606,6 +726,7 @@ class _StructuralVisitor(ast.NodeVisitor):
         if len(index_names) >= 2:
             self.has_parallel_two_pointer_pattern = True
     def visit_If(self, node):
+        self._check_target_comparison(node)
         if self._inside_loop_depth_for_if > 0:
             self._current_if_nesting += 1
             self.max_if_nesting_in_loop = max(self.max_if_nesting_in_loop, self._current_if_nesting)
@@ -628,6 +749,7 @@ class _StructuralVisitor(ast.NodeVisitor):
         self._check_lomuto_hoare(node)
         self._check_frequency_array(node)
         self._check_gap_assign(node)
+        self._check_directional_pointer_adjustment(node)
         self.generic_visit(node)
 
     def _check_gap_assign(self, node):
@@ -636,6 +758,45 @@ class _StructuralVisitor(ast.NodeVisitor):
             name = node.targets[0].id.lower()
             if "gap" in name or "shrink" in name:
                 self.has_gap_reduction = True
+
+    def _check_directional_pointer_adjustment(self, node):
+        """Detects Binary Search pointer adjustments: left = mid + 1, right = mid - 1"""
+        if len(node.targets) == 1 and isinstance(node.targets[0], ast.Name):
+            target_name = node.targets[0].id.lower()
+            # Check for left/right pointer variable names
+            if target_name in ("left", "right", "lo", "hi", "low", "high", "l", "r"):
+                if isinstance(node.value, ast.BinOp):
+                    # left = mid + 1 or right = mid - 1
+                    if isinstance(node.value.op, (ast.Add, ast.Sub)):
+                        # Check if the other operand is a constant (usually 1 or -1)
+                        if isinstance(node.value.right, ast.Constant):
+                            if node.value.right.value in (1, -1):
+                                # Check if the left side is a midpoint-like variable
+                                if isinstance(node.value.left, ast.Name):
+                                    left_name = node.value.left.id.lower()
+                                    if any(k in left_name for k in ("mid", "middle", "pivot", "center")):
+                                        self.has_directional_pointer_adjustment = True
+
+    def _check_target_comparison(self, node):
+        """Detects Binary Search target comparison: arr[mid] == target or arr[mid] == x"""
+        if isinstance(node.test, ast.Compare):
+            # Check for equality comparison (arr[mid] == target)
+            if isinstance(node.test.ops[0], ast.Eq):
+                left = node.test.left
+                comparators = node.test.comparators
+                # Check if one side is array[mid] and other is target-like variable
+                for side in [left, *comparators]:
+                    if isinstance(side, ast.Subscript):
+                        # Check if it's array[mid] pattern
+                        if isinstance(side.slice, ast.Name):
+                            slice_name = side.slice.id.lower()
+                            if any(k in slice_name for k in ("mid", "middle", "center")):
+                                # Found array[mid], now check the other side for target
+                                other_side = comparators[0] if side == left else left
+                                if isinstance(other_side, ast.Name):
+                                    other_name = other_side.id.lower()
+                                    if any(k in other_name for k in ("target", "x", "key", "search", "val", "value")):
+                                        self.has_target_comparison = True
 
     def _check_frequency_array(self, node):
         """Pattern: count = [0] * span, count = [0] * 10, holes = [[] for _ in range(...)]"""
@@ -934,6 +1095,10 @@ def extract_features(code: str) -> Dict[str, float]:
         "has_heap_child_math": float(visitor.has_heap_child_math),
         "has_frequency_array": float(visitor.has_frequency_array),
         "has_radix_exp_scaling": float(visitor.has_radix_exp_scaling),
+        # Search-specific features
+        "has_target_comparison": float(visitor.has_target_comparison),
+        "has_directional_pointer_adjustment": float(visitor.has_directional_pointer_adjustment),
+        "has_single_path_search": float(visitor.has_single_path_search),
     }
     return features
 

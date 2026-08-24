@@ -185,6 +185,33 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
             "Detected linked list pointer manipulations (.next traversal / mutations).",
         )
 
+    # 14. Stack (LIFO): Sequential push / pop operations or stack structures
+    if (
+        (features.get("uses_stack", 0) == 1.0 or "stack" in code_lower or "stk" in code_lower)
+        and ("pop(" in code_lower or "append(" in code_lower or "push(" in code_lower)
+        and not features.get("has_visited_like_var", 0)
+        and not features.get("uses_adjacency_structure", 0)
+        and not features.get("has_backtracking_undo_pattern", 0)
+    ):
+        return (
+            "Stack",
+            0.99,
+            "Detected Stack (LIFO) data structure operations (push/pop sequence).",
+        )
+
+    # 15. Queue (FIFO): Deque / queue operations (popleft, shift, pop(0))
+    if (
+        (features.get("uses_queue", 0) == 1.0 or "queue" in code_lower or "deque" in code_lower or "pop(0)" in code_lower or "popleft" in code_lower)
+        and not features.get("has_visited_like_var", 0)
+        and not features.get("uses_adjacency_structure", 0)
+        and not features.get("has_topological_sort_pattern", 0)
+    ):
+        return (
+            "Queue",
+            0.99,
+            "Detected Queue (FIFO) data structure operations (enqueue/dequeue sequence).",
+        )
+
     return None
 
 

@@ -45,18 +45,44 @@ class ComplexityEstimate:
 
 
 def _rule_binary_search(f: dict):
-    """Midpoint-halving search: O(log n) time, O(1) space (iterative)."""
-    if f["has_midpoint_calculation"] and f["max_loop_depth"] == 1 and not f["has_recursion"]:
+    """Midpoint-halving search: O(log n) time, O(1) space (iterative).
+    
+    High-priority rule: checks for explicit binary search patterns including
+    target comparison and directional pointer adjustments to distinguish from
+    general two-pointer patterns or merge sort.
+    """
+    # Primary check: explicit binary search signatures
+    if (f["has_target_comparison"] and 
+        f["has_directional_pointer_adjustment"] and 
+        f["has_single_path_search"]):
         return ComplexityEstimate(
             time="O(log n)",
             space="O(1)",
             reasoning=(
-                "Detected a midpoint calculation ((lo+hi)//2 style) inside a single "
-                "loop with no recursion - the classic halving-search shape. Each "
-                "iteration eliminates half the remaining search space."
+                "Detected explicit binary search patterns: target comparison "
+                "(arr[mid] == target), directional pointer adjustments "
+                "(left = mid + 1, right = mid - 1), and single-path search "
+                "(no merging). Each iteration eliminates half the remaining "
+                "search space, giving logarithmic time complexity with constant space."
             ),
             confidence="high",
         )
+    
+    # Fallback check: midpoint calculation in single loop
+    if f["has_midpoint_calculation"] and f["max_loop_depth"] == 1 and not f["has_recursion"]:
+        # Additional check to avoid false positives with merge sort
+        if not f["has_auxiliary_merging"] and not f["has_dual_recursion"]:
+            return ComplexityEstimate(
+                time="O(log n)",
+                space="O(1)",
+                reasoning=(
+                    "Detected a midpoint calculation ((lo+hi)//2 style) inside a single "
+                    "loop with no recursion and no merge operations - the classic "
+                    "halving-search shape. Each iteration eliminates half the remaining "
+                    "search space."
+                ),
+                confidence="high",
+            )
     return None
 
 

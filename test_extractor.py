@@ -351,6 +351,65 @@ def radix_sort(arr):
 }
 
 if __name__ == "__main__":
+    # ── Binary Search feature assertions ─────────────────────────────────────
+    # These are the four features that the high-priority rule in
+    # complexity_estimator.py and the pre-check in identify.ts rely on.
+    # Both lo/hi and left/right naming conventions must pass.
+
+    _BS_VARIANTS = {
+        "binary_search_lo_hi": SAMPLES["binary_search"],
+        "binary_search_left_right": """
+def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    return -1
+""",
+    }
+
+    _REQUIRED_BS_FEATURES = [
+        "has_target_comparison",
+        "has_directional_pointer_adjustment",
+        "has_single_path_search",
+        "has_midpoint_calculation",
+    ]
+
+    print("=== Binary Search Feature Assertions ===")
+    all_passed = True
+    for variant_name, code in _BS_VARIANTS.items():
+        features = extract_features(code)
+        failed = [f for f in _REQUIRED_BS_FEATURES if features.get(f, 0) != 1.0]
+        if failed:
+            print(f"  FAIL [{variant_name}]: missing features: {failed}")
+            all_passed = False
+        else:
+            present = {f: features[f] for f in _REQUIRED_BS_FEATURES}
+            print(f"  PASS [{variant_name}]: {present}")
+
+    # Also assert merge sort does NOT trigger target_comparison / directional_pointer
+    _MS_FEATURES = extract_features(SAMPLES["merge_sort"])
+    _MS_SHOULD_BE_ZERO = ["has_target_comparison", "has_directional_pointer_adjustment"]
+    ms_false_positives = [f for f in _MS_SHOULD_BE_ZERO if _MS_FEATURES.get(f, 0) != 0.0]
+    if ms_false_positives:
+        print(f"  FAIL [merge_sort anti-check]: unexpected features set: {ms_false_positives}")
+        all_passed = False
+    else:
+        print(f"  PASS [merge_sort anti-check]: target_comparison=0, directional_pointer=0")
+
+    if all_passed:
+        print("\nPASS: All binary search assertions passed.\n")
+    else:
+        import sys
+        print("\nFAIL: Some assertions failed -- check feature extractor.\n")
+        sys.exit(1)
+
+    # ── General feature dump (existing behaviour) ─────────────────────────────
     for name, code in SAMPLES.items():
         print(f"\n=== {name} ===")
         try:
@@ -358,5 +417,4 @@ if __name__ == "__main__":
             nonzero = {k: v for k, v in features.items() if v != 0.0}
             print(json.dumps(nonzero, indent=2))
         except SyntaxError as e:
-            print(f"SYNTAX ERROR: {e}")
-            
+            print(f"SYNTAX ERROR: {e}")
