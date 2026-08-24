@@ -234,6 +234,120 @@ def mod_pow(base, exp, mod):
         base = (base * base) % mod
     return result
 """,
+    "quick_sort": """
+def quick_sort(arr, start=0, end=None):
+    if end is None:
+        end = len(arr) - 1
+    if start < end:
+        pivot = arr[end]
+        i = start - 1
+        for j in range(start, end):
+            if arr[j] <= pivot:
+                i += 1
+                arr[i], arr[j] = arr[j], arr[i]
+        arr[i + 1], arr[end] = arr[end], arr[i + 1]
+        pivot_idx = i + 1
+        quick_sort(arr, start, pivot_idx - 1)
+        quick_sort(arr, pivot_idx + 1, end)
+    return arr
+""",
+    "merge_sort": """
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+""",
+    "insertion_sort": """
+def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+    return arr
+""",
+    "shell_sort": """
+def shell_sort(arr):
+    n = len(arr)
+    gap = n // 2
+    while gap > 0:
+        for i in range(gap, n):
+            tmp = arr[i]
+            j = i
+            while j >= gap and arr[j - gap] > tmp:
+                arr[j] = arr[j - gap]
+                j -= gap
+            arr[j] = tmp
+        gap //= 2
+    return arr
+""",
+    "heap_sort": """
+def heap_sort(arr):
+    n = len(arr)
+    def heapify(heap_size, i):
+        largest = i
+        l = 2 * i + 1
+        r = 2 * i + 2
+        if l < heap_size and arr[l] > arr[largest]:
+            largest = l
+        if r < heap_size and arr[r] > arr[largest]:
+            largest = r
+        if largest != i:
+            arr[i], arr[largest] = arr[largest], arr[i]
+            heapify(heap_size, largest)
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(n, i)
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify(i, 0)
+    return arr
+""",
+    "counting_sort": """
+def counting_sort(arr):
+    if not arr:
+        return arr
+    minv, maxv = min(arr), max(arr)
+    span = maxv - minv + 1
+    count = [0] * span
+    for num in arr:
+        count[num - minv] += 1
+    for i in range(1, span):
+        count[i] += count[i - 1]
+    res = [0] * len(arr)
+    for num in reversed(arr):
+        count[num - minv] -= 1
+        res[count[num - minv]] = num
+    return res
+""",
+    "radix_sort": """
+def radix_sort(arr):
+    if not arr:
+        return arr
+    maxv = max(arr)
+    exp = 1
+    while maxv // exp > 0:
+        count = [0] * 10
+        for x in arr:
+            count[(x // exp) % 10] += 1
+        exp *= 10
+    return arr
+""",
 }
 
 if __name__ == "__main__":

@@ -46,21 +46,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-_clf = None
-_feature_order: List[str] = []
-
-
-def _load_model():
-    global _clf, _feature_order
-    if _clf is None:
-        if not MODEL_PATH.exists() or not FEATURE_ORDER_PATH.exists():
-            raise RuntimeError(
-                f"model.pkl / feature_order.pkl not found in {BASE_DIR}. "
-                "Run train.py first."
-            )
-        _clf = joblib.load(MODEL_PATH)
-        _feature_order = joblib.load(FEATURE_ORDER_PATH)
-    return _clf, _feature_order
+from model import load_model, predict_algorithm
 
 
 class AnalyzeRequest(BaseModel):
@@ -69,6 +55,8 @@ class AnalyzeRequest(BaseModel):
 
 class AnalyzeResponse(BaseModel):
     algorithm: str
+    algorithm_name: str
+    detected_pattern: str
     confidence: float
     complexity: Dict[str, str]
     features: Dict[str, float]
@@ -76,9 +64,7 @@ class AnalyzeResponse(BaseModel):
 
 @app.on_event("startup")
 def load_model_on_startup():
-    # Fail fast and loudly if the model isn't trained yet, rather than
-    # erroring on the first request.
-    _load_model()
+    load_model()
 
 
 @app.get("/")
@@ -89,7 +75,7 @@ def root():
 @app.get("/health")
 def health():
     try:
-        _load_model()
+        load_model()
         return {"status": "ok", "model_loaded": True}
     except Exception as e:
         return {"status": "error", "model_loaded": False, "detail": str(e)}
@@ -108,16 +94,13 @@ def analyze(payload: AnalyzeRequest):
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Feature extraction failed: {e}")
 
-    clf, feature_order = _load_model()
-
-    row = pd.DataFrame([[features[f] for f in feature_order]], columns=feature_order)
-    prediction = clf.predict(row)[0]
-    confidence = float(clf.predict_proba(row).max())
-
+    prediction, confidence = predict_algorithm(code, features)
     complexity = estimate_complexity_from_features(features)
 
     return AnalyzeResponse(
         algorithm=prediction,
+        algorithm_name=prediction,
+        detected_pattern=f"AlgoLens ML — {prediction}",
         confidence=round(confidence, 4),
         complexity=complexity,
         features=features,
