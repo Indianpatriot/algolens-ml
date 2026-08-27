@@ -55,7 +55,7 @@ CATEGORIES = {
 }
 
 SORTING_FUNC_KEY = "sorting"
-VARIANTS_PER_TEMPLATE = 5
+VARIANTS_PER_TEMPLATE = 8
 
 
 def _generate_flat_categories():

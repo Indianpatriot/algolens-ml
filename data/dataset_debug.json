@@ -30,6 +30,24 @@
     "_variant": 4
   },
   {
+    "code": "from collections import deque\n\ndef breadth_first_search(graph, start):\n    visited = set([start])\n    queue = deque([start])\n    result = []\n    while queue:\n        node = queue.popleft()\n        result.append(node)\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append(neighbor)\n    return result\n",
+    "label": "BFS",
+    "_source_template_idx": 0,
+    "_variant": 5
+  },
+  {
+    "code": "from collections import deque\n\ndef shortest_path_bfs(adj_list, s):\n    # BFS over an adjacency-list graph, returns visited order\n    explored = set([s])\n    frontier = deque([s])\n    output = []\n    while frontier:\n        u = frontier.popleft()\n        output.append(u)\n        for v in adj_list.get(u, []):\n            if v not in explored:\n                explored.add(v)\n                frontier.append(v)\n    return output\n",
+    "label": "BFS",
+    "_source_template_idx": 0,
+    "_variant": 6
+  },
+  {
+    "code": "from collections import deque\n\ndef level_order(edges_of, begin):\n    vis = set([begin])\n    q = deque([begin])\n    ans = []\n    while q:\n        node_id = q.popleft()\n        ans.append(node_id)\n        for nbr in edges_of.get(node_id, []):\n            if nbr not in vis:\n                vis.add(nbr)\n                q.append(nbr)\n    return ans\n",
+    "label": "BFS",
+    "_source_template_idx": 0,
+    "_variant": 7
+  },
+  {
     "code": "from collections import deque\n\ndef breadth_first_search(adj_list, s, goal):\n    # BFS shortest path length in an unweighted graph\n    explored = {s}\n    frontier = deque([(s, 0)])\n    while frontier:\n        u, delta = frontier.popleft()\n        if u == goal:\n            return delta\n        for v in adj_list.get(u, []):\n            if v not in explored:\n                explored.add(v)\n                frontier.append((v, delta + 1))\n    return -1\n",
     "label": "BFS",
     "_source_template_idx": 1,
@@ -58,6 +76,24 @@
     "label": "BFS",
     "_source_template_idx": 1,
     "_variant": 4
+  },
+  {
+    "code": "from collections import deque\n\ndef shortest_path_bfs(adj_list, s, goal):\n    explored = {s}\n    frontier = deque([(s, 0)])\n    while frontier:\n        u, delta = frontier.popleft()\n        if u == goal:\n            return delta\n        for v in adj_list.get(u, []):\n            if v not in explored:\n                explored.add(v)\n                frontier.append((v, delta + 1))\n    return -1\n",
+    "label": "BFS",
+    "_source_template_idx": 1,
+    "_variant": 5
+  },
+  {
+    "code": "from collections import deque\n\ndef level_order(edges_of, begin, want):\n    # BFS shortest path length in an unweighted graph\n    vis = {begin}\n    q = deque([(begin, 0)])\n    while q:\n        node_id, gap = q.popleft()\n        if node_id == want:\n            return gap\n        for nbr in edges_of.get(node_id, []):\n            if nbr not in vis:\n                vis.add(nbr)\n                q.append((nbr, gap + 1))\n    return -1\n",
+    "label": "BFS",
+    "_source_template_idx": 1,
+    "_variant": 6
+  },
+  {
+    "code": "from collections import deque\n\ndef bfs(graph_map, start_idx, needle):\n    been_here = {start_idx}\n    bfs_q = deque([(start_idx, 0)])\n    while bfs_q:\n        curr_node, d = bfs_q.popleft()\n        if curr_node == needle:\n            return d\n        for adj in graph_map.get(curr_node, []):\n            if adj not in been_here:\n                been_here.add(adj)\n                bfs_q.append((adj, d + 1))\n    return -1\n",
+    "label": "BFS",
+    "_source_template_idx": 1,
+    "_variant": 7
   },
   {
     "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef shortest_path_bfs(root):\n    # level-order traversal of a binary tree using BFS\n    if root is None:\n        return []\n    ans = []\n    q = deque([root])\n    while q:\n        size = len(q)\n        level = []\n        for p1 in range(size):\n            node_id = q.popleft()\n            level.append(node_id.val)\n            if node_id.left:\n                q.append(node_id.left)\n            if node_id.right:\n                q.append(node_id.right)\n        ans.append(level)\n    return ans\n",
@@ -90,6 +126,24 @@
     "_variant": 4
   },
   {
+    "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef level_order(root):\n    if root is None:\n        return []\n    ans = []\n    q = deque([root])\n    while q:\n        size = len(q)\n        level = []\n        for p1 in range(size):\n            node_id = q.popleft()\n            level.append(node_id.val)\n            if node_id.left:\n                q.append(node_id.left)\n            if node_id.right:\n                q.append(node_id.right)\n        ans.append(level)\n    return ans\n",
+    "label": "BFS",
+    "_source_template_idx": 2,
+    "_variant": 5
+  },
+  {
+    "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef bfs(root):\n    # level-order traversal of a binary tree using BFS\n    if root is None:\n        return []\n    res = []\n    bfs_q = deque([root])\n    while bfs_q:\n        num_items = len(bfs_q)\n        level = []\n        for row in range(num_items):\n            curr_node = bfs_q.popleft()\n            level.append(curr_node.val)\n            if curr_node.left:\n                bfs_q.append(curr_node.left)\n            if curr_node.right:\n                bfs_q.append(curr_node.right)\n        res.append(level)\n    return res\n",
+    "label": "BFS",
+    "_source_template_idx": 2,
+    "_variant": 6
+  },
+  {
+    "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef breadth_first_search(root):\n    if root is None:\n        return []\n    final_result = []\n    to_visit = deque([root])\n    while to_visit:\n        total = len(to_visit)\n        level = []\n        for a in range(total):\n            w = to_visit.popleft()\n            level.append(w.val)\n            if w.left:\n                to_visit.append(w.left)\n            if w.right:\n                to_visit.append(w.right)\n        final_result.append(level)\n    return final_result\n",
+    "label": "BFS",
+    "_source_template_idx": 2,
+    "_variant": 7
+  },
+  {
     "code": "from collections import deque\n\ndef level_order(values, start_idx):\n    # multi-source-capable BFS over a 2D grid, returns distance grid\n    rows = len(values)\n    cols = len(values[0]) if rows else 0\n    been_here = [[False] * cols for _ in range(rows)]\n    bfs_q = deque([start_idx])\n    row, col = start_idx\n    been_here[row][col] = True\n    dist = [[-1] * cols for _ in range(rows)]\n    dist[row][col] = 0\n    while bfs_q:\n        r, c = bfs_q.popleft()\n        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols and not been_here[nr][nc]:\n                been_here[nr][nc] = True\n                dist[nr][nc] = dist[r][c] + 1\n                bfs_q.append((nr, nc))\n    return dist\n",
     "label": "BFS",
     "_source_template_idx": 3,
@@ -118,6 +172,72 @@
     "label": "BFS",
     "_source_template_idx": 3,
     "_variant": 4
+  },
+  {
+    "code": "from collections import deque\n\ndef bfs(values, start_idx):\n    rows = len(values)\n    cols = len(values[0]) if rows else 0\n    been_here = [[False] * cols for _ in range(rows)]\n    bfs_q = deque([start_idx])\n    row, col = start_idx\n    been_here[row][col] = True\n    dist = [[-1] * cols for _ in range(rows)]\n    dist[row][col] = 0\n    while bfs_q:\n        r, c = bfs_q.popleft()\n        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols and not been_here[nr][nc]:\n                been_here[nr][nc] = True\n                dist[nr][nc] = dist[r][c] + 1\n                bfs_q.append((nr, nc))\n    return dist\n",
+    "label": "BFS",
+    "_source_template_idx": 3,
+    "_variant": 5
+  },
+  {
+    "code": "from collections import deque\n\ndef breadth_first_search(items, from_idx):\n    # multi-source-capable BFS over a 2D grid, returns distance grid\n    rows = len(items)\n    cols = len(items[0]) if rows else 0\n    visited_set = [[False] * cols for _ in range(rows)]\n    to_visit = deque([from_idx])\n    a, b = from_idx\n    visited_set[a][b] = True\n    dist = [[-1] * cols for _ in range(rows)]\n    dist[a][b] = 0\n    while to_visit:\n        r, c = to_visit.popleft()\n        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols and not visited_set[nr][nc]:\n                visited_set[nr][nc] = True\n                dist[nr][nc] = dist[r][c] + 1\n                to_visit.append((nr, nc))\n    return dist\n",
+    "label": "BFS",
+    "_source_template_idx": 3,
+    "_variant": 6
+  },
+  {
+    "code": "from collections import deque\n\ndef shortest_path_bfs(arr, start):\n    rows = len(arr)\n    cols = len(arr[0]) if rows else 0\n    visited = [[False] * cols for _ in range(rows)]\n    queue = deque([start])\n    i, j = start\n    visited[i][j] = True\n    dist = [[-1] * cols for _ in range(rows)]\n    dist[i][j] = 0\n    while queue:\n        r, c = queue.popleft()\n        for dr, dc in [(-1, 0), (1, 0), (0, -1), (0, 1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols and not visited[nr][nc]:\n                visited[nr][nc] = True\n                dist[nr][nc] = dist[r][c] + 1\n                queue.append((nr, nc))\n    return dist\n",
+    "label": "BFS",
+    "_source_template_idx": 3,
+    "_variant": 7
+  },
+  {
+    "code": "import heapq\n\ndef bfs(neighbors_of, from_idx):\n    # Dijkstra single-source shortest path using priority queue\n    dist = {w: float('inf') for w in neighbors_of}\n    dist[from_idx] = 0\n    pq = [(0, from_idx)]\n\n    while pq:\n        curr_d, u = heapq.heappop(pq)\n        if curr_d > dist[u]:\n            continue\n        for v, weight in neighbors_of.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                heapq.heappush(pq, (dist[v], v))\n\n    return dist\n",
+    "label": "BFS",
+    "_source_template_idx": 4,
+    "_variant": 0
+  },
+  {
+    "code": "import heapq\n\ndef breadth_first_search(graph, start):\n    dist = {node: float('inf') for node in graph}\n    dist[start] = 0\n    pq = [(0, start)]\n\n    while pq:\n        curr_d, u = heapq.heappop(pq)\n        if curr_d > dist[u]:\n            continue\n        for v, weight in graph.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                heapq.heappush(pq, (dist[v], v))\n\n    return dist\n",
+    "label": "BFS",
+    "_source_template_idx": 4,
+    "_variant": 1
+  },
+  {
+    "code": "import heapq\n\ndef shortest_path_bfs(adj_list, s):\n    # Dijkstra single-source shortest path using priority queue\n    dist = {u: float('inf') for u in adj_list}\n    dist[s] = 0\n    pq = [(0, s)]\n\n    while pq:\n        curr_d, u = heapq.heappop(pq)\n        if curr_d > dist[u]:\n            continue\n        for v, weight in adj_list.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                heapq.heappush(pq, (dist[v], v))\n\n    return dist\n",
+    "label": "BFS",
+    "_source_template_idx": 4,
+    "_variant": 2
+  },
+  {
+    "code": "import heapq\n\ndef level_order(edges_of, begin):\n    dist = {node_id: float('inf') for node_id in edges_of}\n    dist[begin] = 0\n    pq = [(0, begin)]\n\n    while pq:\n        curr_d, u = heapq.heappop(pq)\n        if curr_d > dist[u]:\n            continue\n        for v, weight in edges_of.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                heapq.heappush(pq, (dist[v], v))\n\n    return dist\n",
+    "label": "BFS",
+    "_source_template_idx": 4,
+    "_variant": 3
+  },
+  {
+    "code": "import heapq\n\ndef bfs(graph_map, start_idx):\n    # Dijkstra single-source shortest path using priority queue\n    dist = {curr_node: float('inf') for curr_node in graph_map}\n    dist[start_idx] = 0\n    pq = [(0, start_idx)]\n\n    while pq:\n        curr_d, u = heapq.heappop(pq)\n        if curr_d > dist[u]:\n            continue\n        for v, weight in graph_map.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                heapq.heappush(pq, (dist[v], v))\n\n    return dist\n",
+    "label": "BFS",
+    "_source_template_idx": 4,
+    "_variant": 4
+  },
+  {
+    "code": "import heapq\n\ndef breadth_first_search(neighbors_of, from_idx):\n    dist = {w: float('inf') for w in neighbors_of}\n    dist[from_idx] = 0\n    pq = [(0, from_idx)]\n\n    while pq:\n        curr_d, u = heapq.heappop(pq)\n        if curr_d > dist[u]:\n            continue\n        for v, weight in neighbors_of.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                heapq.heappush(pq, (dist[v], v))\n\n    return dist\n",
+    "label": "BFS",
+    "_source_template_idx": 4,
+    "_variant": 5
+  },
+  {
+    "code": "import heapq\n\ndef shortest_path_bfs(graph, start):\n    # Dijkstra single-source shortest path using priority queue\n    dist = {node: float('inf') for node in graph}\n    dist[start] = 0\n    pq = [(0, start)]\n\n    while pq:\n        curr_d, u = heapq.heappop(pq)\n        if curr_d > dist[u]:\n            continue\n        for v, weight in graph.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                heapq.heappush(pq, (dist[v], v))\n\n    return dist\n",
+    "label": "BFS",
+    "_source_template_idx": 4,
+    "_variant": 6
+  },
+  {
+    "code": "import heapq\n\ndef level_order(adj_list, s):\n    dist = {u: float('inf') for u in adj_list}\n    dist[s] = 0\n    pq = [(0, s)]\n\n    while pq:\n        curr_d, u = heapq.heappop(pq)\n        if curr_d > dist[u]:\n            continue\n        for v, weight in adj_list.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                heapq.heappush(pq, (dist[v], v))\n\n    return dist\n",
+    "label": "BFS",
+    "_source_template_idx": 4,
+    "_variant": 7
   },
   {
     "code": "def dfs(graph, node, visited=None):\n    # recursive DFS over an adjacency-list graph\n    if visited is None:\n        visited = set()\n    visited.add(node)\n    result = [node]\n    for neighbor in graph.get(node, []):\n        if neighbor not in visited:\n            result.extend(dfs(graph, neighbor, visited))\n    return result\n",
@@ -150,6 +270,24 @@
     "_variant": 4
   },
   {
+    "code": "def depth_first_search(graph, node, visited=None):\n    if visited is None:\n        visited = set()\n    visited.add(node)\n    result = [node]\n    for neighbor in graph.get(node, []):\n        if neighbor not in visited:\n            result.extend(depth_first_search(graph, neighbor, visited))\n    return result\n",
+    "label": "DFS",
+    "_source_template_idx": 0,
+    "_variant": 5
+  },
+  {
+    "code": "def explore(adj_list, u, explored=None):\n    # recursive DFS over an adjacency-list graph\n    if explored is None:\n        explored = set()\n    explored.add(u)\n    output = [u]\n    for v in adj_list.get(u, []):\n        if v not in explored:\n            output.extend(explore(adj_list, v, explored))\n    return output\n",
+    "label": "DFS",
+    "_source_template_idx": 0,
+    "_variant": 6
+  },
+  {
+    "code": "def traverse_dfs(edges_of, node_id, vis=None):\n    if vis is None:\n        vis = set()\n    vis.add(node_id)\n    ans = [node_id]\n    for nbr in edges_of.get(node_id, []):\n        if nbr not in vis:\n            ans.extend(traverse_dfs(edges_of, nbr, vis))\n    return ans\n",
+    "label": "DFS",
+    "_source_template_idx": 0,
+    "_variant": 7
+  },
+  {
     "code": "def depth_first_search(adj_list, s):\n    # iterative DFS using an explicit stack\n    explored = set()\n    pending = [s]\n    output = []\n    while pending:\n        u = pending.pop()\n        if u in explored:\n            continue\n        explored.add(u)\n        output.append(u)\n        for v in adj_list.get(u, []):\n            if v not in explored:\n                pending.append(v)\n    return output\n",
     "label": "DFS",
     "_source_template_idx": 1,
@@ -178,6 +316,24 @@
     "label": "DFS",
     "_source_template_idx": 1,
     "_variant": 4
+  },
+  {
+    "code": "def explore(adj_list, s):\n    explored = set()\n    pending = [s]\n    output = []\n    while pending:\n        u = pending.pop()\n        if u in explored:\n            continue\n        explored.add(u)\n        output.append(u)\n        for v in adj_list.get(u, []):\n            if v not in explored:\n                pending.append(v)\n    return output\n",
+    "label": "DFS",
+    "_source_template_idx": 1,
+    "_variant": 5
+  },
+  {
+    "code": "def traverse_dfs(edges_of, begin):\n    # iterative DFS using an explicit stack\n    vis = set()\n    stk = [begin]\n    ans = []\n    while stk:\n        node_id = stk.pop()\n        if node_id in vis:\n            continue\n        vis.add(node_id)\n        ans.append(node_id)\n        for nbr in edges_of.get(node_id, []):\n            if nbr not in vis:\n                stk.append(nbr)\n    return ans\n",
+    "label": "DFS",
+    "_source_template_idx": 1,
+    "_variant": 6
+  },
+  {
+    "code": "def dfs(graph_map, start_idx):\n    been_here = set()\n    dfs_stack = [start_idx]\n    res = []\n    while dfs_stack:\n        curr_node = dfs_stack.pop()\n        if curr_node in been_here:\n            continue\n        been_here.add(curr_node)\n        res.append(curr_node)\n        for adj in graph_map.get(curr_node, []):\n            if adj not in been_here:\n                dfs_stack.append(adj)\n    return res\n",
+    "label": "DFS",
+    "_source_template_idx": 1,
+    "_variant": 7
   },
   {
     "code": "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef explore(root):\n    # recursive preorder DFS traversal of a binary tree\n    ans = []\n    def helper(node_id):\n        if node_id is None:\n            return\n        ans.append(node_id.val)\n        helper(node_id.left)\n        helper(node_id.right)\n    helper(root)\n    return ans\n",
@@ -210,6 +366,24 @@
     "_variant": 4
   },
   {
+    "code": "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef traverse_dfs(root):\n    ans = []\n    def helper(node_id):\n        if node_id is None:\n            return\n        ans.append(node_id.val)\n        helper(node_id.left)\n        helper(node_id.right)\n    helper(root)\n    return ans\n",
+    "label": "DFS",
+    "_source_template_idx": 2,
+    "_variant": 5
+  },
+  {
+    "code": "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef dfs(root):\n    # recursive preorder DFS traversal of a binary tree\n    res = []\n    def helper(curr_node):\n        if curr_node is None:\n            return\n        res.append(curr_node.val)\n        helper(curr_node.left)\n        helper(curr_node.right)\n    helper(root)\n    return res\n",
+    "label": "DFS",
+    "_source_template_idx": 2,
+    "_variant": 6
+  },
+  {
+    "code": "class TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val\n        self.left = left\n        self.right = right\n\ndef depth_first_search(root):\n    final_result = []\n    def helper(w):\n        if w is None:\n            return\n        final_result.append(w.val)\n        helper(w.left)\n        helper(w.right)\n    helper(root)\n    return final_result\n",
+    "label": "DFS",
+    "_source_template_idx": 2,
+    "_variant": 7
+  },
+  {
     "code": "def traverse_dfs(values, start_idx):\n    # DFS flood fill / connected components on a 2D grid\n    rows = len(values)\n    cols = len(values[0]) if rows else 0\n    been_here = [[False] * cols for _ in range(rows)]\n\n    def helper(r, c):\n        if r < 0 or r >= rows or c < 0 or c >= cols:\n            return\n        if been_here[r][c] or values[r][c] == 0:\n            return\n        been_here[r][c] = True\n        helper(r + 1, c)\n        helper(r - 1, c)\n        helper(r, c + 1)\n        helper(r, c - 1)\n\n    row, col = start_idx\n    helper(row, col)\n    return been_here\n",
     "label": "DFS",
     "_source_template_idx": 3,
@@ -238,6 +412,24 @@
     "label": "DFS",
     "_source_template_idx": 3,
     "_variant": 4
+  },
+  {
+    "code": "def dfs(values, start_idx):\n    rows = len(values)\n    cols = len(values[0]) if rows else 0\n    been_here = [[False] * cols for _ in range(rows)]\n\n    def helper(r, c):\n        if r < 0 or r >= rows or c < 0 or c >= cols:\n            return\n        if been_here[r][c] or values[r][c] == 0:\n            return\n        been_here[r][c] = True\n        helper(r + 1, c)\n        helper(r - 1, c)\n        helper(r, c + 1)\n        helper(r, c - 1)\n\n    row, col = start_idx\n    helper(row, col)\n    return been_here\n",
+    "label": "DFS",
+    "_source_template_idx": 3,
+    "_variant": 5
+  },
+  {
+    "code": "def depth_first_search(items, from_idx):\n    # DFS flood fill / connected components on a 2D grid\n    rows = len(items)\n    cols = len(items[0]) if rows else 0\n    visited_set = [[False] * cols for _ in range(rows)]\n\n    def helper(r, c):\n        if r < 0 or r >= rows or c < 0 or c >= cols:\n            return\n        if visited_set[r][c] or items[r][c] == 0:\n            return\n        visited_set[r][c] = True\n        helper(r + 1, c)\n        helper(r - 1, c)\n        helper(r, c + 1)\n        helper(r, c - 1)\n\n    a, b = from_idx\n    helper(a, b)\n    return visited_set\n",
+    "label": "DFS",
+    "_source_template_idx": 3,
+    "_variant": 6
+  },
+  {
+    "code": "def explore(arr, start):\n    rows = len(arr)\n    cols = len(arr[0]) if rows else 0\n    visited = [[False] * cols for _ in range(rows)]\n\n    def helper(r, c):\n        if r < 0 or r >= rows or c < 0 or c >= cols:\n            return\n        if visited[r][c] or arr[r][c] == 0:\n            return\n        visited[r][c] = True\n        helper(r + 1, c)\n        helper(r - 1, c)\n        helper(r, c + 1)\n        helper(r, c - 1)\n\n    i, j = start\n    helper(i, j)\n    return visited\n",
+    "label": "DFS",
+    "_source_template_idx": 3,
+    "_variant": 7
   },
   {
     "code": "def solve(n, memo=None):\n    # top-down memoized DP (climbing stairs style)\n    if memo is None:\n        memo = {}\n    if n <= 1:\n        return 1\n    if n in memo:\n        return memo[n]\n    result = solve(n - 1, memo) + solve(n - 2, memo)\n    memo[n] = result\n    return result\n",
@@ -270,6 +462,24 @@
     "_variant": 4
   },
   {
+    "code": "def compute(n, memo=None):\n    if memo is None:\n        memo = {}\n    if n <= 1:\n        return 1\n    if n in memo:\n        return memo[n]\n    result = compute(n - 1, memo) + compute(n - 2, memo)\n    memo[n] = result\n    return result\n",
+    "label": "Dynamic Programming",
+    "_source_template_idx": 0,
+    "_variant": 5
+  },
+  {
+    "code": "def dp_solution(length, cache=None):\n    # top-down memoized DP (climbing stairs style)\n    if cache is None:\n        cache = {}\n    if length <= 1:\n        return 1\n    if length in cache:\n        return cache[length]\n    output = dp_solution(length - 1, cache) + dp_solution(length - 2, cache)\n    cache[length] = output\n    return output\n",
+    "label": "Dynamic Programming",
+    "_source_template_idx": 0,
+    "_variant": 6
+  },
+  {
+    "code": "def run_dp(size, lookup=None):\n    if lookup is None:\n        lookup = {}\n    if size <= 1:\n        return 1\n    if size in lookup:\n        return lookup[size]\n    ans = run_dp(size - 1, lookup) + run_dp(size - 2, lookup)\n    lookup[size] = ans\n    return ans\n",
+    "label": "Dynamic Programming",
+    "_source_template_idx": 0,
+    "_variant": 7
+  },
+  {
     "code": "def compute(goal, nums):\n    # bottom-up tabulated DP (coin change style)\n    table = [float('inf')] * (goal + 1)\n    table[0] = 0\n    for idx in range(1, goal + 1):\n        for coin in nums:\n            if coin <= idx:\n                table[idx] = min(table[idx], table[idx - coin] + 1)\n    return table[goal] if table[goal] != float('inf') else -1\n",
     "label": "Dynamic Programming",
     "_source_template_idx": 1,
@@ -298,6 +508,24 @@
     "label": "Dynamic Programming",
     "_source_template_idx": 1,
     "_variant": 4
+  },
+  {
+    "code": "def dp_solution(goal, nums):\n    table = [float('inf')] * (goal + 1)\n    table[0] = 0\n    for idx in range(1, goal + 1):\n        for coin in nums:\n            if coin <= idx:\n                table[idx] = min(table[idx], table[idx - coin] + 1)\n    return table[goal] if table[goal] != float('inf') else -1\n",
+    "label": "Dynamic Programming",
+    "_source_template_idx": 1,
+    "_variant": 5
+  },
+  {
+    "code": "def run_dp(want, data):\n    # bottom-up tabulated DP (coin change style)\n    dp_arr = [float('inf')] * (want + 1)\n    dp_arr[0] = 0\n    for p1 in range(1, want + 1):\n        for coin in data:\n            if coin <= p1:\n                dp_arr[p1] = min(dp_arr[p1], dp_arr[p1 - coin] + 1)\n    return dp_arr[want] if dp_arr[want] != float('inf') else -1\n",
+    "label": "Dynamic Programming",
+    "_source_template_idx": 1,
+    "_variant": 6
+  },
+  {
+    "code": "def solve(needle, values):\n    dp_grid = [float('inf')] * (needle + 1)\n    dp_grid[0] = 0\n    for row in range(1, needle + 1):\n        for coin in values:\n            if coin <= row:\n                dp_grid[row] = min(dp_grid[row], dp_grid[row - coin] + 1)\n    return dp_grid[needle] if dp_grid[needle] != float('inf') else -1\n",
+    "label": "Dynamic Programming",
+    "_source_template_idx": 1,
+    "_variant": 7
   },
   {
     "code": "def dp_solution(data, arr2):\n    # 2D tabulated DP - longest common subsequence\n    size = len(data)\n    m = len(arr2)\n    dp_arr = [[0] * (m + 1) for _ in range(size + 1)]\n    for p1 in range(1, size + 1):\n        for p2 in range(1, m + 1):\n            if data[p1 - 1] == arr2[p2 - 1]:\n                dp_arr[p1][p2] = dp_arr[p1 - 1][p2 - 1] + 1\n            else:\n                dp_arr[p1][p2] = max(dp_arr[p1 - 1][p2], dp_arr[p1][p2 - 1])\n    return dp_arr[size][m]\n",
@@ -330,6 +558,24 @@
     "_variant": 4
   },
   {
+    "code": "def run_dp(data, arr2):\n    size = len(data)\n    m = len(arr2)\n    dp_arr = [[0] * (m + 1) for _ in range(size + 1)]\n    for p1 in range(1, size + 1):\n        for p2 in range(1, m + 1):\n            if data[p1 - 1] == arr2[p2 - 1]:\n                dp_arr[p1][p2] = dp_arr[p1 - 1][p2 - 1] + 1\n            else:\n                dp_arr[p1][p2] = max(dp_arr[p1 - 1][p2], dp_arr[p1][p2 - 1])\n    return dp_arr[size][m]\n",
+    "label": "Dynamic Programming",
+    "_source_template_idx": 2,
+    "_variant": 5
+  },
+  {
+    "code": "def solve(values, arr2):\n    # 2D tabulated DP - longest common subsequence\n    num_items = len(values)\n    m = len(arr2)\n    dp_grid = [[0] * (m + 1) for _ in range(num_items + 1)]\n    for row in range(1, num_items + 1):\n        for col in range(1, m + 1):\n            if values[row - 1] == arr2[col - 1]:\n                dp_grid[row][col] = dp_grid[row - 1][col - 1] + 1\n            else:\n                dp_grid[row][col] = max(dp_grid[row - 1][col], dp_grid[row][col - 1])\n    return dp_grid[num_items][m]\n",
+    "label": "Dynamic Programming",
+    "_source_template_idx": 2,
+    "_variant": 6
+  },
+  {
+    "code": "def compute(items, arr2):\n    total = len(items)\n    m = len(arr2)\n    dp_table = [[0] * (m + 1) for _ in range(total + 1)]\n    for a in range(1, total + 1):\n        for b in range(1, m + 1):\n            if items[a - 1] == arr2[b - 1]:\n                dp_table[a][b] = dp_table[a - 1][b - 1] + 1\n            else:\n                dp_table[a][b] = max(dp_table[a - 1][b], dp_table[a][b - 1])\n    return dp_table[total][m]\n",
+    "label": "Dynamic Programming",
+    "_source_template_idx": 2,
+    "_variant": 7
+  },
+  {
     "code": "def run_dp(values, arr2, needle):\n    # 0/1 knapsack, 2D tabulated DP\n    num_items = len(values)\n    dp_grid = [[0] * (needle + 1) for _ in range(num_items + 1)]\n    for row in range(1, num_items + 1):\n        for col in range(needle + 1):\n            dp_grid[row][col] = dp_grid[row - 1][col]\n            if values[row - 1] <= col:\n                candidate = dp_grid[row - 1][col - values[row - 1]] + arr2[row - 1]\n                dp_grid[row][col] = max(dp_grid[row][col], candidate)\n    return dp_grid[num_items][needle]\n",
     "label": "Dynamic Programming",
     "_source_template_idx": 3,
@@ -358,6 +604,24 @@
     "label": "Dynamic Programming",
     "_source_template_idx": 3,
     "_variant": 4
+  },
+  {
+    "code": "def solve(values, arr2, needle):\n    num_items = len(values)\n    dp_grid = [[0] * (needle + 1) for _ in range(num_items + 1)]\n    for row in range(1, num_items + 1):\n        for col in range(needle + 1):\n            dp_grid[row][col] = dp_grid[row - 1][col]\n            if values[row - 1] <= col:\n                candidate = dp_grid[row - 1][col - values[row - 1]] + arr2[row - 1]\n                dp_grid[row][col] = max(dp_grid[row][col], candidate)\n    return dp_grid[num_items][needle]\n",
+    "label": "Dynamic Programming",
+    "_source_template_idx": 3,
+    "_variant": 5
+  },
+  {
+    "code": "def compute(items, arr2, tgt):\n    # 0/1 knapsack, 2D tabulated DP\n    total = len(items)\n    dp_table = [[0] * (tgt + 1) for _ in range(total + 1)]\n    for a in range(1, total + 1):\n        for b in range(tgt + 1):\n            dp_table[a][b] = dp_table[a - 1][b]\n            if items[a - 1] <= b:\n                candidate = dp_table[a - 1][b - items[a - 1]] + arr2[a - 1]\n                dp_table[a][b] = max(dp_table[a][b], candidate)\n    return dp_table[total][tgt]\n",
+    "label": "Dynamic Programming",
+    "_source_template_idx": 3,
+    "_variant": 6
+  },
+  {
+    "code": "def dp_solution(arr, arr2, target):\n    n = len(arr)\n    dp = [[0] * (target + 1) for _ in range(n + 1)]\n    for i in range(1, n + 1):\n        for j in range(target + 1):\n            dp[i][j] = dp[i - 1][j]\n            if arr[i - 1] <= j:\n                candidate = dp[i - 1][j - arr[i - 1]] + arr2[i - 1]\n                dp[i][j] = max(dp[i][j], candidate)\n    return dp[n][target]\n",
+    "label": "Dynamic Programming",
+    "_source_template_idx": 3,
+    "_variant": 7
   },
   {
     "code": "def backtrack(arr):\n    # generate all permutations via backtracking with explicit undo\n    result = []\n    path = []\n    used = [False] * len(arr)\n\n    def helper():\n        if len(path) == len(arr):\n            result.append(path[:])\n            return\n        for i in range(len(arr)):\n            if used[i]:\n                continue\n            used[i] = True\n            path.append(arr[i])\n            helper()\n            path.pop()\n            used[i] = False\n\n    helper()\n    return result\n",
@@ -390,6 +654,24 @@
     "_variant": 4
   },
   {
+    "code": "def solve_backtrack(arr):\n    result = []\n    path = []\n    used = [False] * len(arr)\n\n    def helper():\n        if len(path) == len(arr):\n            result.append(path[:])\n            return\n        for i in range(len(arr)):\n            if used[i]:\n                continue\n            used[i] = True\n            path.append(arr[i])\n            helper()\n            path.pop()\n            used[i] = False\n\n    helper()\n    return result\n",
+    "label": "Backtracking",
+    "_source_template_idx": 0,
+    "_variant": 5
+  },
+  {
+    "code": "def generate(nums):\n    # generate all permutations via backtracking with explicit undo\n    output = []\n    path = []\n    used = [False] * len(nums)\n\n    def helper():\n        if len(path) == len(nums):\n            output.append(path[:])\n            return\n        for idx in range(len(nums)):\n            if used[idx]:\n                continue\n            used[idx] = True\n            path.append(nums[idx])\n            helper()\n            path.pop()\n            used[idx] = False\n\n    helper()\n    return output\n",
+    "label": "Backtracking",
+    "_source_template_idx": 0,
+    "_variant": 6
+  },
+  {
+    "code": "def search_solutions(data):\n    ans = []\n    path = []\n    used = [False] * len(data)\n\n    def helper():\n        if len(path) == len(data):\n            ans.append(path[:])\n            return\n        for p1 in range(len(data)):\n            if used[p1]:\n                continue\n            used[p1] = True\n            path.append(data[p1])\n            helper()\n            path.pop()\n            used[p1] = False\n\n    helper()\n    return ans\n",
+    "label": "Backtracking",
+    "_source_template_idx": 0,
+    "_variant": 7
+  },
+  {
     "code": "def solve_backtrack(length):\n    # N-Queens via backtracking, undoing placement on dead ends\n    output = []\n    cols = set()\n    diag1 = set()\n    diag2 = set()\n    placement = []\n\n    def helper(row):\n        if row == length:\n            output.append(placement[:])\n            return\n        for col in range(length):\n            if col in cols or (row - col) in diag1 or (row + col) in diag2:\n                continue\n            cols.add(col)\n            diag1.add(row - col)\n            diag2.add(row + col)\n            placement.append(col)\n            helper(row + 1)\n            placement.pop()\n            cols.remove(col)\n            diag1.remove(row - col)\n            diag2.remove(row + col)\n\n    helper(0)\n    return output\n",
     "label": "Backtracking",
     "_source_template_idx": 1,
@@ -418,6 +700,24 @@
     "label": "Backtracking",
     "_source_template_idx": 1,
     "_variant": 4
+  },
+  {
+    "code": "def generate(length):\n    output = []\n    cols = set()\n    diag1 = set()\n    diag2 = set()\n    placement = []\n\n    def helper(row):\n        if row == length:\n            output.append(placement[:])\n            return\n        for col in range(length):\n            if col in cols or (row - col) in diag1 or (row + col) in diag2:\n                continue\n            cols.add(col)\n            diag1.add(row - col)\n            diag2.add(row + col)\n            placement.append(col)\n            helper(row + 1)\n            placement.pop()\n            cols.remove(col)\n            diag1.remove(row - col)\n            diag2.remove(row + col)\n\n    helper(0)\n    return output\n",
+    "label": "Backtracking",
+    "_source_template_idx": 1,
+    "_variant": 5
+  },
+  {
+    "code": "def search_solutions(size):\n    # N-Queens via backtracking, undoing placement on dead ends\n    ans = []\n    cols = set()\n    diag1 = set()\n    diag2 = set()\n    placement = []\n\n    def helper(row):\n        if row == size:\n            ans.append(placement[:])\n            return\n        for col in range(size):\n            if col in cols or (row - col) in diag1 or (row + col) in diag2:\n                continue\n            cols.add(col)\n            diag1.add(row - col)\n            diag2.add(row + col)\n            placement.append(col)\n            helper(row + 1)\n            placement.pop()\n            cols.remove(col)\n            diag1.remove(row - col)\n            diag2.remove(row + col)\n\n    helper(0)\n    return ans\n",
+    "label": "Backtracking",
+    "_source_template_idx": 1,
+    "_variant": 6
+  },
+  {
+    "code": "def backtrack(num_items):\n    res = []\n    cols = set()\n    diag1 = set()\n    diag2 = set()\n    placement = []\n\n    def helper(row):\n        if row == num_items:\n            res.append(placement[:])\n            return\n        for col in range(num_items):\n            if col in cols or (row - col) in diag1 or (row + col) in diag2:\n                continue\n            cols.add(col)\n            diag1.add(row - col)\n            diag2.add(row + col)\n            placement.append(col)\n            helper(row + 1)\n            placement.pop()\n            cols.remove(col)\n            diag1.remove(row - col)\n            diag2.remove(row + col)\n\n    helper(0)\n    return res\n",
+    "label": "Backtracking",
+    "_source_template_idx": 1,
+    "_variant": 7
   },
   {
     "code": "def generate(data, want):\n    # combination sum via backtracking with undo on the running path\n    ans = []\n    path = []\n\n    def helper(begin, remaining):\n        if remaining == 0:\n            ans.append(path[:])\n            return\n        if remaining < 0:\n            return\n        for p1 in range(begin, len(data)):\n            path.append(data[p1])\n            helper(p1, remaining - data[p1])\n            path.pop()\n\n    helper(0, want)\n    return ans\n",
@@ -450,6 +750,24 @@
     "_variant": 4
   },
   {
+    "code": "def search_solutions(data, want):\n    ans = []\n    path = []\n\n    def helper(begin, remaining):\n        if remaining == 0:\n            ans.append(path[:])\n            return\n        if remaining < 0:\n            return\n        for p1 in range(begin, len(data)):\n            path.append(data[p1])\n            helper(p1, remaining - data[p1])\n            path.pop()\n\n    helper(0, want)\n    return ans\n",
+    "label": "Backtracking",
+    "_source_template_idx": 2,
+    "_variant": 5
+  },
+  {
+    "code": "def backtrack(values, needle):\n    # combination sum via backtracking with undo on the running path\n    res = []\n    path = []\n\n    def helper(start_idx, remaining):\n        if remaining == 0:\n            res.append(path[:])\n            return\n        if remaining < 0:\n            return\n        for row in range(start_idx, len(values)):\n            path.append(values[row])\n            helper(row, remaining - values[row])\n            path.pop()\n\n    helper(0, needle)\n    return res\n",
+    "label": "Backtracking",
+    "_source_template_idx": 2,
+    "_variant": 6
+  },
+  {
+    "code": "def solve_backtrack(items, tgt):\n    final_result = []\n    path = []\n\n    def helper(from_idx, remaining):\n        if remaining == 0:\n            final_result.append(path[:])\n            return\n        if remaining < 0:\n            return\n        for a in range(from_idx, len(items)):\n            path.append(items[a])\n            helper(a, remaining - items[a])\n            path.pop()\n\n    helper(0, tgt)\n    return final_result\n",
+    "label": "Backtracking",
+    "_source_template_idx": 2,
+    "_variant": 7
+  },
+  {
     "code": "def search_solutions(values, k_val):\n    # subsets of size k via backtracking, explicit undo (pop) after recursion\n    res = []\n    path = []\n\n    def helper(start_idx):\n        if len(path) == k_val:\n            res.append(path[:])\n            return\n        for row in range(start_idx, len(values)):\n            path.append(values[row])\n            helper(row + 1)\n            path.pop()\n\n    helper(0)\n    return res\n",
     "label": "Backtracking",
     "_source_template_idx": 3,
@@ -478,6 +796,120 @@
     "label": "Backtracking",
     "_source_template_idx": 3,
     "_variant": 4
+  },
+  {
+    "code": "def backtrack(values, k_val):\n    res = []\n    path = []\n\n    def helper(start_idx):\n        if len(path) == k_val:\n            res.append(path[:])\n            return\n        for row in range(start_idx, len(values)):\n            path.append(values[row])\n            helper(row + 1)\n            path.pop()\n\n    helper(0)\n    return res\n",
+    "label": "Backtracking",
+    "_source_template_idx": 3,
+    "_variant": 5
+  },
+  {
+    "code": "def solve_backtrack(items, k_th):\n    # subsets of size k via backtracking, explicit undo (pop) after recursion\n    final_result = []\n    path = []\n\n    def helper(from_idx):\n        if len(path) == k_th:\n            final_result.append(path[:])\n            return\n        for a in range(from_idx, len(items)):\n            path.append(items[a])\n            helper(a + 1)\n            path.pop()\n\n    helper(0)\n    return final_result\n",
+    "label": "Backtracking",
+    "_source_template_idx": 3,
+    "_variant": 6
+  },
+  {
+    "code": "def generate(arr, k):\n    result = []\n    path = []\n\n    def helper(start):\n        if len(path) == k:\n            result.append(path[:])\n            return\n        for i in range(start, len(arr)):\n            path.append(arr[i])\n            helper(i + 1)\n            path.pop()\n\n    helper(0)\n    return result\n",
+    "label": "Backtracking",
+    "_source_template_idx": 3,
+    "_variant": 7
+  },
+  {
+    "code": "def backtrack(board, word):\n    # 2D grid word search via backtracking with visited cell restoration\n    rows = len(board)\n    cols = len(board[0])\n\n    def helper(r, c, index):\n        if index == len(word):\n            return True\n        if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[index]:\n            return False\n        \n        orig = board[r][c]\n        board[r][c] = '#'\n        found = (\n            helper(r + 1, c, index + 1) or\n            helper(r - 1, c, index + 1) or\n            helper(r, c + 1, index + 1) or\n            helper(r, c - 1, index + 1)\n        )\n        board[r][c] = orig\n        return found\n\n    for r in range(rows):\n        for c in range(cols):\n            if helper(r, c, 0):\n                return True\n    return False\n",
+    "label": "Backtracking",
+    "_source_template_idx": 4,
+    "_variant": 0
+  },
+  {
+    "code": "def solve_backtrack(board, word):\n    rows = len(board)\n    cols = len(board[0])\n\n    def helper(r, c, index):\n        if index == len(word):\n            return True\n        if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[index]:\n            return False\n        \n        orig = board[r][c]\n        board[r][c] = '#'\n        found = (\n            helper(r + 1, c, index + 1) or\n            helper(r - 1, c, index + 1) or\n            helper(r, c + 1, index + 1) or\n            helper(r, c - 1, index + 1)\n        )\n        board[r][c] = orig\n        return found\n\n    for r in range(rows):\n        for c in range(cols):\n            if helper(r, c, 0):\n                return True\n    return False\n",
+    "label": "Backtracking",
+    "_source_template_idx": 4,
+    "_variant": 1
+  },
+  {
+    "code": "def generate(board, word):\n    # 2D grid word search via backtracking with visited cell restoration\n    rows = len(board)\n    cols = len(board[0])\n\n    def helper(r, c, index):\n        if index == len(word):\n            return True\n        if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[index]:\n            return False\n        \n        orig = board[r][c]\n        board[r][c] = '#'\n        found = (\n            helper(r + 1, c, index + 1) or\n            helper(r - 1, c, index + 1) or\n            helper(r, c + 1, index + 1) or\n            helper(r, c - 1, index + 1)\n        )\n        board[r][c] = orig\n        return found\n\n    for r in range(rows):\n        for c in range(cols):\n            if helper(r, c, 0):\n                return True\n    return False\n",
+    "label": "Backtracking",
+    "_source_template_idx": 4,
+    "_variant": 2
+  },
+  {
+    "code": "def search_solutions(board, word):\n    rows = len(board)\n    cols = len(board[0])\n\n    def helper(r, c, index):\n        if index == len(word):\n            return True\n        if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[index]:\n            return False\n        \n        orig = board[r][c]\n        board[r][c] = '#'\n        found = (\n            helper(r + 1, c, index + 1) or\n            helper(r - 1, c, index + 1) or\n            helper(r, c + 1, index + 1) or\n            helper(r, c - 1, index + 1)\n        )\n        board[r][c] = orig\n        return found\n\n    for r in range(rows):\n        for c in range(cols):\n            if helper(r, c, 0):\n                return True\n    return False\n",
+    "label": "Backtracking",
+    "_source_template_idx": 4,
+    "_variant": 3
+  },
+  {
+    "code": "def backtrack(board, word):\n    # 2D grid word search via backtracking with visited cell restoration\n    rows = len(board)\n    cols = len(board[0])\n\n    def helper(r, c, index):\n        if index == len(word):\n            return True\n        if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[index]:\n            return False\n        \n        orig = board[r][c]\n        board[r][c] = '#'\n        found = (\n            helper(r + 1, c, index + 1) or\n            helper(r - 1, c, index + 1) or\n            helper(r, c + 1, index + 1) or\n            helper(r, c - 1, index + 1)\n        )\n        board[r][c] = orig\n        return found\n\n    for r in range(rows):\n        for c in range(cols):\n            if helper(r, c, 0):\n                return True\n    return False\n",
+    "label": "Backtracking",
+    "_source_template_idx": 4,
+    "_variant": 4
+  },
+  {
+    "code": "def solve_backtrack(board, word):\n    rows = len(board)\n    cols = len(board[0])\n\n    def helper(r, c, index):\n        if index == len(word):\n            return True\n        if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[index]:\n            return False\n        \n        orig = board[r][c]\n        board[r][c] = '#'\n        found = (\n            helper(r + 1, c, index + 1) or\n            helper(r - 1, c, index + 1) or\n            helper(r, c + 1, index + 1) or\n            helper(r, c - 1, index + 1)\n        )\n        board[r][c] = orig\n        return found\n\n    for r in range(rows):\n        for c in range(cols):\n            if helper(r, c, 0):\n                return True\n    return False\n",
+    "label": "Backtracking",
+    "_source_template_idx": 4,
+    "_variant": 5
+  },
+  {
+    "code": "def generate(board, word):\n    # 2D grid word search via backtracking with visited cell restoration\n    rows = len(board)\n    cols = len(board[0])\n\n    def helper(r, c, index):\n        if index == len(word):\n            return True\n        if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[index]:\n            return False\n        \n        orig = board[r][c]\n        board[r][c] = '#'\n        found = (\n            helper(r + 1, c, index + 1) or\n            helper(r - 1, c, index + 1) or\n            helper(r, c + 1, index + 1) or\n            helper(r, c - 1, index + 1)\n        )\n        board[r][c] = orig\n        return found\n\n    for r in range(rows):\n        for c in range(cols):\n            if helper(r, c, 0):\n                return True\n    return False\n",
+    "label": "Backtracking",
+    "_source_template_idx": 4,
+    "_variant": 6
+  },
+  {
+    "code": "def search_solutions(board, word):\n    rows = len(board)\n    cols = len(board[0])\n\n    def helper(r, c, index):\n        if index == len(word):\n            return True\n        if r < 0 or r >= rows or c < 0 or c >= cols or board[r][c] != word[index]:\n            return False\n        \n        orig = board[r][c]\n        board[r][c] = '#'\n        found = (\n            helper(r + 1, c, index + 1) or\n            helper(r - 1, c, index + 1) or\n            helper(r, c + 1, index + 1) or\n            helper(r, c - 1, index + 1)\n        )\n        board[r][c] = orig\n        return found\n\n    for r in range(rows):\n        for c in range(cols):\n            if helper(r, c, 0):\n                return True\n    return False\n",
+    "label": "Backtracking",
+    "_source_template_idx": 4,
+    "_variant": 7
+  },
+  {
+    "code": "def solve_backtrack(graph, start):\n    # travelling salesman problem via state-space backtracking\n    n = len(graph)\n    visited = [False] * n\n    visited[start] = True\n    best_cost = [float('inf')]\n\n    def helper(curr, count, cost):\n        if count == n and graph[curr][start] > 0:\n            best_cost[0] = min(best_cost[0], cost + graph[curr][start])\n            return\n        for next in range(n):\n            if not visited[next] and graph[curr][next] > 0:\n                visited[next] = True\n                helper(next, count + 1, cost + graph[curr][next])\n                visited[next] = False\n\n    helper(start, 1, 0)\n    return best_cost[0]\n",
+    "label": "Backtracking",
+    "_source_template_idx": 5,
+    "_variant": 0
+  },
+  {
+    "code": "def generate(adj_list, s):\n    length = len(adj_list)\n    explored = [False] * length\n    explored[s] = True\n    best_cost = [float('inf')]\n\n    def helper(curr, cnt, cost):\n        if cnt == length and adj_list[curr][s] > 0:\n            best_cost[0] = min(best_cost[0], cost + adj_list[curr][s])\n            return\n        for next in range(length):\n            if not explored[next] and adj_list[curr][next] > 0:\n                explored[next] = True\n                helper(next, cnt + 1, cost + adj_list[curr][next])\n                explored[next] = False\n\n    helper(s, 1, 0)\n    return best_cost[0]\n",
+    "label": "Backtracking",
+    "_source_template_idx": 5,
+    "_variant": 1
+  },
+  {
+    "code": "def search_solutions(edges_of, begin):\n    # travelling salesman problem via state-space backtracking\n    size = len(edges_of)\n    vis = [False] * size\n    vis[begin] = True\n    best_cost = [float('inf')]\n\n    def helper(curr, freq, cost):\n        if freq == size and edges_of[curr][begin] > 0:\n            best_cost[0] = min(best_cost[0], cost + edges_of[curr][begin])\n            return\n        for next in range(size):\n            if not vis[next] and edges_of[curr][next] > 0:\n                vis[next] = True\n                helper(next, freq + 1, cost + edges_of[curr][next])\n                vis[next] = False\n\n    helper(begin, 1, 0)\n    return best_cost[0]\n",
+    "label": "Backtracking",
+    "_source_template_idx": 5,
+    "_variant": 2
+  },
+  {
+    "code": "def backtrack(graph_map, start_idx):\n    num_items = len(graph_map)\n    been_here = [False] * num_items\n    been_here[start_idx] = True\n    best_cost = [float('inf')]\n\n    def helper(curr, counter, cost):\n        if counter == num_items and graph_map[curr][start_idx] > 0:\n            best_cost[0] = min(best_cost[0], cost + graph_map[curr][start_idx])\n            return\n        for next in range(num_items):\n            if not been_here[next] and graph_map[curr][next] > 0:\n                been_here[next] = True\n                helper(next, counter + 1, cost + graph_map[curr][next])\n                been_here[next] = False\n\n    helper(start_idx, 1, 0)\n    return best_cost[0]\n",
+    "label": "Backtracking",
+    "_source_template_idx": 5,
+    "_variant": 3
+  },
+  {
+    "code": "def solve_backtrack(neighbors_of, from_idx):\n    # travelling salesman problem via state-space backtracking\n    total = len(neighbors_of)\n    visited_set = [False] * total\n    visited_set[from_idx] = True\n    best_cost = [float('inf')]\n\n    def helper(curr, occurrences, cost):\n        if occurrences == total and neighbors_of[curr][from_idx] > 0:\n            best_cost[0] = min(best_cost[0], cost + neighbors_of[curr][from_idx])\n            return\n        for next in range(total):\n            if not visited_set[next] and neighbors_of[curr][next] > 0:\n                visited_set[next] = True\n                helper(next, occurrences + 1, cost + neighbors_of[curr][next])\n                visited_set[next] = False\n\n    helper(from_idx, 1, 0)\n    return best_cost[0]\n",
+    "label": "Backtracking",
+    "_source_template_idx": 5,
+    "_variant": 4
+  },
+  {
+    "code": "def generate(graph, start):\n    n = len(graph)\n    visited = [False] * n\n    visited[start] = True\n    best_cost = [float('inf')]\n\n    def helper(curr, count, cost):\n        if count == n and graph[curr][start] > 0:\n            best_cost[0] = min(best_cost[0], cost + graph[curr][start])\n            return\n        for next in range(n):\n            if not visited[next] and graph[curr][next] > 0:\n                visited[next] = True\n                helper(next, count + 1, cost + graph[curr][next])\n                visited[next] = False\n\n    helper(start, 1, 0)\n    return best_cost[0]\n",
+    "label": "Backtracking",
+    "_source_template_idx": 5,
+    "_variant": 5
+  },
+  {
+    "code": "def search_solutions(adj_list, s):\n    # travelling salesman problem via state-space backtracking\n    length = len(adj_list)\n    explored = [False] * length\n    explored[s] = True\n    best_cost = [float('inf')]\n\n    def helper(curr, cnt, cost):\n        if cnt == length and adj_list[curr][s] > 0:\n            best_cost[0] = min(best_cost[0], cost + adj_list[curr][s])\n            return\n        for next in range(length):\n            if not explored[next] and adj_list[curr][next] > 0:\n                explored[next] = True\n                helper(next, cnt + 1, cost + adj_list[curr][next])\n                explored[next] = False\n\n    helper(s, 1, 0)\n    return best_cost[0]\n",
+    "label": "Backtracking",
+    "_source_template_idx": 5,
+    "_variant": 6
+  },
+  {
+    "code": "def backtrack(edges_of, begin):\n    size = len(edges_of)\n    vis = [False] * size\n    vis[begin] = True\n    best_cost = [float('inf')]\n\n    def helper(curr, freq, cost):\n        if freq == size and edges_of[curr][begin] > 0:\n            best_cost[0] = min(best_cost[0], cost + edges_of[curr][begin])\n            return\n        for next in range(size):\n            if not vis[next] and edges_of[curr][next] > 0:\n                vis[next] = True\n                helper(next, freq + 1, cost + edges_of[curr][next])\n                vis[next] = False\n\n    helper(begin, 1, 0)\n    return best_cost[0]\n",
+    "label": "Backtracking",
+    "_source_template_idx": 5,
+    "_variant": 7
   },
   {
     "code": "def two_pointer_solve(arr, target):\n    # Two pointers start at opposite ends and move toward each other\n    left, right = 0, len(arr) - 1\n    while left < right:\n        cur = arr[left] + arr[right]\n        if cur == target:\n            return [left, right]\n        elif cur < target:\n            left += 1\n        else:\n            right -= 1\n    return [-1, -1]\n",
@@ -510,6 +942,24 @@
     "_variant": 4
   },
   {
+    "code": "def find_pair(arr, target):\n    left, right = 0, len(arr) - 1\n    while left < right:\n        cur = arr[left] + arr[right]\n        if cur == target:\n            return [left, right]\n        elif cur < target:\n            left += 1\n        else:\n            right -= 1\n    return [-1, -1]\n",
+    "label": "Two Pointer",
+    "_source_template_idx": 0,
+    "_variant": 5
+  },
+  {
+    "code": "def solve_two_ptr(nums, goal):\n    # Two pointers start at opposite ends and move toward each other\n    lo, hi = 0, len(nums) - 1\n    while lo < hi:\n        curr = nums[lo] + nums[hi]\n        if curr == goal:\n            return [lo, hi]\n        elif curr < goal:\n            lo += 1\n        else:\n            hi -= 1\n    return [-1, -1]\n",
+    "label": "Two Pointer",
+    "_source_template_idx": 0,
+    "_variant": 6
+  },
+  {
+    "code": "def run(data, want):\n    left_ptr, right_ptr = 0, len(data) - 1\n    while left_ptr < right_ptr:\n        c = data[left_ptr] + data[right_ptr]\n        if c == want:\n            return [left_ptr, right_ptr]\n        elif c < want:\n            left_ptr += 1\n        else:\n            right_ptr -= 1\n    return [-1, -1]\n",
+    "label": "Two Pointer",
+    "_source_template_idx": 0,
+    "_variant": 7
+  },
+  {
     "code": "def find_pair(nums):\n    # One index (i) trails behind, only advancing when a new distinct\n    # value is found; the other (j) scans ahead every iteration.\n    if not nums:\n        return 0\n    idx = 0\n    for jdx in range(1, len(nums)):\n        if nums[jdx] != nums[idx]:\n            idx += 1\n            nums[idx] = nums[jdx]\n    return idx + 1\n",
     "label": "Two Pointer",
     "_source_template_idx": 1,
@@ -538,6 +988,24 @@
     "label": "Two Pointer",
     "_source_template_idx": 1,
     "_variant": 4
+  },
+  {
+    "code": "def solve_two_ptr(nums):\n    if not nums:\n        return 0\n    idx = 0\n    for jdx in range(1, len(nums)):\n        if nums[jdx] != nums[idx]:\n            idx += 1\n            nums[idx] = nums[jdx]\n    return idx + 1\n",
+    "label": "Two Pointer",
+    "_source_template_idx": 1,
+    "_variant": 5
+  },
+  {
+    "code": "def run(data):\n    # One index (i) trails behind, only advancing when a new distinct\n    # value is found; the other (j) scans ahead every iteration.\n    if not data:\n        return 0\n    p1 = 0\n    for p2 in range(1, len(data)):\n        if data[p2] != data[p1]:\n            p1 += 1\n            data[p1] = data[p2]\n    return p1 + 1\n",
+    "label": "Two Pointer",
+    "_source_template_idx": 1,
+    "_variant": 6
+  },
+  {
+    "code": "def two_pointer_solve(values):\n    if not values:\n        return 0\n    row = 0\n    for col in range(1, len(values)):\n        if values[col] != values[row]:\n            row += 1\n            values[row] = values[col]\n    return row + 1\n",
+    "label": "Two Pointer",
+    "_source_template_idx": 1,
+    "_variant": 7
   },
   {
     "code": "def solve_two_ptr(head):\n    # slow advances one step, fast advances two steps per iteration\n    slow = head\n    fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow == fast:\n            return True\n    return False\n",
@@ -570,6 +1038,24 @@
     "_variant": 4
   },
   {
+    "code": "def run(head):\n    slow = head\n    fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow == fast:\n            return True\n    return False\n",
+    "label": "Two Pointer",
+    "_source_template_idx": 2,
+    "_variant": 5
+  },
+  {
+    "code": "def two_pointer_solve(head):\n    # slow advances one step, fast advances two steps per iteration\n    slow = head\n    fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow == fast:\n            return True\n    return False\n",
+    "label": "Two Pointer",
+    "_source_template_idx": 2,
+    "_variant": 6
+  },
+  {
+    "code": "def find_pair(head):\n    slow = head\n    fast = head\n    while fast and fast.next:\n        slow = slow.next\n        fast = fast.next.next\n        if slow == fast:\n            return True\n    return False\n",
+    "label": "Two Pointer",
+    "_source_template_idx": 2,
+    "_variant": 7
+  },
+  {
     "code": "def run(values, arr2):\n    # Two independent indices, each advancing over its own array\n    row, col = 0, 0\n    res = []\n    while row < len(values) and col < len(arr2):\n        if values[row] <= arr2[col]:\n            res.append(values[row])\n            row += 1\n        else:\n            res.append(arr2[col])\n            col += 1\n    res.extend(values[row:])\n    res.extend(arr2[col:])\n    return res\n",
     "label": "Two Pointer",
     "_source_template_idx": 3,
@@ -598,6 +1084,24 @@
     "label": "Two Pointer",
     "_source_template_idx": 3,
     "_variant": 4
+  },
+  {
+    "code": "def two_pointer_solve(values, arr2):\n    row, col = 0, 0\n    res = []\n    while row < len(values) and col < len(arr2):\n        if values[row] <= arr2[col]:\n            res.append(values[row])\n            row += 1\n        else:\n            res.append(arr2[col])\n            col += 1\n    res.extend(values[row:])\n    res.extend(arr2[col:])\n    return res\n",
+    "label": "Two Pointer",
+    "_source_template_idx": 3,
+    "_variant": 5
+  },
+  {
+    "code": "def find_pair(items, arr2):\n    # Two independent indices, each advancing over its own array\n    a, b = 0, 0\n    final_result = []\n    while a < len(items) and b < len(arr2):\n        if items[a] <= arr2[b]:\n            final_result.append(items[a])\n            a += 1\n        else:\n            final_result.append(arr2[b])\n            b += 1\n    final_result.extend(items[a:])\n    final_result.extend(arr2[b:])\n    return final_result\n",
+    "label": "Two Pointer",
+    "_source_template_idx": 3,
+    "_variant": 6
+  },
+  {
+    "code": "def solve_two_ptr(arr, arr2):\n    i, j = 0, 0\n    result = []\n    while i < len(arr) and j < len(arr2):\n        if arr[i] <= arr2[j]:\n            result.append(arr[i])\n            i += 1\n        else:\n            result.append(arr2[j])\n            j += 1\n    result.extend(arr[i:])\n    result.extend(arr2[j:])\n    return result\n",
+    "label": "Two Pointer",
+    "_source_template_idx": 3,
+    "_variant": 7
   },
   {
     "code": "def sliding_window_solve(arr, k):\n    # fixed-size sliding window, max sum of any window of size k\n    window_sum = sum(arr[:k])\n    max_val = window_sum\n    for i in range(k, len(arr)):\n        window_sum += arr[i] - arr[i - k]\n        max_val = max(max_val, window_sum)\n    return max_val\n",
@@ -630,6 +1134,24 @@
     "_variant": 4
   },
   {
+    "code": "def max_window(arr, k):\n    window_sum = sum(arr[:k])\n    max_val = window_sum\n    for i in range(k, len(arr)):\n        window_sum += arr[i] - arr[i - k]\n        max_val = max(max_val, window_sum)\n    return max_val\n",
+    "label": "Sliding Window",
+    "_source_template_idx": 0,
+    "_variant": 5
+  },
+  {
+    "code": "def find_window(nums, kth):\n    # fixed-size sliding window, max sum of any window of size k\n    cur_sum = sum(nums[:kth])\n    best = cur_sum\n    for idx in range(kth, len(nums)):\n        cur_sum += nums[idx] - nums[idx - kth]\n        best = max(best, cur_sum)\n    return best\n",
+    "label": "Sliding Window",
+    "_source_template_idx": 0,
+    "_variant": 6
+  },
+  {
+    "code": "def solve_window(data, pivot_idx):\n    running_sum = sum(data[:pivot_idx])\n    max_so_far = running_sum\n    for p1 in range(pivot_idx, len(data)):\n        running_sum += data[p1] - data[p1 - pivot_idx]\n        max_so_far = max(max_so_far, running_sum)\n    return max_so_far\n",
+    "label": "Sliding Window",
+    "_source_template_idx": 0,
+    "_variant": 7
+  },
+  {
     "code": "def max_window(nums):\n    # variable-size sliding window, longest substring without repeats\n    marked = {}\n    lo = 0\n    best = 0\n    for hi in range(len(nums)):\n        ch = nums[hi]\n        if ch in marked and marked[ch] >= lo:\n            lo = marked[ch] + 1\n        marked[ch] = hi\n        best = max(best, hi - lo + 1)\n    return best\n",
     "label": "Sliding Window",
     "_source_template_idx": 1,
@@ -658,6 +1180,24 @@
     "label": "Sliding Window",
     "_source_template_idx": 1,
     "_variant": 4
+  },
+  {
+    "code": "def find_window(nums):\n    marked = {}\n    lo = 0\n    best = 0\n    for hi in range(len(nums)):\n        ch = nums[hi]\n        if ch in marked and marked[ch] >= lo:\n            lo = marked[ch] + 1\n        marked[ch] = hi\n        best = max(best, hi - lo + 1)\n    return best\n",
+    "label": "Sliding Window",
+    "_source_template_idx": 1,
+    "_variant": 5
+  },
+  {
+    "code": "def solve_window(data):\n    # variable-size sliding window, longest substring without repeats\n    was_seen = {}\n    left_ptr = 0\n    max_so_far = 0\n    for right_ptr in range(len(data)):\n        ch = data[right_ptr]\n        if ch in was_seen and was_seen[ch] >= left_ptr:\n            left_ptr = was_seen[ch] + 1\n        was_seen[ch] = right_ptr\n        max_so_far = max(max_so_far, right_ptr - left_ptr + 1)\n    return max_so_far\n",
+    "label": "Sliding Window",
+    "_source_template_idx": 1,
+    "_variant": 6
+  },
+  {
+    "code": "def sliding_window_solve(values):\n    checked = {}\n    l = 0\n    max_area = 0\n    for r in range(len(values)):\n        ch = values[r]\n        if ch in checked and checked[ch] >= l:\n            l = checked[ch] + 1\n        checked[ch] = r\n        max_area = max(max_area, r - l + 1)\n    return max_area\n",
+    "label": "Sliding Window",
+    "_source_template_idx": 1,
+    "_variant": 7
   },
   {
     "code": "def find_window(data, want):\n    # variable-size shrinking window, minimum window containing target chars\n    freq = {}\n    for ch in want:\n        freq[ch] = freq.get(ch, 0) + 1\n    need = len(freq)\n    have = 0\n    left_ptr = 0\n    best = (float('inf'), 0, 0)\n    win = {}\n    for right_ptr in range(len(data)):\n        ch = data[right_ptr]\n        win[ch] = win.get(ch, 0) + 1\n        if ch in freq and win[ch] == freq[ch]:\n            have += 1\n        while have == need:\n            if right_ptr - left_ptr + 1 < best[0]:\n                best = (right_ptr - left_ptr + 1, left_ptr, right_ptr)\n            lchar = data[left_ptr]\n            win[lchar] -= 1\n            if lchar in freq and win[lchar] < freq[lchar]:\n                have -= 1\n            left_ptr += 1\n    return \"\" if best[0] == float('inf') else data[best[1]:best[2] + 1]\n",
@@ -690,6 +1230,24 @@
     "_variant": 4
   },
   {
+    "code": "def solve_window(data, want):\n    freq = {}\n    for ch in want:\n        freq[ch] = freq.get(ch, 0) + 1\n    need = len(freq)\n    have = 0\n    left_ptr = 0\n    best = (float('inf'), 0, 0)\n    win = {}\n    for right_ptr in range(len(data)):\n        ch = data[right_ptr]\n        win[ch] = win.get(ch, 0) + 1\n        if ch in freq and win[ch] == freq[ch]:\n            have += 1\n        while have == need:\n            if right_ptr - left_ptr + 1 < best[0]:\n                best = (right_ptr - left_ptr + 1, left_ptr, right_ptr)\n            lchar = data[left_ptr]\n            win[lchar] -= 1\n            if lchar in freq and win[lchar] < freq[lchar]:\n                have -= 1\n            left_ptr += 1\n    return \"\" if best[0] == float('inf') else data[best[1]:best[2] + 1]\n",
+    "label": "Sliding Window",
+    "_source_template_idx": 2,
+    "_variant": 5
+  },
+  {
+    "code": "def sliding_window_solve(values, needle):\n    # variable-size shrinking window, minimum window containing target chars\n    counter = {}\n    for ch in needle:\n        counter[ch] = counter.get(ch, 0) + 1\n    need = len(counter)\n    have = 0\n    l = 0\n    best = (float('inf'), 0, 0)\n    win = {}\n    for r in range(len(values)):\n        ch = values[r]\n        win[ch] = win.get(ch, 0) + 1\n        if ch in counter and win[ch] == counter[ch]:\n            have += 1\n        while have == need:\n            if r - l + 1 < best[0]:\n                best = (r - l + 1, l, r)\n            lchar = values[l]\n            win[lchar] -= 1\n            if lchar in counter and win[lchar] < counter[lchar]:\n                have -= 1\n            l += 1\n    return \"\" if best[0] == float('inf') else values[best[1]:best[2] + 1]\n",
+    "label": "Sliding Window",
+    "_source_template_idx": 2,
+    "_variant": 6
+  },
+  {
+    "code": "def max_window(items, tgt):\n    occurrences = {}\n    for ch in tgt:\n        occurrences[ch] = occurrences.get(ch, 0) + 1\n    need = len(occurrences)\n    have = 0\n    low = 0\n    best = (float('inf'), 0, 0)\n    win = {}\n    for high in range(len(items)):\n        ch = items[high]\n        win[ch] = win.get(ch, 0) + 1\n        if ch in occurrences and win[ch] == occurrences[ch]:\n            have += 1\n        while have == need:\n            if high - low + 1 < best[0]:\n                best = (high - low + 1, low, high)\n            lchar = items[low]\n            win[lchar] -= 1\n            if lchar in occurrences and win[lchar] < occurrences[lchar]:\n                have -= 1\n            low += 1\n    return \"\" if best[0] == float('inf') else items[best[1]:best[2] + 1]\n",
+    "label": "Sliding Window",
+    "_source_template_idx": 2,
+    "_variant": 7
+  },
+  {
     "code": "def solve_window(values, needle):\n    # variable-size sliding window, longest subarray with sum <= target\n    l = 0\n    win_total = 0\n    max_area = 0\n    for r in range(len(values)):\n        win_total += values[r]\n        while win_total > needle and l <= r:\n            win_total -= values[l]\n            l += 1\n        max_area = max(max_area, r - l + 1)\n    return max_area\n",
     "label": "Sliding Window",
     "_source_template_idx": 3,
@@ -718,6 +1276,24 @@
     "label": "Sliding Window",
     "_source_template_idx": 3,
     "_variant": 4
+  },
+  {
+    "code": "def sliding_window_solve(values, needle):\n    l = 0\n    win_total = 0\n    max_area = 0\n    for r in range(len(values)):\n        win_total += values[r]\n        while win_total > needle and l <= r:\n            win_total -= values[l]\n            l += 1\n        max_area = max(max_area, r - l + 1)\n    return max_area\n",
+    "label": "Sliding Window",
+    "_source_template_idx": 3,
+    "_variant": 5
+  },
+  {
+    "code": "def max_window(items, tgt):\n    # variable-size sliding window, longest subarray with sum <= target\n    low = 0\n    subarr_sum = 0\n    tallest = 0\n    for high in range(len(items)):\n        subarr_sum += items[high]\n        while subarr_sum > tgt and low <= high:\n            subarr_sum -= items[low]\n            low += 1\n        tallest = max(tallest, high - low + 1)\n    return tallest\n",
+    "label": "Sliding Window",
+    "_source_template_idx": 3,
+    "_variant": 6
+  },
+  {
+    "code": "def find_window(arr, target):\n    left = 0\n    window_sum = 0\n    max_val = 0\n    for right in range(len(arr)):\n        window_sum += arr[right]\n        while window_sum > target and left <= right:\n            window_sum -= arr[left]\n            left += 1\n        max_val = max(max_val, right - left + 1)\n    return max_val\n",
+    "label": "Sliding Window",
+    "_source_template_idx": 3,
+    "_variant": 7
   },
   {
     "code": "def binary_search(arr, target):\n    # classic binary search over a sorted array\n    left = 0\n    right = len(arr) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1\n",
@@ -750,6 +1326,24 @@
     "_variant": 4
   },
   {
+    "code": "def bsearch(arr, target):\n    left = 0\n    right = len(arr) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1\n",
+    "label": "Binary Search",
+    "_source_template_idx": 0,
+    "_variant": 5
+  },
+  {
+    "code": "def find_target(nums, goal):\n    # classic binary search over a sorted array\n    lo = 0\n    hi = len(nums) - 1\n    while lo <= hi:\n        mid_pt = (lo + hi) // 2\n        if nums[mid_pt] == goal:\n            return mid_pt\n        elif nums[mid_pt] < goal:\n            lo = mid_pt + 1\n        else:\n            hi = mid_pt - 1\n    return -1\n",
+    "label": "Binary Search",
+    "_source_template_idx": 0,
+    "_variant": 6
+  },
+  {
+    "code": "def search_sorted(data, want):\n    left_ptr = 0\n    right_ptr = len(data) - 1\n    while left_ptr <= right_ptr:\n        middle = (left_ptr + right_ptr) // 2\n        if data[middle] == want:\n            return middle\n        elif data[middle] < want:\n            left_ptr = middle + 1\n        else:\n            right_ptr = middle - 1\n    return -1\n",
+    "label": "Binary Search",
+    "_source_template_idx": 0,
+    "_variant": 7
+  },
+  {
     "code": "def bsearch(nums, goal):\n    # binary search in a rotated sorted array\n    lo = 0\n    hi = len(nums) - 1\n    while lo <= hi:\n        mid_pt = (lo + hi) // 2\n        if nums[mid_pt] == goal:\n            return mid_pt\n        if nums[lo] <= nums[mid_pt]:\n            if nums[lo] <= goal < nums[mid_pt]:\n                hi = mid_pt - 1\n            else:\n                lo = mid_pt + 1\n        else:\n            if nums[mid_pt] < goal <= nums[hi]:\n                lo = mid_pt + 1\n            else:\n                hi = mid_pt - 1\n    return -1\n",
     "label": "Binary Search",
     "_source_template_idx": 1,
@@ -778,6 +1372,24 @@
     "label": "Binary Search",
     "_source_template_idx": 1,
     "_variant": 4
+  },
+  {
+    "code": "def find_target(nums, goal):\n    lo = 0\n    hi = len(nums) - 1\n    while lo <= hi:\n        mid_pt = (lo + hi) // 2\n        if nums[mid_pt] == goal:\n            return mid_pt\n        if nums[lo] <= nums[mid_pt]:\n            if nums[lo] <= goal < nums[mid_pt]:\n                hi = mid_pt - 1\n            else:\n                lo = mid_pt + 1\n        else:\n            if nums[mid_pt] < goal <= nums[hi]:\n                lo = mid_pt + 1\n            else:\n                hi = mid_pt - 1\n    return -1\n",
+    "label": "Binary Search",
+    "_source_template_idx": 1,
+    "_variant": 5
+  },
+  {
+    "code": "def search_sorted(data, want):\n    # binary search in a rotated sorted array\n    left_ptr = 0\n    right_ptr = len(data) - 1\n    while left_ptr <= right_ptr:\n        middle = (left_ptr + right_ptr) // 2\n        if data[middle] == want:\n            return middle\n        if data[left_ptr] <= data[middle]:\n            if data[left_ptr] <= want < data[middle]:\n                right_ptr = middle - 1\n            else:\n                left_ptr = middle + 1\n        else:\n            if data[middle] < want <= data[right_ptr]:\n                left_ptr = middle + 1\n            else:\n                right_ptr = middle - 1\n    return -1\n",
+    "label": "Binary Search",
+    "_source_template_idx": 1,
+    "_variant": 6
+  },
+  {
+    "code": "def binary_search(values, needle):\n    l = 0\n    r = len(values) - 1\n    while l <= r:\n        m = (l + r) // 2\n        if values[m] == needle:\n            return m\n        if values[l] <= values[m]:\n            if values[l] <= needle < values[m]:\n                r = m - 1\n            else:\n                l = m + 1\n        else:\n            if values[m] < needle <= values[r]:\n                l = m + 1\n            else:\n                r = m - 1\n    return -1\n",
+    "label": "Binary Search",
+    "_source_template_idx": 1,
+    "_variant": 7
   },
   {
     "code": "def find_target(data, want):\n    # binary search for the first and last occurrence of target\n    def helper(find_first):\n        left_ptr = 0\n        right_ptr = len(data) - 1\n        ans = -1\n        while left_ptr <= right_ptr:\n            middle = (left_ptr + right_ptr) // 2\n            if data[middle] == want:\n                ans = middle\n                if find_first:\n                    right_ptr = middle - 1\n                else:\n                    left_ptr = middle + 1\n            elif data[middle] < want:\n                left_ptr = middle + 1\n            else:\n                right_ptr = middle - 1\n        return ans\n\n    return [helper(True), helper(False)]\n",
@@ -810,6 +1422,24 @@
     "_variant": 4
   },
   {
+    "code": "def search_sorted(data, want):\n    def helper(find_first):\n        left_ptr = 0\n        right_ptr = len(data) - 1\n        ans = -1\n        while left_ptr <= right_ptr:\n            middle = (left_ptr + right_ptr) // 2\n            if data[middle] == want:\n                ans = middle\n                if find_first:\n                    right_ptr = middle - 1\n                else:\n                    left_ptr = middle + 1\n            elif data[middle] < want:\n                left_ptr = middle + 1\n            else:\n                right_ptr = middle - 1\n        return ans\n\n    return [helper(True), helper(False)]\n",
+    "label": "Binary Search",
+    "_source_template_idx": 2,
+    "_variant": 5
+  },
+  {
+    "code": "def binary_search(values, needle):\n    # binary search for the first and last occurrence of target\n    def helper(find_first):\n        l = 0\n        r = len(values) - 1\n        res = -1\n        while l <= r:\n            m = (l + r) // 2\n            if values[m] == needle:\n                res = m\n                if find_first:\n                    r = m - 1\n                else:\n                    l = m + 1\n            elif values[m] < needle:\n                l = m + 1\n            else:\n                r = m - 1\n        return res\n\n    return [helper(True), helper(False)]\n",
+    "label": "Binary Search",
+    "_source_template_idx": 2,
+    "_variant": 6
+  },
+  {
+    "code": "def bsearch(items, tgt):\n    def helper(find_first):\n        low = 0\n        high = len(items) - 1\n        final_result = -1\n        while low <= high:\n            pivot = (low + high) // 2\n            if items[pivot] == tgt:\n                final_result = pivot\n                if find_first:\n                    high = pivot - 1\n                else:\n                    low = pivot + 1\n            elif items[pivot] < tgt:\n                low = pivot + 1\n            else:\n                high = pivot - 1\n        return final_result\n\n    return [helper(True), helper(False)]\n",
+    "label": "Binary Search",
+    "_source_template_idx": 2,
+    "_variant": 7
+  },
+  {
     "code": "def search_sorted(needle):\n    # binary search on the answer space (integer sqrt)\n    l = 0\n    r = needle\n    res = 0\n    while l <= r:\n        m = (l + r) // 2\n        if m * m <= needle:\n            res = m\n            l = m + 1\n        else:\n            r = m - 1\n    return res\n",
     "label": "Binary Search",
     "_source_template_idx": 3,
@@ -838,6 +1468,24 @@
     "label": "Binary Search",
     "_source_template_idx": 3,
     "_variant": 4
+  },
+  {
+    "code": "def binary_search(needle):\n    l = 0\n    r = needle\n    res = 0\n    while l <= r:\n        m = (l + r) // 2\n        if m * m <= needle:\n            res = m\n            l = m + 1\n        else:\n            r = m - 1\n    return res\n",
+    "label": "Binary Search",
+    "_source_template_idx": 3,
+    "_variant": 5
+  },
+  {
+    "code": "def bsearch(tgt):\n    # binary search on the answer space (integer sqrt)\n    low = 0\n    high = tgt\n    final_result = 0\n    while low <= high:\n        pivot = (low + high) // 2\n        if pivot * pivot <= tgt:\n            final_result = pivot\n            low = pivot + 1\n        else:\n            high = pivot - 1\n    return final_result\n",
+    "label": "Binary Search",
+    "_source_template_idx": 3,
+    "_variant": 6
+  },
+  {
+    "code": "def find_target(target):\n    left = 0\n    right = target\n    result = 0\n    while left <= right:\n        mid = (left + right) // 2\n        if mid * mid <= target:\n            result = mid\n            left = mid + 1\n        else:\n            right = mid - 1\n    return result\n",
+    "label": "Binary Search",
+    "_source_template_idx": 3,
+    "_variant": 7
   },
   {
     "code": "def make_set(n):\n    return list(range(n))\n\ndef find(parent, i):\n    # union-find with path compression\n    if parent[i] != i:\n        parent[i] = find(parent, parent[i])\n    return parent[i]\n\ndef union(parent, x, y):\n    root_x = find(parent, x)\n    root_y = find(parent, y)\n    if root_x != root_y:\n        parent[root_x] = root_y\n",
@@ -870,6 +1518,24 @@
     "_variant": 4
   },
   {
+    "code": "def make_set(n):\n    return list(range(n))\n\ndef find(parent, i):\n    if parent[i] != i:\n        parent[i] = find(parent, parent[i])\n    return parent[i]\n\ndef union(parent, x, y):\n    root_x = find(parent, x)\n    root_y = find(parent, y)\n    if root_x != root_y:\n        parent[root_x] = root_y\n",
+    "label": "Union-Find",
+    "_source_template_idx": 0,
+    "_variant": 5
+  },
+  {
+    "code": "def make_set(length):\n    return list(range(length))\n\ndef find(root_of, idx):\n    # union-find with path compression\n    if root_of[idx] != idx:\n        root_of[idx] = find(root_of, root_of[idx])\n    return root_of[idx]\n\ndef union(root_of, x, y):\n    root_x = find(root_of, x)\n    root_y = find(root_of, y)\n    if root_x != root_y:\n        root_of[root_x] = root_y\n",
+    "label": "Union-Find",
+    "_source_template_idx": 0,
+    "_variant": 6
+  },
+  {
+    "code": "def make_set(size):\n    return list(range(size))\n\ndef find(uf_parent, p1):\n    if uf_parent[p1] != p1:\n        uf_parent[p1] = find(uf_parent, uf_parent[p1])\n    return uf_parent[p1]\n\ndef union(uf_parent, x, y):\n    root_x = find(uf_parent, x)\n    root_y = find(uf_parent, y)\n    if root_x != root_y:\n        uf_parent[root_x] = root_y\n",
+    "label": "Union-Find",
+    "_source_template_idx": 0,
+    "_variant": 7
+  },
+  {
     "code": "def process_edges(length, nums):\n    # union-find with union by rank\n    root_of = list(range(length))\n    size = [0] * length\n\n    def find(x):\n        while root_of[x] != x:\n            root_of[x] = root_of[root_of[x]]\n            x = root_of[x]\n        return x\n\n    def union(a, b):\n        root_a = find(a)\n        root_b = find(b)\n        if root_a == root_b:\n            return\n        if size[root_a] < size[root_b]:\n            root_of[root_a] = root_b\n        elif size[root_a] > size[root_b]:\n            root_of[root_b] = root_a\n        else:\n            root_of[root_b] = root_a\n            size[root_a] += 1\n\n    for u, v in nums:\n        union(u, v)\n    return root_of\n",
     "label": "Union-Find",
     "_source_template_idx": 1,
@@ -898,6 +1564,24 @@
     "label": "Union-Find",
     "_source_template_idx": 1,
     "_variant": 4
+  },
+  {
+    "code": "def count_components(length, nums):\n    root_of = list(range(length))\n    size = [0] * length\n\n    def find(x):\n        while root_of[x] != x:\n            root_of[x] = root_of[root_of[x]]\n            x = root_of[x]\n        return x\n\n    def union(a, b):\n        root_a = find(a)\n        root_b = find(b)\n        if root_a == root_b:\n            return\n        if size[root_a] < size[root_b]:\n            root_of[root_a] = root_b\n        elif size[root_a] > size[root_b]:\n            root_of[root_b] = root_a\n        else:\n            root_of[root_b] = root_a\n            size[root_a] += 1\n\n    for u, v in nums:\n        union(u, v)\n    return root_of\n",
+    "label": "Union-Find",
+    "_source_template_idx": 1,
+    "_variant": 5
+  },
+  {
+    "code": "def union_find_solve(size, data):\n    # union-find with union by rank\n    uf_parent = list(range(size))\n    uf_rank = [0] * size\n\n    def find(x):\n        while uf_parent[x] != x:\n            uf_parent[x] = uf_parent[uf_parent[x]]\n            x = uf_parent[x]\n        return x\n\n    def union(a, b):\n        root_a = find(a)\n        root_b = find(b)\n        if root_a == root_b:\n            return\n        if uf_rank[root_a] < uf_rank[root_b]:\n            uf_parent[root_a] = root_b\n        elif uf_rank[root_a] > uf_rank[root_b]:\n            uf_parent[root_b] = root_a\n        else:\n            uf_parent[root_b] = root_a\n            uf_rank[root_a] += 1\n\n    for u, v in data:\n        union(u, v)\n    return uf_parent\n",
+    "label": "Union-Find",
+    "_source_template_idx": 1,
+    "_variant": 6
+  },
+  {
+    "code": "def solve(num_items, values):\n    par = list(range(num_items))\n    rnk = [0] * num_items\n\n    def find(x):\n        while par[x] != x:\n            par[x] = par[par[x]]\n            x = par[x]\n        return x\n\n    def union(a, b):\n        root_a = find(a)\n        root_b = find(b)\n        if root_a == root_b:\n            return\n        if rnk[root_a] < rnk[root_b]:\n            par[root_a] = root_b\n        elif rnk[root_a] > rnk[root_b]:\n            par[root_b] = root_a\n        else:\n            par[root_b] = root_a\n            rnk[root_a] += 1\n\n    for u, v in values:\n        union(u, v)\n    return par\n",
+    "label": "Union-Find",
+    "_source_template_idx": 1,
+    "_variant": 7
   },
   {
     "code": "def count_components(size, data):\n    # count connected components using union-find\n    uf_parent = list(range(size))\n\n    def find(x):\n        if uf_parent[x] != x:\n            uf_parent[x] = find(uf_parent[x])\n        return uf_parent[x]\n\n    def union(a, b):\n        root_a, root_b = find(a), find(b)\n        if root_a != root_b:\n            uf_parent[root_a] = root_b\n\n    for u, v in data:\n        union(u, v)\n    return len(set(find(x) for x in range(size)))\n",
@@ -930,6 +1614,24 @@
     "_variant": 4
   },
   {
+    "code": "def union_find_solve(size, data):\n    uf_parent = list(range(size))\n\n    def find(x):\n        if uf_parent[x] != x:\n            uf_parent[x] = find(uf_parent[x])\n        return uf_parent[x]\n\n    def union(a, b):\n        root_a, root_b = find(a), find(b)\n        if root_a != root_b:\n            uf_parent[root_a] = root_b\n\n    for u, v in data:\n        union(u, v)\n    return len(set(find(x) for x in range(size)))\n",
+    "label": "Union-Find",
+    "_source_template_idx": 2,
+    "_variant": 5
+  },
+  {
+    "code": "def solve(num_items, values):\n    # count connected components using union-find\n    par = list(range(num_items))\n\n    def find(x):\n        if par[x] != x:\n            par[x] = find(par[x])\n        return par[x]\n\n    def union(a, b):\n        root_a, root_b = find(a), find(b)\n        if root_a != root_b:\n            par[root_a] = root_b\n\n    for u, v in values:\n        union(u, v)\n    return len(set(find(x) for x in range(num_items)))\n",
+    "label": "Union-Find",
+    "_source_template_idx": 2,
+    "_variant": 6
+  },
+  {
+    "code": "def process_edges(total, items):\n    find_parent = list(range(total))\n\n    def find(x):\n        if find_parent[x] != x:\n            find_parent[x] = find(find_parent[x])\n        return find_parent[x]\n\n    def union(a, b):\n        root_a, root_b = find(a), find(b)\n        if root_a != root_b:\n            find_parent[root_a] = root_b\n\n    for u, v in items:\n        union(u, v)\n    return len(set(find(x) for x in range(total)))\n",
+    "label": "Union-Find",
+    "_source_template_idx": 2,
+    "_variant": 7
+  },
+  {
     "code": "def union_find_solve(values):\n    # detect the redundant edge that creates a cycle, via union-find\n    num_items = len(values)\n    par = list(range(num_items + 1))\n\n    def find(x):\n        if par[x] != x:\n            par[x] = find(par[x])\n        return par[x]\n\n    for u, v in values:\n        root_u = find(u)\n        root_v = find(v)\n        if root_u == root_v:\n            return [u, v]\n        par[root_u] = root_v\n    return []\n",
     "label": "Union-Find",
     "_source_template_idx": 3,
@@ -958,6 +1660,24 @@
     "label": "Union-Find",
     "_source_template_idx": 3,
     "_variant": 4
+  },
+  {
+    "code": "def solve(values):\n    num_items = len(values)\n    par = list(range(num_items + 1))\n\n    def find(x):\n        if par[x] != x:\n            par[x] = find(par[x])\n        return par[x]\n\n    for u, v in values:\n        root_u = find(u)\n        root_v = find(v)\n        if root_u == root_v:\n            return [u, v]\n        par[root_u] = root_v\n    return []\n",
+    "label": "Union-Find",
+    "_source_template_idx": 3,
+    "_variant": 5
+  },
+  {
+    "code": "def process_edges(items):\n    # detect the redundant edge that creates a cycle, via union-find\n    total = len(items)\n    find_parent = list(range(total + 1))\n\n    def find(x):\n        if find_parent[x] != x:\n            find_parent[x] = find(find_parent[x])\n        return find_parent[x]\n\n    for u, v in items:\n        root_u = find(u)\n        root_v = find(v)\n        if root_u == root_v:\n            return [u, v]\n        find_parent[root_u] = root_v\n    return []\n",
+    "label": "Union-Find",
+    "_source_template_idx": 3,
+    "_variant": 6
+  },
+  {
+    "code": "def count_components(arr):\n    n = len(arr)\n    parent = list(range(n + 1))\n\n    def find(x):\n        if parent[x] != x:\n            parent[x] = find(parent[x])\n        return parent[x]\n\n    for u, v in arr:\n        root_u = find(u)\n        root_v = find(v)\n        if root_u == root_v:\n            return [u, v]\n        parent[root_u] = root_v\n    return []\n",
+    "label": "Union-Find",
+    "_source_template_idx": 3,
+    "_variant": 7
   },
   {
     "code": "def solve_stack(arr):\n    # monotonic decreasing stack, next greater element\n    n = len(arr)\n    result = [-1] * n\n    stack = []\n    for i in range(n):\n        while stack and arr[stack[-1]] < arr[i]:\n            top = stack.pop()\n            result[top] = arr[i]\n        stack.append(i)\n    return result\n",
@@ -990,6 +1710,24 @@
     "_variant": 4
   },
   {
+    "code": "def next_greater(arr):\n    n = len(arr)\n    result = [-1] * n\n    stack = []\n    for i in range(n):\n        while stack and arr[stack[-1]] < arr[i]:\n            top = stack.pop()\n            result[top] = arr[i]\n        stack.append(i)\n    return result\n",
+    "label": "Monotonic Stack",
+    "_source_template_idx": 0,
+    "_variant": 5
+  },
+  {
+    "code": "def stack_solve(nums):\n    # monotonic decreasing stack, next greater element\n    length = len(nums)\n    output = [-1] * length\n    pending = []\n    for idx in range(length):\n        while pending and nums[pending[-1]] < nums[idx]:\n            top = pending.pop()\n            output[top] = nums[idx]\n        pending.append(idx)\n    return output\n",
+    "label": "Monotonic Stack",
+    "_source_template_idx": 0,
+    "_variant": 6
+  },
+  {
+    "code": "def process(data):\n    size = len(data)\n    ans = [-1] * size\n    stk = []\n    for p1 in range(size):\n        while stk and data[stk[-1]] < data[p1]:\n            top = stk.pop()\n            ans[top] = data[p1]\n        stk.append(p1)\n    return ans\n",
+    "label": "Monotonic Stack",
+    "_source_template_idx": 0,
+    "_variant": 7
+  },
+  {
     "code": "def next_greater(nums):\n    # monotonic stack of indices, days until a warmer temperature\n    output = [0] * len(nums)\n    pending = []\n    for idx, curr in enumerate(nums):\n        while pending and nums[pending[-1]] < curr:\n            prev_idx = pending.pop()\n            output[prev_idx] = idx - prev_idx\n        pending.append(idx)\n    return output\n",
     "label": "Monotonic Stack",
     "_source_template_idx": 1,
@@ -1018,6 +1756,24 @@
     "label": "Monotonic Stack",
     "_source_template_idx": 1,
     "_variant": 4
+  },
+  {
+    "code": "def stack_solve(nums):\n    output = [0] * len(nums)\n    pending = []\n    for idx, curr in enumerate(nums):\n        while pending and nums[pending[-1]] < curr:\n            prev_idx = pending.pop()\n            output[prev_idx] = idx - prev_idx\n        pending.append(idx)\n    return output\n",
+    "label": "Monotonic Stack",
+    "_source_template_idx": 1,
+    "_variant": 5
+  },
+  {
+    "code": "def process(data):\n    # monotonic stack of indices, days until a warmer temperature\n    ans = [0] * len(data)\n    stk = []\n    for p1, c in enumerate(data):\n        while stk and data[stk[-1]] < c:\n            prev_idx = stk.pop()\n            ans[prev_idx] = p1 - prev_idx\n        stk.append(p1)\n    return ans\n",
+    "label": "Monotonic Stack",
+    "_source_template_idx": 1,
+    "_variant": 6
+  },
+  {
+    "code": "def solve_stack(values):\n    res = [0] * len(values)\n    dfs_stack = []\n    for row, x in enumerate(values):\n        while dfs_stack and values[dfs_stack[-1]] < x:\n            prev_idx = dfs_stack.pop()\n            res[prev_idx] = row - prev_idx\n        dfs_stack.append(row)\n    return res\n",
+    "label": "Monotonic Stack",
+    "_source_template_idx": 1,
+    "_variant": 7
   },
   {
     "code": "def stack_solve(data):\n    # monotonic increasing stack, largest rectangle in a histogram\n    stk = []\n    max_so_far = 0\n    size = len(data)\n    for p1 in range(size + 1):\n        c = data[p1] if p1 < size else 0\n        while stk and data[stk[-1]] >= c:\n            height = data[stk.pop()]\n            width = p1 if not stk else p1 - stk[-1] - 1\n            max_so_far = max(max_so_far, height * width)\n        stk.append(p1)\n    return max_so_far\n",
@@ -1050,6 +1806,24 @@
     "_variant": 4
   },
   {
+    "code": "def process(data):\n    stk = []\n    max_so_far = 0\n    size = len(data)\n    for p1 in range(size + 1):\n        c = data[p1] if p1 < size else 0\n        while stk and data[stk[-1]] >= c:\n            height = data[stk.pop()]\n            width = p1 if not stk else p1 - stk[-1] - 1\n            max_so_far = max(max_so_far, height * width)\n        stk.append(p1)\n    return max_so_far\n",
+    "label": "Monotonic Stack",
+    "_source_template_idx": 2,
+    "_variant": 5
+  },
+  {
+    "code": "def solve_stack(values):\n    # monotonic increasing stack, largest rectangle in a histogram\n    dfs_stack = []\n    max_area = 0\n    num_items = len(values)\n    for row in range(num_items + 1):\n        x = values[row] if row < num_items else 0\n        while dfs_stack and values[dfs_stack[-1]] >= x:\n            height = values[dfs_stack.pop()]\n            width = row if not dfs_stack else row - dfs_stack[-1] - 1\n            max_area = max(max_area, height * width)\n        dfs_stack.append(row)\n    return max_area\n",
+    "label": "Monotonic Stack",
+    "_source_template_idx": 2,
+    "_variant": 6
+  },
+  {
+    "code": "def next_greater(items):\n    call_stack = []\n    tallest = 0\n    total = len(items)\n    for a in range(total + 1):\n        cur_val = items[a] if a < total else 0\n        while call_stack and items[call_stack[-1]] >= cur_val:\n            height = items[call_stack.pop()]\n            width = a if not call_stack else a - call_stack[-1] - 1\n            tallest = max(tallest, height * width)\n        call_stack.append(a)\n    return tallest\n",
+    "label": "Monotonic Stack",
+    "_source_template_idx": 2,
+    "_variant": 7
+  },
+  {
     "code": "def process(values):\n    # monotonic stack approach to trapping rain water\n    dfs_stack = []\n    res = 0\n    for row, x in enumerate(values):\n        while dfs_stack and values[dfs_stack[-1]] < x:\n            top = dfs_stack.pop()\n            if not dfs_stack:\n                break\n            left_idx = dfs_stack[-1]\n            width = row - left_idx - 1\n            bounded_height = min(values[left_idx], x) - values[top]\n            res += width * bounded_height\n        dfs_stack.append(row)\n    return res\n",
     "label": "Monotonic Stack",
     "_source_template_idx": 3,
@@ -1078,6 +1852,24 @@
     "label": "Monotonic Stack",
     "_source_template_idx": 3,
     "_variant": 4
+  },
+  {
+    "code": "def solve_stack(values):\n    dfs_stack = []\n    res = 0\n    for row, x in enumerate(values):\n        while dfs_stack and values[dfs_stack[-1]] < x:\n            top = dfs_stack.pop()\n            if not dfs_stack:\n                break\n            left_idx = dfs_stack[-1]\n            width = row - left_idx - 1\n            bounded_height = min(values[left_idx], x) - values[top]\n            res += width * bounded_height\n        dfs_stack.append(row)\n    return res\n",
+    "label": "Monotonic Stack",
+    "_source_template_idx": 3,
+    "_variant": 5
+  },
+  {
+    "code": "def next_greater(items):\n    # monotonic stack approach to trapping rain water\n    call_stack = []\n    final_result = 0\n    for a, cur_val in enumerate(items):\n        while call_stack and items[call_stack[-1]] < cur_val:\n            top = call_stack.pop()\n            if not call_stack:\n                break\n            left_idx = call_stack[-1]\n            width = a - left_idx - 1\n            bounded_height = min(items[left_idx], cur_val) - items[top]\n            final_result += width * bounded_height\n        call_stack.append(a)\n    return final_result\n",
+    "label": "Monotonic Stack",
+    "_source_template_idx": 3,
+    "_variant": 6
+  },
+  {
+    "code": "def stack_solve(arr):\n    stack = []\n    result = 0\n    for i, cur in enumerate(arr):\n        while stack and arr[stack[-1]] < cur:\n            top = stack.pop()\n            if not stack:\n                break\n            left_idx = stack[-1]\n            width = i - left_idx - 1\n            bounded_height = min(arr[left_idx], cur) - arr[top]\n            result += width * bounded_height\n        stack.append(i)\n    return result\n",
+    "label": "Monotonic Stack",
+    "_source_template_idx": 3,
+    "_variant": 7
   },
   {
     "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef insert_node(head, target):\n    new_node = Node(target)\n    new_node.next = head\n    return new_node\n",
@@ -1110,6 +1902,24 @@
     "_variant": 4
   },
   {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef modify_list(head, target):\n    new_node = Node(target)\n    new_node.next = head\n    return new_node\n",
+    "label": "Linked List Operations",
+    "_source_template_idx": 0,
+    "_variant": 5
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef process_list(head, goal):\n    new_node = Node(goal)\n    new_node.next = head\n    return new_node\n",
+    "label": "Linked List Operations",
+    "_source_template_idx": 0,
+    "_variant": 6
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef update_list(head, want):\n    new_node = Node(want)\n    new_node.next = head\n    return new_node\n",
+    "label": "Linked List Operations",
+    "_source_template_idx": 0,
+    "_variant": 7
+  },
+  {
     "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef modify_list(head, goal, position):\n    new_node = Node(goal)\n\n    if position == 0:\n        new_node.next = head\n        return new_node\n\n    current = head\n    for _ in range(position - 1):\n        if current is None:\n            return head\n        current = current.next\n\n    if current is None:\n        return head\n\n    new_node.next = current.next\n    current.next = new_node\n    return head\n",
     "label": "Linked List Operations",
     "_source_template_idx": 1,
@@ -1138,6 +1948,24 @@
     "label": "Linked List Operations",
     "_source_template_idx": 1,
     "_variant": 4
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef process_list(head, goal, position):\n    new_node = Node(goal)\n\n    if position == 0:\n        new_node.next = head\n        return new_node\n\n    current = head\n    for _ in range(position - 1):\n        if current is None:\n            return head\n        current = current.next\n\n    if current is None:\n        return head\n\n    new_node.next = current.next\n    current.next = new_node\n    return head\n",
+    "label": "Linked List Operations",
+    "_source_template_idx": 1,
+    "_variant": 5
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef update_list(head, want, position):\n    new_node = Node(want)\n\n    if position == 0:\n        new_node.next = head\n        return new_node\n\n    current = head\n    for _ in range(position - 1):\n        if current is None:\n            return head\n        current = current.next\n\n    if current is None:\n        return head\n\n    new_node.next = current.next\n    current.next = new_node\n    return head\n",
+    "label": "Linked List Operations",
+    "_source_template_idx": 1,
+    "_variant": 6
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef insert_node(head, needle, position):\n    new_node = Node(needle)\n\n    if position == 0:\n        new_node.next = head\n        return new_node\n\n    current = head\n    for _ in range(position - 1):\n        if current is None:\n            return head\n        current = current.next\n\n    if current is None:\n        return head\n\n    new_node.next = current.next\n    current.next = new_node\n    return head\n",
+    "label": "Linked List Operations",
+    "_source_template_idx": 1,
+    "_variant": 7
   },
   {
     "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef process_list(head, want):\n    if head is None:\n        return None\n\n    if head.data == want:\n        return head.next\n\n    prev = head\n    current = head.next\n    while current is not None:\n        if current.data == want:\n            prev.next = current.next\n            return head\n        prev = current\n        current = current.next\n\n    return head\n",
@@ -1170,6 +1998,24 @@
     "_variant": 4
   },
   {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef update_list(head, want):\n    if head is None:\n        return None\n\n    if head.data == want:\n        return head.next\n\n    prev = head\n    current = head.next\n    while current is not None:\n        if current.data == want:\n            prev.next = current.next\n            return head\n        prev = current\n        current = current.next\n\n    return head\n",
+    "label": "Linked List Operations",
+    "_source_template_idx": 2,
+    "_variant": 5
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef insert_node(head, needle):\n    if head is None:\n        return None\n\n    if head.data == needle:\n        return head.next\n\n    prev = head\n    current = head.next\n    while current is not None:\n        if current.data == needle:\n            prev.next = current.next\n            return head\n        prev = current\n        current = current.next\n\n    return head\n",
+    "label": "Linked List Operations",
+    "_source_template_idx": 2,
+    "_variant": 6
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef modify_list(head, tgt):\n    if head is None:\n        return None\n\n    if head.data == tgt:\n        return head.next\n\n    prev = head\n    current = head.next\n    while current is not None:\n        if current.data == tgt:\n            prev.next = current.next\n            return head\n        prev = current\n        current = current.next\n\n    return head\n",
+    "label": "Linked List Operations",
+    "_source_template_idx": 2,
+    "_variant": 7
+  },
+  {
     "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef update_list(head):\n    prev = None\n    current = head\n    while current is not None:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    return prev\n",
     "label": "Linked List Operations",
     "_source_template_idx": 3,
@@ -1198,6 +2044,24 @@
     "label": "Linked List Operations",
     "_source_template_idx": 3,
     "_variant": 4
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef insert_node(head):\n    prev = None\n    current = head\n    while current is not None:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    return prev\n",
+    "label": "Linked List Operations",
+    "_source_template_idx": 3,
+    "_variant": 5
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef modify_list(head):\n    prev = None\n    current = head\n    while current is not None:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    return prev\n",
+    "label": "Linked List Operations",
+    "_source_template_idx": 3,
+    "_variant": 6
+  },
+  {
+    "code": "class Node:\n    def __init__(self, data):\n        self.data = data\n        self.next = None\n\ndef process_list(head):\n    prev = None\n    current = head\n    while current is not None:\n        next_node = current.next\n        current.next = prev\n        prev = current\n        current = next_node\n    return prev\n",
+    "label": "Linked List Operations",
+    "_source_template_idx": 3,
+    "_variant": 7
   },
   {
     "code": "def sort_array(arr):\n    # bubble sort - repeated adjacent swaps, early exit if sorted\n    n = len(arr)\n    for i in range(n):\n        swapped = False\n        for j in range(0, n - i - 1):\n            if arr[j] > arr[j + 1]:\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\n                swapped = True\n        if not swapped:\n            break\n    return arr\n",
@@ -1232,6 +2096,27 @@
     "label": "In-Place Nested-Loop Swap Sort",
     "_source_template_idx": 0,
     "_variant": 4,
+    "_original_algorithm": "Bubble Sort"
+  },
+  {
+    "code": "def merge_sort(arr):\n    n = len(arr)\n    for i in range(n):\n        swapped = False\n        for j in range(0, n - i - 1):\n            if arr[j] > arr[j + 1]:\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\n                swapped = True\n        if not swapped:\n            break\n    return arr\n",
+    "label": "In-Place Nested-Loop Swap Sort",
+    "_source_template_idx": 0,
+    "_variant": 5,
+    "_original_algorithm": "Bubble Sort"
+  },
+  {
+    "code": "def quick_sort(nums):\n    # bubble sort - repeated adjacent swaps, early exit if sorted\n    length = len(nums)\n    for idx in range(length):\n        swapped = False\n        for jdx in range(0, length - idx - 1):\n            if nums[jdx] > nums[jdx + 1]:\n                nums[jdx], nums[jdx + 1] = nums[jdx + 1], nums[jdx]\n                swapped = True\n        if not swapped:\n            break\n    return nums\n",
+    "label": "In-Place Nested-Loop Swap Sort",
+    "_source_template_idx": 0,
+    "_variant": 6,
+    "_original_algorithm": "Bubble Sort"
+  },
+  {
+    "code": "def sort_solve(data):\n    size = len(data)\n    for p1 in range(size):\n        swapped = False\n        for p2 in range(0, size - p1 - 1):\n            if data[p2] > data[p2 + 1]:\n                data[p2], data[p2 + 1] = data[p2 + 1], data[p2]\n                swapped = True\n        if not swapped:\n            break\n    return data\n",
+    "label": "In-Place Nested-Loop Swap Sort",
+    "_source_template_idx": 0,
+    "_variant": 7,
     "_original_algorithm": "Bubble Sort"
   },
   {
@@ -1270,6 +2155,27 @@
     "_original_algorithm": "Insertion Sort"
   },
   {
+    "code": "def quick_sort(nums):\n    for idx in range(1, len(nums)):\n        key = nums[idx]\n        jdx = idx - 1\n        while jdx >= 0 and nums[jdx] > key:\n            nums[jdx + 1] = nums[jdx]\n            jdx -= 1\n        nums[jdx + 1] = key\n    return nums\n",
+    "label": "Shift-Based Sort",
+    "_source_template_idx": 1,
+    "_variant": 5,
+    "_original_algorithm": "Insertion Sort"
+  },
+  {
+    "code": "def sort_solve(data):\n    # insertion sort - shift elements right while building a sorted prefix\n    for p1 in range(1, len(data)):\n        key = data[p1]\n        p2 = p1 - 1\n        while p2 >= 0 and data[p2] > key:\n            data[p2 + 1] = data[p2]\n            p2 -= 1\n        data[p2 + 1] = key\n    return data\n",
+    "label": "Shift-Based Sort",
+    "_source_template_idx": 1,
+    "_variant": 6,
+    "_original_algorithm": "Insertion Sort"
+  },
+  {
+    "code": "def sort_array(values):\n    for row in range(1, len(values)):\n        key = values[row]\n        col = row - 1\n        while col >= 0 and values[col] > key:\n            values[col + 1] = values[col]\n            col -= 1\n        values[col + 1] = key\n    return values\n",
+    "label": "Shift-Based Sort",
+    "_source_template_idx": 1,
+    "_variant": 7,
+    "_original_algorithm": "Insertion Sort"
+  },
+  {
     "code": "def quick_sort(data):\n    # selection sort - find min of the unsorted suffix, swap into place\n    size = len(data)\n    for p1 in range(size):\n        min_idx = p1\n        for p2 in range(p1 + 1, size):\n            if data[p2] < data[min_idx]:\n                min_idx = p2\n        data[p1], data[min_idx] = data[min_idx], data[p1]\n    return data\n",
     "label": "In-Place Nested-Loop Swap Sort",
     "_source_template_idx": 2,
@@ -1302,6 +2208,27 @@
     "label": "In-Place Nested-Loop Swap Sort",
     "_source_template_idx": 2,
     "_variant": 4,
+    "_original_algorithm": "Selection Sort"
+  },
+  {
+    "code": "def sort_solve(data):\n    size = len(data)\n    for p1 in range(size):\n        min_idx = p1\n        for p2 in range(p1 + 1, size):\n            if data[p2] < data[min_idx]:\n                min_idx = p2\n        data[p1], data[min_idx] = data[min_idx], data[p1]\n    return data\n",
+    "label": "In-Place Nested-Loop Swap Sort",
+    "_source_template_idx": 2,
+    "_variant": 5,
+    "_original_algorithm": "Selection Sort"
+  },
+  {
+    "code": "def sort_array(values):\n    # selection sort - find min of the unsorted suffix, swap into place\n    num_items = len(values)\n    for row in range(num_items):\n        min_idx = row\n        for col in range(row + 1, num_items):\n            if values[col] < values[min_idx]:\n                min_idx = col\n        values[row], values[min_idx] = values[min_idx], values[row]\n    return values\n",
+    "label": "In-Place Nested-Loop Swap Sort",
+    "_source_template_idx": 2,
+    "_variant": 6,
+    "_original_algorithm": "Selection Sort"
+  },
+  {
+    "code": "def merge_sort(items):\n    total = len(items)\n    for a in range(total):\n        min_idx = a\n        for b in range(a + 1, total):\n            if items[b] < items[min_idx]:\n                min_idx = b\n        items[a], items[min_idx] = items[min_idx], items[a]\n    return items\n",
+    "label": "In-Place Nested-Loop Swap Sort",
+    "_source_template_idx": 2,
+    "_variant": 7,
     "_original_algorithm": "Selection Sort"
   },
   {
@@ -1340,6 +2267,27 @@
     "_original_algorithm": "Shell Sort"
   },
   {
+    "code": "def sort_array(values):\n    num_items = len(values)\n    gap = num_items // 2\n    while gap > 0:\n        for row in range(gap, num_items):\n            temp = values[row]\n            col = row\n            while col >= gap and values[col - gap] > temp:\n                values[col] = values[col - gap]\n                col -= gap\n            values[col] = temp\n        gap //= 2\n    return values\n",
+    "label": "Shift-Based Sort",
+    "_source_template_idx": 3,
+    "_variant": 5,
+    "_original_algorithm": "Shell Sort"
+  },
+  {
+    "code": "def merge_sort(items):\n    # shell sort - insertion sort with a shrinking gap sequence\n    total = len(items)\n    gap = total // 2\n    while gap > 0:\n        for a in range(gap, total):\n            t = items[a]\n            b = a\n            while b >= gap and items[b - gap] > t:\n                items[b] = items[b - gap]\n                b -= gap\n            items[b] = t\n        gap //= 2\n    return items\n",
+    "label": "Shift-Based Sort",
+    "_source_template_idx": 3,
+    "_variant": 6,
+    "_original_algorithm": "Shell Sort"
+  },
+  {
+    "code": "def quick_sort(arr):\n    n = len(arr)\n    gap = n // 2\n    while gap > 0:\n        for i in range(gap, n):\n            tmp = arr[i]\n            j = i\n            while j >= gap and arr[j - gap] > tmp:\n                arr[j] = arr[j - gap]\n                j -= gap\n            arr[j] = tmp\n        gap //= 2\n    return arr\n",
+    "label": "Shift-Based Sort",
+    "_source_template_idx": 3,
+    "_variant": 7,
+    "_original_algorithm": "Shell Sort"
+  },
+  {
     "code": "def sort_array(items):\n    # classic merge sort, divide and conquer with an auxiliary merge step\n    if len(items) <= 1:\n        return items\n    pivot = len(items) // 2\n    low = sort_array(items[:pivot])\n    high = sort_array(items[pivot:])\n    final_result = []\n    a = b = 0\n    while a < len(low) and b < len(high):\n        if low[a] <= high[b]:\n            final_result.append(low[a])\n            a += 1\n        else:\n            final_result.append(high[b])\n            b += 1\n    final_result.extend(low[a:])\n    final_result.extend(high[b:])\n    return final_result\n",
     "label": "Recursive Non-Swap Sort",
     "_source_template_idx": 4,
@@ -1372,6 +2320,27 @@
     "label": "Recursive Non-Swap Sort",
     "_source_template_idx": 4,
     "_variant": 4,
+    "_original_algorithm": "Merge Sort"
+  },
+  {
+    "code": "def merge_sort(items):\n    if len(items) <= 1:\n        return items\n    pivot = len(items) // 2\n    low = merge_sort(items[:pivot])\n    high = merge_sort(items[pivot:])\n    final_result = []\n    a = b = 0\n    while a < len(low) and b < len(high):\n        if low[a] <= high[b]:\n            final_result.append(low[a])\n            a += 1\n        else:\n            final_result.append(high[b])\n            b += 1\n    final_result.extend(low[a:])\n    final_result.extend(high[b:])\n    return final_result\n",
+    "label": "Recursive Non-Swap Sort",
+    "_source_template_idx": 4,
+    "_variant": 5,
+    "_original_algorithm": "Merge Sort"
+  },
+  {
+    "code": "def quick_sort(arr):\n    # classic merge sort, divide and conquer with an auxiliary merge step\n    if len(arr) <= 1:\n        return arr\n    mid = len(arr) // 2\n    left = quick_sort(arr[:mid])\n    right = quick_sort(arr[mid:])\n    result = []\n    i = j = 0\n    while i < len(left) and j < len(right):\n        if left[i] <= right[j]:\n            result.append(left[i])\n            i += 1\n        else:\n            result.append(right[j])\n            j += 1\n    result.extend(left[i:])\n    result.extend(right[j:])\n    return result\n",
+    "label": "Recursive Non-Swap Sort",
+    "_source_template_idx": 4,
+    "_variant": 6,
+    "_original_algorithm": "Merge Sort"
+  },
+  {
+    "code": "def sort_solve(nums):\n    if len(nums) <= 1:\n        return nums\n    mid_pt = len(nums) // 2\n    lo = sort_solve(nums[:mid_pt])\n    hi = sort_solve(nums[mid_pt:])\n    output = []\n    idx = jdx = 0\n    while idx < len(lo) and jdx < len(hi):\n        if lo[idx] <= hi[jdx]:\n            output.append(lo[idx])\n            idx += 1\n        else:\n            output.append(hi[jdx])\n            jdx += 1\n    output.extend(lo[idx:])\n    output.extend(hi[jdx:])\n    return output\n",
+    "label": "Recursive Non-Swap Sort",
+    "_source_template_idx": 4,
+    "_variant": 7,
     "_original_algorithm": "Merge Sort"
   },
   {
@@ -1410,6 +2379,27 @@
     "_original_algorithm": "Quick Sort"
   },
   {
+    "code": "def quick_sort(arr, start=0, end=None):\n    if end is None:\n        end = len(arr) - 1\n    if start < end:\n        pivot = arr[end]\n        i = start - 1\n        for j in range(start, end):\n            if arr[j] <= pivot:\n                i += 1\n                arr[i], arr[j] = arr[j], arr[i]\n        arr[i + 1], arr[end] = arr[end], arr[i + 1]\n        pivot_idx = i + 1\n        quick_sort(arr, start, pivot_idx - 1)\n        quick_sort(arr, pivot_idx + 1, end)\n    return arr\n",
+    "label": "Recursive Swap-Based Sort",
+    "_source_template_idx": 5,
+    "_variant": 5,
+    "_original_algorithm": "Quick Sort"
+  },
+  {
+    "code": "def sort_solve(nums, s=0, e=None):\n    # in-place quick sort using Lomuto partition scheme\n    if e is None:\n        e = len(nums) - 1\n    if s < e:\n        pivot = nums[e]\n        idx = s - 1\n        for jdx in range(s, e):\n            if nums[jdx] <= pivot:\n                idx += 1\n                nums[idx], nums[jdx] = nums[jdx], nums[idx]\n        nums[idx + 1], nums[e] = nums[e], nums[idx + 1]\n        pivot_idx = idx + 1\n        sort_solve(nums, s, pivot_idx - 1)\n        sort_solve(nums, pivot_idx + 1, e)\n    return nums\n",
+    "label": "Recursive Swap-Based Sort",
+    "_source_template_idx": 5,
+    "_variant": 6,
+    "_original_algorithm": "Quick Sort"
+  },
+  {
+    "code": "def sort_array(data, begin=0, finish=None):\n    if finish is None:\n        finish = len(data) - 1\n    if begin < finish:\n        pivot = data[finish]\n        p1 = begin - 1\n        for p2 in range(begin, finish):\n            if data[p2] <= pivot:\n                p1 += 1\n                data[p1], data[p2] = data[p2], data[p1]\n        data[p1 + 1], data[finish] = data[finish], data[p1 + 1]\n        pivot_idx = p1 + 1\n        sort_array(data, begin, pivot_idx - 1)\n        sort_array(data, pivot_idx + 1, finish)\n    return data\n",
+    "label": "Recursive Swap-Based Sort",
+    "_source_template_idx": 5,
+    "_variant": 7,
+    "_original_algorithm": "Quick Sort"
+  },
+  {
     "code": "def quick_sort(nums):\n    # heap sort - build a max heap, then repeatedly extract the max\n    length = len(nums)\n\n    def helper(heap_size, idx):\n        largest = idx\n        l = 2 * idx + 1\n        r = 2 * idx + 2\n        if l < heap_size and nums[l] > nums[largest]:\n            largest = l\n        if r < heap_size and nums[r] > nums[largest]:\n            largest = r\n        if largest != idx:\n            nums[idx], nums[largest] = nums[largest], nums[idx]\n            helper(heap_size, largest)\n\n    for idx in range(length // 2 - 1, -1, -1):\n        helper(length, idx)\n    for idx in range(length - 1, 0, -1):\n        nums[0], nums[idx] = nums[idx], nums[0]\n        helper(idx, 0)\n    return nums\n",
     "label": "Heap/Complex Structural Sort",
     "_source_template_idx": 6,
@@ -1442,6 +2432,27 @@
     "label": "Heap/Complex Structural Sort",
     "_source_template_idx": 6,
     "_variant": 4,
+    "_original_algorithm": "Heap Sort"
+  },
+  {
+    "code": "def sort_solve(nums):\n    length = len(nums)\n\n    def helper(heap_size, idx):\n        largest = idx\n        l = 2 * idx + 1\n        r = 2 * idx + 2\n        if l < heap_size and nums[l] > nums[largest]:\n            largest = l\n        if r < heap_size and nums[r] > nums[largest]:\n            largest = r\n        if largest != idx:\n            nums[idx], nums[largest] = nums[largest], nums[idx]\n            helper(heap_size, largest)\n\n    for idx in range(length // 2 - 1, -1, -1):\n        helper(length, idx)\n    for idx in range(length - 1, 0, -1):\n        nums[0], nums[idx] = nums[idx], nums[0]\n        helper(idx, 0)\n    return nums\n",
+    "label": "Heap/Complex Structural Sort",
+    "_source_template_idx": 6,
+    "_variant": 5,
+    "_original_algorithm": "Heap Sort"
+  },
+  {
+    "code": "def sort_array(data):\n    # heap sort - build a max heap, then repeatedly extract the max\n    size = len(data)\n\n    def helper(heap_size, p1):\n        largest = p1\n        l = 2 * p1 + 1\n        r = 2 * p1 + 2\n        if l < heap_size and data[l] > data[largest]:\n            largest = l\n        if r < heap_size and data[r] > data[largest]:\n            largest = r\n        if largest != p1:\n            data[p1], data[largest] = data[largest], data[p1]\n            helper(heap_size, largest)\n\n    for p1 in range(size // 2 - 1, -1, -1):\n        helper(size, p1)\n    for p1 in range(size - 1, 0, -1):\n        data[0], data[p1] = data[p1], data[0]\n        helper(p1, 0)\n    return data\n",
+    "label": "Heap/Complex Structural Sort",
+    "_source_template_idx": 6,
+    "_variant": 6,
+    "_original_algorithm": "Heap Sort"
+  },
+  {
+    "code": "def merge_sort(values):\n    num_items = len(values)\n\n    def helper(heap_size, row):\n        largest = row\n        l = 2 * row + 1\n        r = 2 * row + 2\n        if l < heap_size and values[l] > values[largest]:\n            largest = l\n        if r < heap_size and values[r] > values[largest]:\n            largest = r\n        if largest != row:\n            values[row], values[largest] = values[largest], values[row]\n            helper(heap_size, largest)\n\n    for row in range(num_items // 2 - 1, -1, -1):\n        helper(num_items, row)\n    for row in range(num_items - 1, 0, -1):\n        values[0], values[row] = values[row], values[0]\n        helper(row, 0)\n    return values\n",
+    "label": "Heap/Complex Structural Sort",
+    "_source_template_idx": 6,
+    "_variant": 7,
     "_original_algorithm": "Heap Sort"
   },
   {
@@ -1480,6 +2491,27 @@
     "_original_algorithm": "Timsort"
   },
   {
+    "code": "def sort_array(data):\n    size = len(data)\n    run = 8\n\n    def insertion_pass(left, right):\n        for i in range(left + 1, right + 1):\n            key = data[i]\n            j = i - 1\n            while j >= left and data[j] > key:\n                data[j + 1] = data[j]\n                j -= 1\n            data[j + 1] = key\n\n    def merge_pass(left, mid, right):\n        left_part = data[left:mid + 1]\n        right_part = data[mid + 1:right + 1]\n        i = j = 0\n        k = left\n        while i < len(left_part) and j < len(right_part):\n            if left_part[i] <= right_part[j]:\n                data[k] = left_part[i]\n                i += 1\n            else:\n                data[k] = right_part[j]\n                j += 1\n            k += 1\n        while i < len(left_part):\n            data[k] = left_part[i]\n            i += 1\n            k += 1\n        while j < len(right_part):\n            data[k] = right_part[j]\n            j += 1\n            k += 1\n\n    for start in range(0, size, run):\n        insertion_pass(start, min(start + run - 1, size - 1))\n\n    size = run\n    while size < size:\n        for left in range(0, size, 2 * size):\n            mid = min(left + size - 1, size - 1)\n            right = min(left + 2 * size - 1, size - 1)\n            if mid < right:\n                merge_pass(left, mid, right)\n        size *= 2\n    return data\n",
+    "label": "Heap/Complex Structural Sort",
+    "_source_template_idx": 7,
+    "_variant": 5,
+    "_original_algorithm": "Timsort"
+  },
+  {
+    "code": "def merge_sort(values):\n    # simplified timsort - insertion-sort small runs, then iterative bottom-up merge\n    num_items = len(values)\n    run = 8\n\n    def insertion_pass(left, right):\n        for i in range(left + 1, right + 1):\n            key = values[i]\n            j = i - 1\n            while j >= left and values[j] > key:\n                values[j + 1] = values[j]\n                j -= 1\n            values[j + 1] = key\n\n    def merge_pass(left, mid, right):\n        left_part = values[left:mid + 1]\n        right_part = values[mid + 1:right + 1]\n        i = j = 0\n        k = left\n        while i < len(left_part) and j < len(right_part):\n            if left_part[i] <= right_part[j]:\n                values[k] = left_part[i]\n                i += 1\n            else:\n                values[k] = right_part[j]\n                j += 1\n            k += 1\n        while i < len(left_part):\n            values[k] = left_part[i]\n            i += 1\n            k += 1\n        while j < len(right_part):\n            values[k] = right_part[j]\n            j += 1\n            k += 1\n\n    for start in range(0, num_items, run):\n        insertion_pass(start, min(start + run - 1, num_items - 1))\n\n    size = run\n    while size < num_items:\n        for left in range(0, num_items, 2 * size):\n            mid = min(left + size - 1, num_items - 1)\n            right = min(left + 2 * size - 1, num_items - 1)\n            if mid < right:\n                merge_pass(left, mid, right)\n        size *= 2\n    return values\n",
+    "label": "Heap/Complex Structural Sort",
+    "_source_template_idx": 7,
+    "_variant": 6,
+    "_original_algorithm": "Timsort"
+  },
+  {
+    "code": "def quick_sort(items):\n    total = len(items)\n    run = 8\n\n    def insertion_pass(left, right):\n        for i in range(left + 1, right + 1):\n            key = items[i]\n            j = i - 1\n            while j >= left and items[j] > key:\n                items[j + 1] = items[j]\n                j -= 1\n            items[j + 1] = key\n\n    def merge_pass(left, mid, right):\n        left_part = items[left:mid + 1]\n        right_part = items[mid + 1:right + 1]\n        i = j = 0\n        k = left\n        while i < len(left_part) and j < len(right_part):\n            if left_part[i] <= right_part[j]:\n                items[k] = left_part[i]\n                i += 1\n            else:\n                items[k] = right_part[j]\n                j += 1\n            k += 1\n        while i < len(left_part):\n            items[k] = left_part[i]\n            i += 1\n            k += 1\n        while j < len(right_part):\n            items[k] = right_part[j]\n            j += 1\n            k += 1\n\n    for start in range(0, total, run):\n        insertion_pass(start, min(start + run - 1, total - 1))\n\n    size = run\n    while size < total:\n        for left in range(0, total, 2 * size):\n            mid = min(left + size - 1, total - 1)\n            right = min(left + 2 * size - 1, total - 1)\n            if mid < right:\n                merge_pass(left, mid, right)\n        size *= 2\n    return items\n",
+    "label": "Heap/Complex Structural Sort",
+    "_source_template_idx": 7,
+    "_variant": 7,
+    "_original_algorithm": "Timsort"
+  },
+  {
     "code": "def sort_array(values):\n    # counting sort - frequency array + prefix sum, non-negative integers only\n    if not values:\n        return values\n    max_area = max(values)\n    minv = min(values)\n    span = max_area - minv + 1\n    counter = [0] * span\n    for num in values:\n        counter[num - minv] += 1\n    for row in range(1, span):\n        counter[row] += counter[row - 1]\n    res = [0] * len(values)\n    for num in reversed(values):\n        counter[num - minv] -= 1\n        res[counter[num - minv]] = num\n    return res\n",
     "label": "Distribution Sort",
     "_source_template_idx": 8,
@@ -1512,6 +2544,27 @@
     "label": "Distribution Sort",
     "_source_template_idx": 8,
     "_variant": 4,
+    "_original_algorithm": "Counting Sort"
+  },
+  {
+    "code": "def merge_sort(values):\n    if not values:\n        return values\n    max_area = max(values)\n    minv = min(values)\n    span = max_area - minv + 1\n    counter = [0] * span\n    for num in values:\n        counter[num - minv] += 1\n    for row in range(1, span):\n        counter[row] += counter[row - 1]\n    res = [0] * len(values)\n    for num in reversed(values):\n        counter[num - minv] -= 1\n        res[counter[num - minv]] = num\n    return res\n",
+    "label": "Distribution Sort",
+    "_source_template_idx": 8,
+    "_variant": 5,
+    "_original_algorithm": "Counting Sort"
+  },
+  {
+    "code": "def quick_sort(items):\n    # counting sort - frequency array + prefix sum, non-negative integers only\n    if not items:\n        return items\n    tallest = max(items)\n    minv = min(items)\n    span = tallest - minv + 1\n    occurrences = [0] * span\n    for num in items:\n        occurrences[num - minv] += 1\n    for a in range(1, span):\n        occurrences[a] += occurrences[a - 1]\n    final_result = [0] * len(items)\n    for num in reversed(items):\n        occurrences[num - minv] -= 1\n        final_result[occurrences[num - minv]] = num\n    return final_result\n",
+    "label": "Distribution Sort",
+    "_source_template_idx": 8,
+    "_variant": 6,
+    "_original_algorithm": "Counting Sort"
+  },
+  {
+    "code": "def sort_solve(arr):\n    if not arr:\n        return arr\n    max_val = max(arr)\n    minv = min(arr)\n    span = max_val - minv + 1\n    count = [0] * span\n    for num in arr:\n        count[num - minv] += 1\n    for i in range(1, span):\n        count[i] += count[i - 1]\n    result = [0] * len(arr)\n    for num in reversed(arr):\n        count[num - minv] -= 1\n        result[count[num - minv]] = num\n    return result\n",
+    "label": "Distribution Sort",
+    "_source_template_idx": 8,
+    "_variant": 7,
     "_original_algorithm": "Counting Sort"
   },
   {
@@ -1550,6 +2603,27 @@
     "_original_algorithm": "Radix Sort"
   },
   {
+    "code": "def _radix_counting_pass(arr, exp):\n    n = len(arr)\n    output = [0] * n\n    count = [0] * 10\n    for i in range(n):\n        digit = (arr[i] // exp) % 10\n        count[digit] += 1\n    for i in range(1, 10):\n        count[i] += count[i - 1]\n    for i in range(n - 1, -1, -1):\n        digit = (arr[i] // exp) % 10\n        count[digit] -= 1\n        output[count[digit]] = arr[i]\n    return output\n\ndef quick_sort(items):\n    if not items:\n        return items\n    tallest = max(items)\n    exp = 1\n    while tallest // exp > 0:\n        items = _radix_counting_pass(items, exp)\n        exp *= 10\n    return items\n",
+    "label": "Distribution Sort",
+    "_source_template_idx": 9,
+    "_variant": 5,
+    "_original_algorithm": "Radix Sort"
+  },
+  {
+    "code": "def _radix_counting_pass(arr, exp):\n    n = len(arr)\n    output = [0] * n\n    count = [0] * 10\n    for i in range(n):\n        digit = (arr[i] // exp) % 10\n        count[digit] += 1\n    for i in range(1, 10):\n        count[i] += count[i - 1]\n    for i in range(n - 1, -1, -1):\n        digit = (arr[i] // exp) % 10\n        count[digit] -= 1\n        output[count[digit]] = arr[i]\n    return output\n\ndef sort_solve(arr):\n    # LSD radix sort - repeated counting sort passes, one per decimal digit\n    if not arr:\n        return arr\n    max_val = max(arr)\n    exp = 1\n    while max_val // exp > 0:\n        arr = _radix_counting_pass(arr, exp)\n        exp *= 10\n    return arr\n",
+    "label": "Distribution Sort",
+    "_source_template_idx": 9,
+    "_variant": 6,
+    "_original_algorithm": "Radix Sort"
+  },
+  {
+    "code": "def _radix_counting_pass(arr, exp):\n    n = len(arr)\n    output = [0] * n\n    count = [0] * 10\n    for i in range(n):\n        digit = (arr[i] // exp) % 10\n        count[digit] += 1\n    for i in range(1, 10):\n        count[i] += count[i - 1]\n    for i in range(n - 1, -1, -1):\n        digit = (arr[i] // exp) % 10\n        count[digit] -= 1\n        output[count[digit]] = arr[i]\n    return output\n\ndef sort_array(nums):\n    if not nums:\n        return nums\n    best = max(nums)\n    exp = 1\n    while best // exp > 0:\n        nums = _radix_counting_pass(nums, exp)\n        exp *= 10\n    return nums\n",
+    "label": "Distribution Sort",
+    "_source_template_idx": 9,
+    "_variant": 7,
+    "_original_algorithm": "Radix Sort"
+  },
+  {
     "code": "def quick_sort(arr):\n    # bucket sort - distribute floats in [0, 1) into n buckets, sort each, concatenate\n    n = len(arr)\n    if n == 0:\n        return arr\n    buckets = [[] for _ in range(n)]\n    for num in arr:\n        idx = int(num * n)\n        if idx == n:\n            idx = n - 1\n        buckets[idx].append(num)\n    for bucket in buckets:\n        bucket.sort()\n    result = []\n    for bucket in buckets:\n        result.extend(bucket)\n    return result\n",
     "label": "Distribution Sort",
     "_source_template_idx": 10,
@@ -1582,6 +2656,27 @@
     "label": "Distribution Sort",
     "_source_template_idx": 10,
     "_variant": 4,
+    "_original_algorithm": "Bucket Sort"
+  },
+  {
+    "code": "def sort_solve(arr):\n    n = len(arr)\n    if n == 0:\n        return arr\n    buckets = [[] for _ in range(n)]\n    for num in arr:\n        idx = int(num * n)\n        if idx == n:\n            idx = n - 1\n        buckets[idx].append(num)\n    for bucket in buckets:\n        bucket.sort()\n    result = []\n    for bucket in buckets:\n        result.extend(bucket)\n    return result\n",
+    "label": "Distribution Sort",
+    "_source_template_idx": 10,
+    "_variant": 5,
+    "_original_algorithm": "Bucket Sort"
+  },
+  {
+    "code": "def sort_array(nums):\n    # bucket sort - distribute floats in [0, 1) into n buckets, sort each, concatenate\n    length = len(nums)\n    if length == 0:\n        return nums\n    buckets = [[] for _ in range(length)]\n    for num in nums:\n        idx = int(num * length)\n        if idx == length:\n            idx = length - 1\n        buckets[idx].append(num)\n    for bucket in buckets:\n        bucket.sort()\n    output = []\n    for bucket in buckets:\n        output.extend(bucket)\n    return output\n",
+    "label": "Distribution Sort",
+    "_source_template_idx": 10,
+    "_variant": 6,
+    "_original_algorithm": "Bucket Sort"
+  },
+  {
+    "code": "def merge_sort(data):\n    size = len(data)\n    if size == 0:\n        return data\n    buckets = [[] for _ in range(size)]\n    for num in data:\n        idx = int(num * size)\n        if idx == size:\n            idx = size - 1\n        buckets[idx].append(num)\n    for bucket in buckets:\n        bucket.sort()\n    ans = []\n    for bucket in buckets:\n        ans.extend(bucket)\n    return ans\n",
+    "label": "Distribution Sort",
+    "_source_template_idx": 10,
+    "_variant": 7,
     "_original_algorithm": "Bucket Sort"
   },
   {
@@ -1620,6 +2715,27 @@
     "_original_algorithm": "Tree Sort"
   },
   {
+    "code": "class TreeNode:\n    def __init__(self, val):\n        self.val = val\n        self.left = None\n        self.right = None\n\ndef _bst_insert(root, val):\n    if root is None:\n        return TreeNode(val)\n    if val < root.val:\n        root.left = _bst_insert(root.left, val)\n    else:\n        root.right = _bst_insert(root.right, val)\n    return root\n\ndef _inorder(root, out):\n    if root:\n        _inorder(root.left, out)\n        out.append(root.val)\n        _inorder(root.right, out)\n\ndef sort_array(nums):\n    root = None\n    for num in nums:\n        root = _bst_insert(root, num)\n    output = []\n    _inorder(root, output)\n    return output\n",
+    "label": "Recursive Non-Swap Sort",
+    "_source_template_idx": 11,
+    "_variant": 5,
+    "_original_algorithm": "Tree Sort"
+  },
+  {
+    "code": "class TreeNode:\n    def __init__(self, val):\n        self.val = val\n        self.left = None\n        self.right = None\n\ndef _bst_insert(root, val):\n    if root is None:\n        return TreeNode(val)\n    if val < root.val:\n        root.left = _bst_insert(root.left, val)\n    else:\n        root.right = _bst_insert(root.right, val)\n    return root\n\ndef _inorder(root, out):\n    if root:\n        _inorder(root.left, out)\n        out.append(root.val)\n        _inorder(root.right, out)\n\ndef merge_sort(data):\n    # tree sort - insert into a BST, then inorder traversal yields sorted order\n    root = None\n    for num in data:\n        root = _bst_insert(root, num)\n    ans = []\n    _inorder(root, ans)\n    return ans\n",
+    "label": "Recursive Non-Swap Sort",
+    "_source_template_idx": 11,
+    "_variant": 6,
+    "_original_algorithm": "Tree Sort"
+  },
+  {
+    "code": "class TreeNode:\n    def __init__(self, val):\n        self.val = val\n        self.left = None\n        self.right = None\n\ndef _bst_insert(root, val):\n    if root is None:\n        return TreeNode(val)\n    if val < root.val:\n        root.left = _bst_insert(root.left, val)\n    else:\n        root.right = _bst_insert(root.right, val)\n    return root\n\ndef _inorder(root, out):\n    if root:\n        _inorder(root.left, out)\n        out.append(root.val)\n        _inorder(root.right, out)\n\ndef quick_sort(values):\n    root = None\n    for num in values:\n        root = _bst_insert(root, num)\n    res = []\n    _inorder(root, res)\n    return res\n",
+    "label": "Recursive Non-Swap Sort",
+    "_source_template_idx": 11,
+    "_variant": 7,
+    "_original_algorithm": "Tree Sort"
+  },
+  {
     "code": "def sort_array(data):\n    # cycle sort - minimizes writes, places each element on its correct cycle\n    size = len(data)\n    for begin in range(size - 1):\n        item = data[begin]\n        pos = begin\n        for p1 in range(begin + 1, size):\n            if data[p1] < item:\n                pos += 1\n        if pos == begin:\n            continue\n        while item == data[pos]:\n            pos += 1\n        data[pos], item = item, data[pos]\n        while pos != begin:\n            pos = begin\n            for p1 in range(begin + 1, size):\n                if data[p1] < item:\n                    pos += 1\n            while item == data[pos]:\n                pos += 1\n            data[pos], item = item, data[pos]\n    return data\n",
     "label": "In-Place Nested-Loop Swap Sort",
     "_source_template_idx": 12,
@@ -1652,6 +2768,27 @@
     "label": "In-Place Nested-Loop Swap Sort",
     "_source_template_idx": 12,
     "_variant": 4,
+    "_original_algorithm": "Cycle Sort"
+  },
+  {
+    "code": "def merge_sort(data):\n    size = len(data)\n    for begin in range(size - 1):\n        item = data[begin]\n        pos = begin\n        for p1 in range(begin + 1, size):\n            if data[p1] < item:\n                pos += 1\n        if pos == begin:\n            continue\n        while item == data[pos]:\n            pos += 1\n        data[pos], item = item, data[pos]\n        while pos != begin:\n            pos = begin\n            for p1 in range(begin + 1, size):\n                if data[p1] < item:\n                    pos += 1\n            while item == data[pos]:\n                pos += 1\n            data[pos], item = item, data[pos]\n    return data\n",
+    "label": "In-Place Nested-Loop Swap Sort",
+    "_source_template_idx": 12,
+    "_variant": 5,
+    "_original_algorithm": "Cycle Sort"
+  },
+  {
+    "code": "def quick_sort(values):\n    # cycle sort - minimizes writes, places each element on its correct cycle\n    num_items = len(values)\n    for start_idx in range(num_items - 1):\n        item = values[start_idx]\n        pos = start_idx\n        for row in range(start_idx + 1, num_items):\n            if values[row] < item:\n                pos += 1\n        if pos == start_idx:\n            continue\n        while item == values[pos]:\n            pos += 1\n        values[pos], item = item, values[pos]\n        while pos != start_idx:\n            pos = start_idx\n            for row in range(start_idx + 1, num_items):\n                if values[row] < item:\n                    pos += 1\n            while item == values[pos]:\n                pos += 1\n            values[pos], item = item, values[pos]\n    return values\n",
+    "label": "In-Place Nested-Loop Swap Sort",
+    "_source_template_idx": 12,
+    "_variant": 6,
+    "_original_algorithm": "Cycle Sort"
+  },
+  {
+    "code": "def sort_solve(items):\n    total = len(items)\n    for from_idx in range(total - 1):\n        item = items[from_idx]\n        pos = from_idx\n        for a in range(from_idx + 1, total):\n            if items[a] < item:\n                pos += 1\n        if pos == from_idx:\n            continue\n        while item == items[pos]:\n            pos += 1\n        items[pos], item = item, items[pos]\n        while pos != from_idx:\n            pos = from_idx\n            for a in range(from_idx + 1, total):\n                if items[a] < item:\n                    pos += 1\n            while item == items[pos]:\n                pos += 1\n            items[pos], item = item, items[pos]\n    return items\n",
+    "label": "In-Place Nested-Loop Swap Sort",
+    "_source_template_idx": 12,
+    "_variant": 7,
     "_original_algorithm": "Cycle Sort"
   },
   {
@@ -1690,6 +2827,27 @@
     "_original_algorithm": "Pigeonhole Sort"
   },
   {
+    "code": "def quick_sort(values):\n    if not values:\n        return values\n    minv = min(values)\n    max_area = max(values)\n    holes = [[] for _ in range(max_area - minv + 1)]\n    for num in values:\n        holes[num - minv].append(num)\n    res = []\n    for hole in holes:\n        res.extend(hole)\n    return res\n",
+    "label": "Distribution Sort",
+    "_source_template_idx": 13,
+    "_variant": 5,
+    "_original_algorithm": "Pigeonhole Sort"
+  },
+  {
+    "code": "def sort_solve(items):\n    # pigeonhole sort - one hole per possible value, append then flatten\n    if not items:\n        return items\n    minv = min(items)\n    tallest = max(items)\n    holes = [[] for _ in range(tallest - minv + 1)]\n    for num in items:\n        holes[num - minv].append(num)\n    final_result = []\n    for hole in holes:\n        final_result.extend(hole)\n    return final_result\n",
+    "label": "Distribution Sort",
+    "_source_template_idx": 13,
+    "_variant": 6,
+    "_original_algorithm": "Pigeonhole Sort"
+  },
+  {
+    "code": "def sort_array(arr):\n    if not arr:\n        return arr\n    minv = min(arr)\n    max_val = max(arr)\n    holes = [[] for _ in range(max_val - minv + 1)]\n    for num in arr:\n        holes[num - minv].append(num)\n    result = []\n    for hole in holes:\n        result.extend(hole)\n    return result\n",
+    "label": "Distribution Sort",
+    "_source_template_idx": 13,
+    "_variant": 7,
+    "_original_algorithm": "Pigeonhole Sort"
+  },
+  {
     "code": "def _compare_and_swap(arr, i, j, ascending):\n    if (arr[i] > arr[j]) == ascending:\n        arr[i], arr[j] = arr[j], arr[i]\n\ndef _bitonic_merge(arr, low, length, ascending):\n    if length > 1:\n        mid = length // 2\n        for i in range(low, low + mid):\n            _compare_and_swap(arr, i, i + mid, ascending)\n        _bitonic_merge(arr, low, mid, ascending)\n        _bitonic_merge(arr, low + mid, mid, ascending)\n\ndef _bitonic_sort_recursive(arr, low, length, ascending):\n    if length > 1:\n        mid = length // 2\n        _bitonic_sort_recursive(arr, low, mid, True)\n        _bitonic_sort_recursive(arr, low + mid, mid, False)\n        _bitonic_merge(arr, low, length, ascending)\n\ndef quick_sort(items):\n    # bitonic sort - comparator network, requires len(arr) to be a power of 2\n    _bitonic_sort_recursive(items, 0, len(items), True)\n    return items\n",
     "label": "Recursive Swap-Based Sort",
     "_source_template_idx": 14,
@@ -1722,6 +2880,27 @@
     "label": "Recursive Swap-Based Sort",
     "_source_template_idx": 14,
     "_variant": 4,
+    "_original_algorithm": "Bitonic Sort"
+  },
+  {
+    "code": "def _compare_and_swap(arr, i, j, ascending):\n    if (arr[i] > arr[j]) == ascending:\n        arr[i], arr[j] = arr[j], arr[i]\n\ndef _bitonic_merge(arr, low, length, ascending):\n    if length > 1:\n        mid = length // 2\n        for i in range(low, low + mid):\n            _compare_and_swap(arr, i, i + mid, ascending)\n        _bitonic_merge(arr, low, mid, ascending)\n        _bitonic_merge(arr, low + mid, mid, ascending)\n\ndef _bitonic_sort_recursive(arr, low, length, ascending):\n    if length > 1:\n        mid = length // 2\n        _bitonic_sort_recursive(arr, low, mid, True)\n        _bitonic_sort_recursive(arr, low + mid, mid, False)\n        _bitonic_merge(arr, low, length, ascending)\n\ndef sort_solve(items):\n    _bitonic_sort_recursive(items, 0, len(items), True)\n    return items\n",
+    "label": "Recursive Swap-Based Sort",
+    "_source_template_idx": 14,
+    "_variant": 5,
+    "_original_algorithm": "Bitonic Sort"
+  },
+  {
+    "code": "def _compare_and_swap(arr, i, j, ascending):\n    if (arr[i] > arr[j]) == ascending:\n        arr[i], arr[j] = arr[j], arr[i]\n\ndef _bitonic_merge(arr, low, length, ascending):\n    if length > 1:\n        mid = length // 2\n        for i in range(low, low + mid):\n            _compare_and_swap(arr, i, i + mid, ascending)\n        _bitonic_merge(arr, low, mid, ascending)\n        _bitonic_merge(arr, low + mid, mid, ascending)\n\ndef _bitonic_sort_recursive(arr, low, length, ascending):\n    if length > 1:\n        mid = length // 2\n        _bitonic_sort_recursive(arr, low, mid, True)\n        _bitonic_sort_recursive(arr, low + mid, mid, False)\n        _bitonic_merge(arr, low, length, ascending)\n\ndef sort_array(arr):\n    # bitonic sort - comparator network, requires len(arr) to be a power of 2\n    _bitonic_sort_recursive(arr, 0, len(arr), True)\n    return arr\n",
+    "label": "Recursive Swap-Based Sort",
+    "_source_template_idx": 14,
+    "_variant": 6,
+    "_original_algorithm": "Bitonic Sort"
+  },
+  {
+    "code": "def _compare_and_swap(arr, i, j, ascending):\n    if (arr[i] > arr[j]) == ascending:\n        arr[i], arr[j] = arr[j], arr[i]\n\ndef _bitonic_merge(arr, low, length, ascending):\n    if length > 1:\n        mid = length // 2\n        for i in range(low, low + mid):\n            _compare_and_swap(arr, i, i + mid, ascending)\n        _bitonic_merge(arr, low, mid, ascending)\n        _bitonic_merge(arr, low + mid, mid, ascending)\n\ndef _bitonic_sort_recursive(arr, low, length, ascending):\n    if length > 1:\n        mid = length // 2\n        _bitonic_sort_recursive(arr, low, mid, True)\n        _bitonic_sort_recursive(arr, low + mid, mid, False)\n        _bitonic_merge(arr, low, length, ascending)\n\ndef merge_sort(nums):\n    _bitonic_sort_recursive(nums, 0, len(nums), True)\n    return nums\n",
+    "label": "Recursive Swap-Based Sort",
+    "_source_template_idx": 14,
+    "_variant": 7,
     "_original_algorithm": "Bitonic Sort"
   },
   {
@@ -1760,6 +2939,27 @@
     "_original_algorithm": "Gnome Sort"
   },
   {
+    "code": "def sort_array(arr):\n    n = len(arr)\n    index = 0\n    while index < n:\n        if index == 0:\n            index += 1\n        elif arr[index] >= arr[index - 1]:\n            index += 1\n        else:\n            arr[index], arr[index - 1] = arr[index - 1], arr[index]\n            index -= 1\n    return arr\n",
+    "label": "Single-Pass Loop Sort",
+    "_source_template_idx": 15,
+    "_variant": 5,
+    "_original_algorithm": "Gnome Sort"
+  },
+  {
+    "code": "def merge_sort(nums):\n    # gnome sort - single index walks forward, steps back on an inversion\n    length = len(nums)\n    index = 0\n    while index < length:\n        if index == 0:\n            index += 1\n        elif nums[index] >= nums[index - 1]:\n            index += 1\n        else:\n            nums[index], nums[index - 1] = nums[index - 1], nums[index]\n            index -= 1\n    return nums\n",
+    "label": "Single-Pass Loop Sort",
+    "_source_template_idx": 15,
+    "_variant": 6,
+    "_original_algorithm": "Gnome Sort"
+  },
+  {
+    "code": "def quick_sort(data):\n    size = len(data)\n    index = 0\n    while index < size:\n        if index == 0:\n            index += 1\n        elif data[index] >= data[index - 1]:\n            index += 1\n        else:\n            data[index], data[index - 1] = data[index - 1], data[index]\n            index -= 1\n    return data\n",
+    "label": "Single-Pass Loop Sort",
+    "_source_template_idx": 15,
+    "_variant": 7,
+    "_original_algorithm": "Gnome Sort"
+  },
+  {
     "code": "def sort_array(nums):\n    # comb sort - bubble sort with a shrinking gap instead of gap=1\n    length = len(nums)\n    gap = length\n    shrink = 1.3\n    swapped = True\n    while gap > 1 or swapped:\n        gap = int(gap / shrink)\n        if gap < 1:\n            gap = 1\n        swapped = False\n        for idx in range(length - gap):\n            if nums[idx] > nums[idx + gap]:\n                nums[idx], nums[idx + gap] = nums[idx + gap], nums[idx]\n                swapped = True\n    return nums\n",
     "label": "In-Place Nested-Loop Swap Sort",
     "_source_template_idx": 16,
@@ -1792,6 +2992,27 @@
     "label": "In-Place Nested-Loop Swap Sort",
     "_source_template_idx": 16,
     "_variant": 4,
+    "_original_algorithm": "Comb Sort"
+  },
+  {
+    "code": "def merge_sort(nums):\n    length = len(nums)\n    gap = length\n    shrink = 1.3\n    swapped = True\n    while gap > 1 or swapped:\n        gap = int(gap / shrink)\n        if gap < 1:\n            gap = 1\n        swapped = False\n        for idx in range(length - gap):\n            if nums[idx] > nums[idx + gap]:\n                nums[idx], nums[idx + gap] = nums[idx + gap], nums[idx]\n                swapped = True\n    return nums\n",
+    "label": "In-Place Nested-Loop Swap Sort",
+    "_source_template_idx": 16,
+    "_variant": 5,
+    "_original_algorithm": "Comb Sort"
+  },
+  {
+    "code": "def quick_sort(data):\n    # comb sort - bubble sort with a shrinking gap instead of gap=1\n    size = len(data)\n    gap = size\n    shrink = 1.3\n    swapped = True\n    while gap > 1 or swapped:\n        gap = int(gap / shrink)\n        if gap < 1:\n            gap = 1\n        swapped = False\n        for p1 in range(size - gap):\n            if data[p1] > data[p1 + gap]:\n                data[p1], data[p1 + gap] = data[p1 + gap], data[p1]\n                swapped = True\n    return data\n",
+    "label": "In-Place Nested-Loop Swap Sort",
+    "_source_template_idx": 16,
+    "_variant": 6,
+    "_original_algorithm": "Comb Sort"
+  },
+  {
+    "code": "def sort_solve(values):\n    num_items = len(values)\n    gap = num_items\n    shrink = 1.3\n    swapped = True\n    while gap > 1 or swapped:\n        gap = int(gap / shrink)\n        if gap < 1:\n            gap = 1\n        swapped = False\n        for row in range(num_items - gap):\n            if values[row] > values[row + gap]:\n                values[row], values[row + gap] = values[row + gap], values[row]\n                swapped = True\n    return values\n",
+    "label": "In-Place Nested-Loop Swap Sort",
+    "_source_template_idx": 16,
+    "_variant": 7,
     "_original_algorithm": "Comb Sort"
   },
   {
@@ -1830,6 +3051,27 @@
     "_original_algorithm": "Pancake Sort"
   },
   {
+    "code": "def _flip(arr, k):\n    arr[:k + 1] = arr[:k + 1][::-1]\n\ndef _find_max_index(arr, n):\n    max_idx = 0\n    for i in range(1, n):\n        if arr[i] > arr[max_idx]:\n            max_idx = i\n    return max_idx\n\ndef quick_sort(data):\n    size = len(data)\n    for size in range(size, 1, -1):\n        max_idx = _find_max_index(data, size)\n        if max_idx != size - 1:\n            _flip(data, max_idx)\n            _flip(data, size - 1)\n    return data\n",
+    "label": "Shift-Based Sort",
+    "_source_template_idx": 17,
+    "_variant": 5,
+    "_original_algorithm": "Pancake Sort"
+  },
+  {
+    "code": "def _flip(arr, k):\n    arr[:k + 1] = arr[:k + 1][::-1]\n\ndef _find_max_index(arr, n):\n    max_idx = 0\n    for i in range(1, n):\n        if arr[i] > arr[max_idx]:\n            max_idx = i\n    return max_idx\n\ndef sort_solve(values):\n    # pancake sort - repeatedly flip the prefix to move the max into place\n    num_items = len(values)\n    for size in range(num_items, 1, -1):\n        max_idx = _find_max_index(values, size)\n        if max_idx != size - 1:\n            _flip(values, max_idx)\n            _flip(values, size - 1)\n    return values\n",
+    "label": "Shift-Based Sort",
+    "_source_template_idx": 17,
+    "_variant": 6,
+    "_original_algorithm": "Pancake Sort"
+  },
+  {
+    "code": "def _flip(arr, k):\n    arr[:k + 1] = arr[:k + 1][::-1]\n\ndef _find_max_index(arr, n):\n    max_idx = 0\n    for i in range(1, n):\n        if arr[i] > arr[max_idx]:\n            max_idx = i\n    return max_idx\n\ndef sort_array(items):\n    total = len(items)\n    for size in range(total, 1, -1):\n        max_idx = _find_max_index(items, size)\n        if max_idx != size - 1:\n            _flip(items, max_idx)\n            _flip(items, size - 1)\n    return items\n",
+    "label": "Shift-Based Sort",
+    "_source_template_idx": 17,
+    "_variant": 7,
+    "_original_algorithm": "Pancake Sort"
+  },
+  {
     "code": "import math\n\ndef _insertion_range(arr, start, end):\n    for i in range(start + 1, end + 1):\n        key = arr[i]\n        j = i - 1\n        while j >= start and arr[j] > key:\n            arr[j + 1] = arr[j]\n            j -= 1\n        arr[j + 1] = key\n\ndef _heapify_range(arr, n, i, offset):\n    largest = i\n    left = 2 * i + 1\n    right = 2 * i + 2\n    if left < n and arr[offset + left] > arr[offset + largest]:\n        largest = left\n    if right < n and arr[offset + right] > arr[offset + largest]:\n        largest = right\n    if largest != i:\n        arr[offset + i], arr[offset + largest] = arr[offset + largest], arr[offset + i]\n        _heapify_range(arr, n, largest, offset)\n\ndef _heap_sort_range(arr, start, end):\n    n = end - start + 1\n    for i in range(n // 2 - 1, -1, -1):\n        _heapify_range(arr, n, i, start)\n    for i in range(n - 1, 0, -1):\n        arr[start], arr[start + i] = arr[start + i], arr[start]\n        _heapify_range(arr, i, 0, start)\n\ndef _partition_range(arr, start, end):\n    pivot = arr[end]\n    i = start - 1\n    for j in range(start, end):\n        if arr[j] <= pivot:\n            i += 1\n            arr[i], arr[j] = arr[j], arr[i]\n    arr[i + 1], arr[end] = arr[end], arr[i + 1]\n    return i + 1\n\ndef _introsort_helper(arr, start, end, depth_limit):\n    size = end - start + 1\n    if size < 16:\n        _insertion_range(arr, start, end)\n        return\n    if depth_limit == 0:\n        _heap_sort_range(arr, start, end)\n        return\n    pivot_idx = _partition_range(arr, start, end)\n    _introsort_helper(arr, start, pivot_idx - 1, depth_limit - 1)\n    _introsort_helper(arr, pivot_idx + 1, end, depth_limit - 1)\n\ndef quick_sort(values):\n    # introsort - quicksort that falls back to heapsort past a recursion-depth limit\n    num_items = len(values)\n    depth_limit = 2 * int(math.log2(num_items)) if num_items > 1 else 1\n    _introsort_helper(values, 0, num_items - 1, depth_limit)\n    return values\n",
     "label": "Recursive Swap-Based Sort",
     "_source_template_idx": 18,
@@ -1862,6 +3104,27 @@
     "label": "Recursive Swap-Based Sort",
     "_source_template_idx": 18,
     "_variant": 4,
+    "_original_algorithm": "Introsort"
+  },
+  {
+    "code": "import math\n\ndef _insertion_range(arr, start, end):\n    for i in range(start + 1, end + 1):\n        key = arr[i]\n        j = i - 1\n        while j >= start and arr[j] > key:\n            arr[j + 1] = arr[j]\n            j -= 1\n        arr[j + 1] = key\n\ndef _heapify_range(arr, n, i, offset):\n    largest = i\n    left = 2 * i + 1\n    right = 2 * i + 2\n    if left < n and arr[offset + left] > arr[offset + largest]:\n        largest = left\n    if right < n and arr[offset + right] > arr[offset + largest]:\n        largest = right\n    if largest != i:\n        arr[offset + i], arr[offset + largest] = arr[offset + largest], arr[offset + i]\n        _heapify_range(arr, n, largest, offset)\n\ndef _heap_sort_range(arr, start, end):\n    n = end - start + 1\n    for i in range(n // 2 - 1, -1, -1):\n        _heapify_range(arr, n, i, start)\n    for i in range(n - 1, 0, -1):\n        arr[start], arr[start + i] = arr[start + i], arr[start]\n        _heapify_range(arr, i, 0, start)\n\ndef _partition_range(arr, start, end):\n    pivot = arr[end]\n    i = start - 1\n    for j in range(start, end):\n        if arr[j] <= pivot:\n            i += 1\n            arr[i], arr[j] = arr[j], arr[i]\n    arr[i + 1], arr[end] = arr[end], arr[i + 1]\n    return i + 1\n\ndef _introsort_helper(arr, start, end, depth_limit):\n    size = end - start + 1\n    if size < 16:\n        _insertion_range(arr, start, end)\n        return\n    if depth_limit == 0:\n        _heap_sort_range(arr, start, end)\n        return\n    pivot_idx = _partition_range(arr, start, end)\n    _introsort_helper(arr, start, pivot_idx - 1, depth_limit - 1)\n    _introsort_helper(arr, pivot_idx + 1, end, depth_limit - 1)\n\ndef sort_solve(values):\n    num_items = len(values)\n    depth_limit = 2 * int(math.log2(num_items)) if num_items > 1 else 1\n    _introsort_helper(values, 0, num_items - 1, depth_limit)\n    return values\n",
+    "label": "Recursive Swap-Based Sort",
+    "_source_template_idx": 18,
+    "_variant": 5,
+    "_original_algorithm": "Introsort"
+  },
+  {
+    "code": "import math\n\ndef _insertion_range(arr, start, end):\n    for i in range(start + 1, end + 1):\n        key = arr[i]\n        j = i - 1\n        while j >= start and arr[j] > key:\n            arr[j + 1] = arr[j]\n            j -= 1\n        arr[j + 1] = key\n\ndef _heapify_range(arr, n, i, offset):\n    largest = i\n    left = 2 * i + 1\n    right = 2 * i + 2\n    if left < n and arr[offset + left] > arr[offset + largest]:\n        largest = left\n    if right < n and arr[offset + right] > arr[offset + largest]:\n        largest = right\n    if largest != i:\n        arr[offset + i], arr[offset + largest] = arr[offset + largest], arr[offset + i]\n        _heapify_range(arr, n, largest, offset)\n\ndef _heap_sort_range(arr, start, end):\n    n = end - start + 1\n    for i in range(n // 2 - 1, -1, -1):\n        _heapify_range(arr, n, i, start)\n    for i in range(n - 1, 0, -1):\n        arr[start], arr[start + i] = arr[start + i], arr[start]\n        _heapify_range(arr, i, 0, start)\n\ndef _partition_range(arr, start, end):\n    pivot = arr[end]\n    i = start - 1\n    for j in range(start, end):\n        if arr[j] <= pivot:\n            i += 1\n            arr[i], arr[j] = arr[j], arr[i]\n    arr[i + 1], arr[end] = arr[end], arr[i + 1]\n    return i + 1\n\ndef _introsort_helper(arr, start, end, depth_limit):\n    size = end - start + 1\n    if size < 16:\n        _insertion_range(arr, start, end)\n        return\n    if depth_limit == 0:\n        _heap_sort_range(arr, start, end)\n        return\n    pivot_idx = _partition_range(arr, start, end)\n    _introsort_helper(arr, start, pivot_idx - 1, depth_limit - 1)\n    _introsort_helper(arr, pivot_idx + 1, end, depth_limit - 1)\n\ndef sort_array(items):\n    # introsort - quicksort that falls back to heapsort past a recursion-depth limit\n    total = len(items)\n    depth_limit = 2 * int(math.log2(total)) if total > 1 else 1\n    _introsort_helper(items, 0, total - 1, depth_limit)\n    return items\n",
+    "label": "Recursive Swap-Based Sort",
+    "_source_template_idx": 18,
+    "_variant": 6,
+    "_original_algorithm": "Introsort"
+  },
+  {
+    "code": "import math\n\ndef _insertion_range(arr, start, end):\n    for i in range(start + 1, end + 1):\n        key = arr[i]\n        j = i - 1\n        while j >= start and arr[j] > key:\n            arr[j + 1] = arr[j]\n            j -= 1\n        arr[j + 1] = key\n\ndef _heapify_range(arr, n, i, offset):\n    largest = i\n    left = 2 * i + 1\n    right = 2 * i + 2\n    if left < n and arr[offset + left] > arr[offset + largest]:\n        largest = left\n    if right < n and arr[offset + right] > arr[offset + largest]:\n        largest = right\n    if largest != i:\n        arr[offset + i], arr[offset + largest] = arr[offset + largest], arr[offset + i]\n        _heapify_range(arr, n, largest, offset)\n\ndef _heap_sort_range(arr, start, end):\n    n = end - start + 1\n    for i in range(n // 2 - 1, -1, -1):\n        _heapify_range(arr, n, i, start)\n    for i in range(n - 1, 0, -1):\n        arr[start], arr[start + i] = arr[start + i], arr[start]\n        _heapify_range(arr, i, 0, start)\n\ndef _partition_range(arr, start, end):\n    pivot = arr[end]\n    i = start - 1\n    for j in range(start, end):\n        if arr[j] <= pivot:\n            i += 1\n            arr[i], arr[j] = arr[j], arr[i]\n    arr[i + 1], arr[end] = arr[end], arr[i + 1]\n    return i + 1\n\ndef _introsort_helper(arr, start, end, depth_limit):\n    size = end - start + 1\n    if size < 16:\n        _insertion_range(arr, start, end)\n        return\n    if depth_limit == 0:\n        _heap_sort_range(arr, start, end)\n        return\n    pivot_idx = _partition_range(arr, start, end)\n    _introsort_helper(arr, start, pivot_idx - 1, depth_limit - 1)\n    _introsort_helper(arr, pivot_idx + 1, end, depth_limit - 1)\n\ndef merge_sort(arr):\n    n = len(arr)\n    depth_limit = 2 * int(math.log2(n)) if n > 1 else 1\n    _introsort_helper(arr, 0, n - 1, depth_limit)\n    return arr\n",
+    "label": "Recursive Swap-Based Sort",
+    "_source_template_idx": 18,
+    "_variant": 7,
     "_original_algorithm": "Introsort"
   },
   {
@@ -1900,6 +3163,27 @@
     "_original_algorithm": "Smoothsort"
   },
   {
+    "code": "def _leonardo(k):\n    if k < 2:\n        return 1\n    a, b = 1, 1\n    for _ in range(k - 1):\n        a, b = b, a + b + 1\n    return b\n\ndef _sift(arr, root, order):\n    while order > 1:\n        right_child = root - 1\n        left_child = root - 1 - _leonardo(order - 2)\n        if arr[left_child] >= arr[right_child]:\n            bigger_child = left_child\n            next_order = order - 1\n        else:\n            bigger_child = right_child\n            next_order = order - 2\n        if arr[bigger_child] <= arr[root]:\n            break\n        arr[root], arr[bigger_child] = arr[bigger_child], arr[root]\n        root = bigger_child\n        order = next_order\n\ndef _heap_root_positions(heap_orders):\n    positions = []\n    pos = -1\n    for order in heap_orders:\n        pos += _leonardo(order)\n        positions.append(pos)\n    return positions\n\ndef sort_array(items):\n    total = len(items)\n    heap_orders = []\n    for to_idx in range(total):\n        if len(heap_orders) >= 2 and heap_orders[-2] == heap_orders[-1] + 1:\n            heap_orders[-2] += 1\n            heap_orders.pop()\n        elif heap_orders and heap_orders[-1] == 1:\n            heap_orders.append(0)\n        else:\n            heap_orders.append(1)\n        _sift(items, to_idx, heap_orders[-1])\n\n    for to_idx in range(total - 1, -1, -1):\n        if not heap_orders:\n            break\n        positions = _heap_root_positions(heap_orders)\n        max_k = max(range(len(positions)), key=lambda i: items[positions[i]])\n        if max_k != len(positions) - 1:\n            items[positions[max_k]], items[positions[-1]] = items[positions[-1]], items[positions[max_k]]\n            _sift(items, positions[max_k], heap_orders[max_k])\n        top_order = heap_orders[-1]\n        if top_order <= 1:\n            heap_orders.pop()\n        else:\n            heap_orders.pop()\n            heap_orders.append(top_order - 1)\n            heap_orders.append(top_order - 2)\n    return items\n",
+    "label": "Heap/Complex Structural Sort",
+    "_source_template_idx": 19,
+    "_variant": 5,
+    "_original_algorithm": "Smoothsort"
+  },
+  {
+    "code": "def _leonardo(k):\n    if k < 2:\n        return 1\n    a, b = 1, 1\n    for _ in range(k - 1):\n        a, b = b, a + b + 1\n    return b\n\ndef _sift(arr, root, order):\n    while order > 1:\n        right_child = root - 1\n        left_child = root - 1 - _leonardo(order - 2)\n        if arr[left_child] >= arr[right_child]:\n            bigger_child = left_child\n            next_order = order - 1\n        else:\n            bigger_child = right_child\n            next_order = order - 2\n        if arr[bigger_child] <= arr[root]:\n            break\n        arr[root], arr[bigger_child] = arr[bigger_child], arr[root]\n        root = bigger_child\n        order = next_order\n\ndef _heap_root_positions(heap_orders):\n    positions = []\n    pos = -1\n    for order in heap_orders:\n        pos += _leonardo(order)\n        positions.append(pos)\n    return positions\n\ndef merge_sort(arr):\n    # simplified smoothsort - a forest of Leonardo heaps. Each extraction step\n    # explicitly selects the max among current heap roots and swaps it into\n    # place, rather than replicating Dijkstra's O(1)-amortized trinkle - still\n    # uses the real Leonardo-heap sift/order machinery, just a simpler (and\n    # asymptotically slightly less optimal, but definitely correct) selection\n    # step for restoring cross-heap ordering.\n    n = len(arr)\n    heap_orders = []\n    for end in range(n):\n        if len(heap_orders) >= 2 and heap_orders[-2] == heap_orders[-1] + 1:\n            heap_orders[-2] += 1\n            heap_orders.pop()\n        elif heap_orders and heap_orders[-1] == 1:\n            heap_orders.append(0)\n        else:\n            heap_orders.append(1)\n        _sift(arr, end, heap_orders[-1])\n\n    for end in range(n - 1, -1, -1):\n        if not heap_orders:\n            break\n        positions = _heap_root_positions(heap_orders)\n        max_k = max(range(len(positions)), key=lambda i: arr[positions[i]])\n        if max_k != len(positions) - 1:\n            arr[positions[max_k]], arr[positions[-1]] = arr[positions[-1]], arr[positions[max_k]]\n            _sift(arr, positions[max_k], heap_orders[max_k])\n        top_order = heap_orders[-1]\n        if top_order <= 1:\n            heap_orders.pop()\n        else:\n            heap_orders.pop()\n            heap_orders.append(top_order - 1)\n            heap_orders.append(top_order - 2)\n    return arr\n",
+    "label": "Heap/Complex Structural Sort",
+    "_source_template_idx": 19,
+    "_variant": 6,
+    "_original_algorithm": "Smoothsort"
+  },
+  {
+    "code": "def _leonardo(k):\n    if k < 2:\n        return 1\n    a, b = 1, 1\n    for _ in range(k - 1):\n        a, b = b, a + b + 1\n    return b\n\ndef _sift(arr, root, order):\n    while order > 1:\n        right_child = root - 1\n        left_child = root - 1 - _leonardo(order - 2)\n        if arr[left_child] >= arr[right_child]:\n            bigger_child = left_child\n            next_order = order - 1\n        else:\n            bigger_child = right_child\n            next_order = order - 2\n        if arr[bigger_child] <= arr[root]:\n            break\n        arr[root], arr[bigger_child] = arr[bigger_child], arr[root]\n        root = bigger_child\n        order = next_order\n\ndef _heap_root_positions(heap_orders):\n    positions = []\n    pos = -1\n    for order in heap_orders:\n        pos += _leonardo(order)\n        positions.append(pos)\n    return positions\n\ndef quick_sort(nums):\n    length = len(nums)\n    heap_orders = []\n    for e in range(length):\n        if len(heap_orders) >= 2 and heap_orders[-2] == heap_orders[-1] + 1:\n            heap_orders[-2] += 1\n            heap_orders.pop()\n        elif heap_orders and heap_orders[-1] == 1:\n            heap_orders.append(0)\n        else:\n            heap_orders.append(1)\n        _sift(nums, e, heap_orders[-1])\n\n    for e in range(length - 1, -1, -1):\n        if not heap_orders:\n            break\n        positions = _heap_root_positions(heap_orders)\n        max_k = max(range(len(positions)), key=lambda i: nums[positions[i]])\n        if max_k != len(positions) - 1:\n            nums[positions[max_k]], nums[positions[-1]] = nums[positions[-1]], nums[positions[max_k]]\n            _sift(nums, positions[max_k], heap_orders[max_k])\n        top_order = heap_orders[-1]\n        if top_order <= 1:\n            heap_orders.pop()\n        else:\n            heap_orders.pop()\n            heap_orders.append(top_order - 1)\n            heap_orders.append(top_order - 2)\n    return nums\n",
+    "label": "Heap/Complex Structural Sort",
+    "_source_template_idx": 19,
+    "_variant": 7,
+    "_original_algorithm": "Smoothsort"
+  },
+  {
     "code": "import random\n\ndef _is_sorted(arr):\n    return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))\n\ndef sort_array(arr):\n    # bogo sort - random shuffle until sorted, capped to avoid a runaway loop\n    attempts = 0\n    while not _is_sorted(arr) and attempts < 2000:\n        random.shuffle(arr)\n        attempts += 1\n    return arr\n",
     "label": "Single-Pass Loop Sort",
     "_source_template_idx": 20,
@@ -1932,6 +3216,27 @@
     "label": "Single-Pass Loop Sort",
     "_source_template_idx": 20,
     "_variant": 4,
+    "_original_algorithm": "Bogo Sort"
+  },
+  {
+    "code": "import random\n\ndef _is_sorted(arr):\n    return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))\n\ndef merge_sort(arr):\n    attempts = 0\n    while not _is_sorted(arr) and attempts < 2000:\n        random.shuffle(arr)\n        attempts += 1\n    return arr\n",
+    "label": "Single-Pass Loop Sort",
+    "_source_template_idx": 20,
+    "_variant": 5,
+    "_original_algorithm": "Bogo Sort"
+  },
+  {
+    "code": "import random\n\ndef _is_sorted(arr):\n    return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))\n\ndef quick_sort(nums):\n    # bogo sort - random shuffle until sorted, capped to avoid a runaway loop\n    attempts = 0\n    while not _is_sorted(nums) and attempts < 2000:\n        random.shuffle(nums)\n        attempts += 1\n    return nums\n",
+    "label": "Single-Pass Loop Sort",
+    "_source_template_idx": 20,
+    "_variant": 6,
+    "_original_algorithm": "Bogo Sort"
+  },
+  {
+    "code": "import random\n\ndef _is_sorted(arr):\n    return all(arr[i] <= arr[i + 1] for i in range(len(arr) - 1))\n\ndef sort_solve(data):\n    attempts = 0\n    while not _is_sorted(data) and attempts < 2000:\n        random.shuffle(data)\n        attempts += 1\n    return data\n",
+    "label": "Single-Pass Loop Sort",
+    "_source_template_idx": 20,
+    "_variant": 7,
     "_original_algorithm": "Bogo Sort"
   }
 ]

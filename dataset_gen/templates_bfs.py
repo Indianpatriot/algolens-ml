@@ -89,4 +89,25 @@ def __FUNC__(__ARR__, __START__):
     return __DIST__
 '''
 
-TEMPLATES = [T1_GRAPH_TRAVERSAL, T2_SHORTEST_PATH, T3_TREE_LEVEL_ORDER, T4_GRID_BFS]
+T5_DIJKSTRA_PQ = '''
+import heapq
+
+def __FUNC__(__GRAPH__, __START__):
+    # Dijkstra single-source shortest path using priority queue
+    __DIST__ = {__NODE__: float('inf') for __NODE__ in __GRAPH__}
+    __DIST__[__START__] = 0
+    __PQ__ = [(0, __START__)]
+
+    while __PQ__:
+        __CURR_D__, __U__ = heapq.heappop(__PQ__)
+        if __CURR_D__ > __DIST__[__U__]:
+            continue
+        for __V__, __WEIGHT__ in __GRAPH__.get(__U__, []):
+            if __DIST__[__U__] + __WEIGHT__ < __DIST__[__V__]:
+                __DIST__[__V__] = __DIST__[__U__] + __WEIGHT__
+                heapq.heappush(__PQ__, (__DIST__[__V__], __V__))
+
+    return __DIST__
+'''
+
+TEMPLATES = [T1_GRAPH_TRAVERSAL, T2_SHORTEST_PATH, T3_TREE_LEVEL_ORDER, T4_GRID_BFS, T5_DIJKSTRA_PQ]

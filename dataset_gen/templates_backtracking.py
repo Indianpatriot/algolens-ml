@@ -92,4 +92,63 @@ def __FUNC__(__ARR__, __K__):
     return __RESULT__
 '''
 
-TEMPLATES = [T1_PERMUTATIONS, T2_NQUEENS, T3_COMBINATION_SUM, T4_CONSTRAINED_PLACEMENT]
+T5_WORD_SEARCH = '''
+def __FUNC__(__BOARD__, __WORD__):
+    # 2D grid word search via backtracking with visited cell restoration
+    __ROWS__ = len(__BOARD__)
+    __COLS__ = len(__BOARD__[0])
+
+    def __HELPER__(__R__, __C__, __INDEX__):
+        if __INDEX__ == len(__WORD__):
+            return True
+        if __R__ < 0 or __R__ >= __ROWS__ or __C__ < 0 or __C__ >= __COLS__ or __BOARD__[__R__][__C__] != __WORD__[__INDEX__]:
+            return False
+        
+        __ORIG__ = __BOARD__[__R__][__C__]
+        __BOARD__[__R__][__C__] = '#'
+        __FOUND__ = (
+            __HELPER__(__R__ + 1, __C__, __INDEX__ + 1) or
+            __HELPER__(__R__ - 1, __C__, __INDEX__ + 1) or
+            __HELPER__(__R__, __C__ + 1, __INDEX__ + 1) or
+            __HELPER__(__R__, __C__ - 1, __INDEX__ + 1)
+        )
+        __BOARD__[__R__][__C__] = __ORIG__
+        return __FOUND__
+
+    for __R__ in range(__ROWS__):
+        for __C__ in range(__COLS__):
+            if __HELPER__(__R__, __C__, 0):
+                return True
+    return False
+'''
+
+T6_TSP_BACKTRACKING = '''
+def __FUNC__(__GRAPH__, __START__):
+    # travelling salesman problem via state-space backtracking
+    __N__ = len(__GRAPH__)
+    __VISITED__ = [False] * __N__
+    __VISITED__[__START__] = True
+    __BEST_COST__ = [float('inf')]
+
+    def __HELPER__(__CURR__, __COUNT__, __COST__):
+        if __COUNT__ == __N__ and __GRAPH__[__CURR__][__START__] > 0:
+            __BEST_COST__[0] = min(__BEST_COST__[0], __COST__ + __GRAPH__[__CURR__][__START__])
+            return
+        for __NEXT__ in range(__N__):
+            if not __VISITED__[__NEXT__] and __GRAPH__[__CURR__][__NEXT__] > 0:
+                __VISITED__[__NEXT__] = True
+                __HELPER__(__NEXT__, __COUNT__ + 1, __COST__ + __GRAPH__[__CURR__][__NEXT__])
+                __VISITED__[__NEXT__] = False
+
+    __HELPER__(__START__, 1, 0)
+    return __BEST_COST__[0]
+'''
+
+TEMPLATES = [
+    T1_PERMUTATIONS,
+    T2_NQUEENS,
+    T3_COMBINATION_SUM,
+    T4_CONSTRAINED_PLACEMENT,
+    T5_WORD_SEARCH,
+    T6_TSP_BACKTRACKING,
+]
