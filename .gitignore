@@ -1,0 +1,37 @@
+# Personal reference material - not part of the actual project
+working-examples/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables / secrets
+.env
+.env.local
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Dataset generation debug artifact (large, regeneratable - dataset.json and
+# features.csv are kept tracked since they're useful to have in the repo)
+data/dataset_debug.json
+
+# Frontend project lives as a nested folder here but has its own separate
+# git repo - never let this repo's git operations touch it
+algo-lens-viz/
