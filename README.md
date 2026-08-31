@@ -214,7 +214,3 @@ python independent_test.py
 | **Backend & ML** | Python 3, FastAPI, Uvicorn, scikit-learn (Random Forest), pandas, joblib |
 
 ---
-
-## 📄 License
-
-This project is licensed under the MIT License.
