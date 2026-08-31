@@ -115,11 +115,7 @@ Contributions, issue reports, and algorithm submissions are welcome. Please open
 
 ---
 
-## 👤 About
 
-Created by [Indianpatriot](https://github.com/Indianpatriot) — building intelligent developer and computer science education tools.
-
----
 
 ## 📄 License
 
