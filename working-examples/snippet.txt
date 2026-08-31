@@ -1,0 +1,2330 @@
+def bucket_sort(arr):
+    n = len(arr)
+    if n <= 1:
+        return arr
+
+    # 1. Create n empty buckets
+    buckets = [[] for _ in range(n)]
+
+    # 2. Distribute elements into corresponding buckets
+    for num in arr:
+        bucket_idx = int(n * num)  # Map float [0, 1) to index [0, n-1]
+        buckets[bucket_idx].append(num)
+
+    # 3. Sort individual buckets (using insertion/standard sort)
+    for bucket in buckets:
+        bucket.sort()
+
+    # 4. Concatenate all buckets into the final array
+    sorted_arr = []
+    for bucket in buckets:
+        sorted_arr.extend(bucket)
+
+    return sorted_arr
+
+# Test Input
+sample_floats = [0.78, 0.17, 0.39, 0.26, 0.72, 0.94, 0.21]
+print("Sorted Floats:", bucket_sort(sample_floats))
+
+
+QUICK Sort
+
+def quick_sort(arr, start=0, end=None):
+    if end is None:
+        end = len(arr) - 1
+    if start < end:
+        pivot = arr[end]
+        i = start - 1
+        for j in range(start, end):
+            if arr[j] <= pivot:
+                i += 1
+                arr[i], arr[j] = arr[j], arr[i]
+        arr[i + 1], arr[end] = arr[end], arr[i + 1]
+        pivot_idx = i + 1
+        quick_sort(arr, start, pivot_idx - 1)
+        quick_sort(arr, pivot_idx + 1, end)
+    return arr
+
+merge sort
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+insertion sort
+def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+
+        arr[j + 1] = key
+
+    return arr
+
+
+nums = [29, 10, 14, 37, 13]
+print(insertion_sort(nums))  # [10, 13, 14, 29, 37]
+
+function insertionSort(arr) {
+    for (let i = 1; i < arr.length; i++) {
+        let key = arr[i];
+        let j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            j--;
+        }
+        arr[j + 1] = key;
+    }
+    return arr;
+}
+
+const nums = [29, 10, 14, 37, 13];
+console.log(insertionSort(nums)); // [10, 13, 14, 29, 37]
+
+heap sort
+def heap_sort(arr):
+    n = len(arr)
+    def heapify(heap_size, i):
+        largest = i
+        l = 2 * i + 1
+        r = 2 * i + 2
+        if l < heap_size and arr[l] > arr[largest]:
+            largest = l
+        if r < heap_size and arr[r] > arr[largest]:
+            largest = r
+        if largest != i:
+            arr[i], arr[largest] = arr[largest], arr[i]
+            heapify(heap_size, largest)
+
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(n, i)
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify(i, 0)
+    return arr
+
+queue operations
+from collections import deque
+
+# Queue: First-In, First-Out (FIFO)
+queue = deque()
+
+# Enqueue (Add to rear)
+queue.append(10)
+queue.append(20)
+queue.append(30)
+
+# Peek front element
+front_item = queue[0]  # 10
+
+# Dequeue (Remove from front)
+dequeued_item = queue.popleft()  # 10
+
+print("Queue:", queue)
+print("Front item:", front_item)
+print("Dequeued item:", dequeued_item)
+
+
+stack operations
+stack = []
+
+stack.append(10)
+stack.append(20)
+stack.append(30)
+
+top_item = stack[-1]  
+
+popped_item = stack.pop()  
+
+breadth first search(bfs)
+from collections import deque
+
+def bfs_graph(graph, start_node):
+    visited = set([start_node])
+    queue = deque([start_node])
+    traversal_order = []
+
+    while queue:
+        node = queue.popleft()
+        traversal_order.append(node)
+
+        for neighbor in graph.get(node, []):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+    return traversal_order
+
+# Example Usage
+graph = {
+    'A': ['B', 'C'],
+    'B': ['D', 'E'],
+    'C': ['F'],
+    'D': [],
+    'E': [],
+    'F': []
+}
+
+print(bfs_graph(graph, 'A'))
+# Output: ['A', 'B', 'C', 'D', 'E', 'F']
+
+dijkstra algorithm
+
+import heapq
+
+# Dijkstra's Single-Source Shortest Path
+graph = {
+    'A': [('B', 4), ('C', 2)],
+    'B': [('C', 1), ('D', 5)],
+    'C': [('D', 8), ('E', 10)],
+    'D': [('E', 2)],
+    'E': []
+}
+start = 'A'
+
+distances = {node: float('inf') for node in graph}
+distances[start] = 0
+pq = [(0, start)]
+
+while pq:
+    curr_d, u = heapq.heappop(pq)
+    if curr_d > distances[u]:
+        continue
+    for v, weight in graph[u]:
+        if distances[u] + weight < distances[v]:
+            distances[v] = distances[u] + weight
+            heapq.heappush(pq, (distances[v], v))
+
+all pairs shortest Path
+# Floyd-Warshall All-Pairs Shortest Path (6x6 Matrix)
+INF = float('inf')
+V = 6
+
+matrix = [
+    [0,   3,   8,   INF, -4,  INF],
+    [INF, 0,   INF, 1,   7,   INF],
+    [INF, 4,   0,   INF, INF, INF],
+    [2,   INF, -5,  0,   INF, 2  ],
+    [INF, INF, INF, 6,   0,   1  ],
+    [INF, INF, INF, INF, INF, 0  ]
+]
+
+dist = [row[:] for row in matrix]
+
+for k in range(V):
+    for i in range(V):
+        for j in range(V):
+            if dist[i][k] + dist[k][j] < dist[i][j]:
+                dist[i][j] = dist[i][k] + dist[k][j]
+
+# Output Final Distance Matrix
+for row in dist:
+    print([val if val != INF else 'INF' for val in row])
+
+
+DAG Topological sort
+from collections import deque
+
+# Kahn's Algorithm (Topological Sort)
+num_nodes = 6
+edges = [[5, 2], [5, 0], [4, 0], [4, 1], [2, 3], [3, 1]]
+
+in_degree = [0] * num_nodes
+for u, v in edges:
+    in_degree[v] += 1
+
+queue = deque([i for i in range(num_nodes) if in_degree[i] == 0])
+order = []
+
+while queue:
+    u = queue.popleft()
+    order.append(u)
+    for u_edge, v_edge in edges:
+        if u_edge == u:
+            in_degree[v_edge] -= 1
+            if in_degree[v_edge] == 0:
+                queue.append(v_edge)
+
+minimum spanning tree 
+# Kruskal's Minimum Spanning Tree
+num_nodes = 4
+edges = [
+    [0, 1, 10],
+    [0, 2, 6],
+    [0, 3, 5],
+    [1, 3, 15],
+    [2, 3, 4]
+]
+
+edges.sort(key=lambda x: x[2])
+parent = list(range(num_nodes))
+
+def find(u):
+    if parent[u] == u:
+        return u
+    parent[u] = find(parent[u])
+    return parent[u]
+
+mst = []
+for u, v, w in edges:
+    root_u = find(u)
+    root_v = find(v)
+    if root_u != root_v:
+        parent[root_u] = root_v
+        mst.append((u, v, w))
+
+n queens:
+def solve_n_queens(n):
+    # N-Queens via backtracking, undoing placement on dead ends
+    result = []
+    cols = set()
+    diag1 = set()
+    diag2 = set()
+    placement = []
+
+    def backtrack(row):
+        if row == n:
+            result.append(placement[:])
+            return
+        for col in range(n):
+            if col in cols or (row - col) in diag1 or (row + col) in diag2:
+                continue
+            cols.add(col)
+            diag1.add(row - col)
+            diag2.add(row + col)
+            placement.append(col)
+            backtrack(row + 1)
+            placement.pop()
+            cols.remove(col)
+            diag1.remove(row - col)
+            diag2.remove(row + col)
+
+    backtrack(0)
+    return result
+
+# Example run:
+# solve_n_queens(7)
+
+permutation js
+function permute(arr) {
+  // Generate all permutations via backtracking with explicit undo
+  const result = [];
+  const path = [];
+  const used = new Array(arr.length).fill(false);
+
+  function backtrack() {
+    if (path.length === arr.length) {
+      result.push([...path]);
+      return;
+    }
+    for (let i = 0; i < arr.length; i++) {
+      if (used[i]) continue;
+      used[i] = true;
+      path.push(arr[i]);
+      backtrack();
+      path.pop();
+      used[i] = false;
+    }
+  }
+
+  backtrack();
+  return result;
+}
+
+// Example run:
+// permute([1, 2, 3]);
+
+permutation py
+def permute(nums):
+    res = []
+    
+    def backtrack(first = 0):
+        if first == len(nums):
+            res.append(nums[:])
+            return
+        for i in range(first, len(nums)):
+            nums[first], nums[i] = nums[i], nums[first]
+            backtrack(first + 1)
+            nums[first], nums[i] = nums[i], nums[first]  # undo swap
+
+    backtrack()
+    return res
+
+# permute([1, 2, 3])
+
+combinations py and js
+def combination_sum(candidates, target):
+    result = []
+    path = []
+
+    def backtrack(start, remaining):
+        if remaining == 0:
+            result.append(path[:])
+            return
+        for i in range(start, len(candidates)):
+            if candidates[i] <= remaining:
+                path.append(candidates[i])
+                backtrack(i, remaining - candidates[i])
+                path.pop()
+
+    backtrack(0, target)
+    return result
+
+# combination_sum([2, 3, 6, 7], 7)
+
+function combinationSum(candidates, target) {
+  const result = [];
+  const path = [];
+
+  function backtrack(start, remaining) {
+    if (remaining === 0) {
+      result.push([...path]);
+      return;
+    }
+    for (let i = start; i < candidates.length; i++) {
+      if (candidates[i] <= remaining) {
+        path.push(candidates[i]);
+        backtrack(i, remaining - candidates[i]);
+        path.pop();
+      }
+    }
+  }
+
+  backtrack(0, target);
+  return result;
+}
+
+// combinationSum([2, 3, 6, 7], 7);
+
+word search
+function exist(board, word) {
+  const R = board.length;
+  const C = board[0].length;
+
+  function searchWord(r, c, k) {
+    if (k === word.length) return true;
+    if (r < 0 || r >= R || c < 0 || c >= C || board[r][c] !== word[k]) {
+      return false;
+    }
+
+    const temp = board[r][c];
+    board[r][c] = "#";
+
+    const found =
+      searchWord(r + 1, c, k + 1) ||
+      searchWord(r - 1, c, k + 1) ||
+      searchWord(r, c + 1, k + 1) ||
+      searchWord(r, c - 1, k + 1);
+
+    board[r][c] = temp;
+    return found;
+  }
+
+  for (let r = 0; r < R; r++) {
+    for (let c = 0; c < C; c++) {
+      if (searchWord(r, c, 0)) return true;
+    }
+  }
+  return false;
+}
+
+def exist(board, word):
+    R, C = len(board), len(board[0])
+
+    def search_word(r, c, k):
+        if k == len(word):
+            return True
+        if r < 0 or r >= R or c < 0 or c >= C or board[r][c] != word[k]:
+            return False
+        
+        temp = board[r][c]
+        board[r][c] = "#"  # mark visited
+        
+        found = (
+            search_word(r + 1, c, k + 1) or
+            search_word(r - 1, c, k + 1) or
+            search_word(r, c + 1, k + 1) or
+            search_word(r, c - 1, k + 1)
+        )
+        
+        board[r][c] = temp  # backtrack unmark
+        return found
+
+    return any(search_word(r, c, 0) for r in range(R) for c in range(C))
+
+# board = [["A","B","C","E"],["S","F","C","S"],["A","D","E","E"]]
+# exist(board, "ABCCED")
+
+hamitonian cycle
+def hamiltonian_cycle(graph, n):
+    path = [-1] * n
+    path[0] = 0  # Start at node 0
+    visited = [False] * n
+    visited[0] = True
+
+    def backtrack(pos):
+        # Base case: All vertices are included in path
+        if pos == n:
+            # Check if there is an edge from the last vertex to the first vertex
+            return graph[path[pos - 1]][path[0]] == 1
+
+        for v in range(1, n):
+            # Check if vertex v can be added to Hamiltonian Cycle
+            if graph[path[pos - 1]][v] == 1 and not visited[v]:
+                path[pos] = v
+                visited[v] = True
+
+                if backtrack(pos + 1):
+                    return True
+
+                # Backtrack / Undo state
+                path[pos] = -1
+                visited[v] = False
+
+        return False
+
+    if backtrack(1):
+        return path + [path[0]]
+    return []
+
+
+# Complex 6-Node Graph Adjacency Matrix
+n = 6
+graph = [
+    [0, 1, 1, 0, 1, 0],
+    [1, 0, 1, 1, 0, 1],
+    [1, 1, 0, 0, 1, 0],
+    [0, 1, 0, 0, 1, 1],
+    [1, 0, 1, 1, 0, 1],
+    [0, 1, 0, 1, 1, 0]
+]
+
+print("Hamiltonian Cycle:", hamiltonian_cycle(graph, n))
+
+
+travelling salesman problem
+
+# Traveling Salesperson Problem (Complex 5-Node Weighted Graph)
+n = 5
+
+# Adjacency Matrix Representation (0 represents no self-loop)
+graph = [
+    [0,  10, 15, 20, 10],  # Edges from Node 0
+    [10,  0, 35, 25, 12],  # Edges from Node 1
+    [15, 35,  0, 30,  8],  # Edges from Node 2
+    [20, 25, 30,  0, 14],  # Edges from Node 3
+    [10, 12,  8, 14,  0]   # Edges from Node 4
+]
+
+def tsp(graph, n):
+    visited = [False] * n
+    visited[0] = True
+    min_cost = [float('inf')]
+
+    def backtrack(curr, count, cost):
+        if count == n and graph[curr][0] > 0:
+            min_cost[0] = min(min_cost[0], cost + graph[curr][0])
+            return
+
+        for nxt in range(n):
+            if not visited[nxt] and graph[curr][nxt] > 0:
+                if cost + graph[curr][nxt] < min_cost[0]:  # Pruning branch
+                    visited[nxt] = True
+                    backtrack(nxt, count + 1, cost + graph[curr][nxt])
+                    visited[nxt] = False
+
+    backtrack(0, 1, 0)
+    return min_cost[0]
+
+print("Minimum TSP Tour Cost:", tsp(graph, n))
+
+
+max sum subarray
+def max_sum_subarray(arr, k):
+    # Fixed-size sliding window of size k
+    window_sum = sum(arr[:k])
+    max_sum = window_sum
+    
+    for i in range(k, len(arr)):
+        window_sum += arr[i] - arr[i - k]
+        max_sum = max(max_sum, window_sum)
+        
+    return max_sum
+
+# Test inputs:
+arr = [2, 1, 5, 1, 3, 2]
+k = 3
+# max_sum_subarray(arr, k)  # Returns 9 (subarray [5, 1, 3])
+
+length of longest substring
+def length_of_longest_substring(s):
+    # Variable-size sliding window with hash set
+    seen = set()
+    left = 0
+    max_len = 0
+    
+    for right in range(len(s)):
+        while s[right] in seen:
+            seen.remove(s[left])
+            left += 1
+        seen.add(s[right])
+        max_len = max(max_len, right - left + 1)
+        
+    return max_len
+
+# Test input:
+s = "pwwkew"
+# length_of_longest_substring(s)  # Returns 3 ("wke")
+
+2 sum
+# Two Sum II - Non-Negative Input Data
+numbers = [1, 3, 4, 7, 10, 12, 15, 18, 21, 25]
+target = 22
+
+
+def two_sum_ii(numbers: list[int], target: int) -> list[int]:
+    left = 0
+    right = len(numbers) - 1
+
+    while left < right:
+        curr_sum = numbers[left] + numbers[right]
+        if curr_sum == target:
+            return [left + 1, right + 1]  # 1-based index return
+        elif curr_sum < target:
+            left += 1
+        else:
+            right -= 1
+
+    return []
+
+
+result = two_sum_ii(numbers, target)
+print("1-based Indices:", result)
+if result:
+    print(f"Values: numbers[{result[0]-1}] + numbers[{result[1]-1}] = {target}")
+
+
+remove zerose
+# Remove Duplicates from Sorted Array - Non-Negative Input
+nums = [0, 0, 1, 1, 1, 2, 2, 3, 3, 4, 4, 4, 5]
+
+
+def remove_duplicates(nums: list[int]) -> int:
+    if not nums:
+        return 0
+    write = 0
+    for read in range(1, len(nums)):
+        if nums[read] != nums[write]:
+            write += 1
+            nums[write] = nums[read]
+    return write + 1
+
+
+k = remove_duplicates(nums)
+
+print("Unique Count (k):", k)
+print("Modified Array (First k elements):", nums[:k])
+print("Full Array State:", nums)
+
+# Merge Two Sorted Arrays - Non-Negative Input
+arr1 = [1, 3, 5, 7, 9, 11]
+arr2 = [2, 4, 6, 8, 10, 12, 14, 15]
+
+
+def merge_sorted(arr1: list[int], arr2: list[int]) -> list[int]:
+    p1, p2 = 0, 0
+    merged = []
+
+    while p1 < len(arr1) and p2 < len(arr2):
+        if arr1[p1] <= arr2[p2]:
+            merged.append(arr1[p1])
+            p1 += 1
+        else:
+            merged.append(arr2[p2])
+            p2 += 1
+
+    merged.extend(arr1[p1:])
+    merged.extend(arr2[p2:])
+    return merged
+
+
+result = merge_sorted(arr1, arr2)
+print("Merged Array:", result)
+
+slow and fast pointrs
+# Python
+class ListNode:
+    def __init__(self, val=0, next=None):
+        self.val = val
+        self.next = next
+
+def has_cycle(head: ListNode | None) -> bool:
+    if not head or not head.next:
+        return False
+    slow = head
+    fast = head
+    
+    while fast and fast.next:
+        slow = slow.next
+        fast = fast.next.next
+        if slow == fast:
+            return True
+            
+    return False
+
+dfs
+def dfs(graph, node, visited=None):
+    if visited is None:
+        visited = set()
+
+    visited.add(node)
+
+    for neighbor in graph.get(node, []):
+        if neighbor not in visited:
+            dfs(graph, neighbor, visited)
+
+    return visited
+
+
+# Adjacency List
+graph = {
+    'A': ['B', 'C', 'D'],
+    'B': ['E', 'F'],
+    'C': ['G'],
+    'D': ['H', 'I'],
+    'E': ['J'],
+    'F': ['G', 'I'],
+    'G': ['J'],
+    'H': ['I'],
+    'I': ['J'],
+    'J': [],
+}
+
+visited_nodes = dfs(graph, 'A')
+print(visited_nodes)
+
+climb stairs
+def climb_stairs(n, memo=None):
+    if memo is None:
+        memo = {}
+    if n <= 1:
+        return 1
+    if n in memo:
+        return memo[n]
+    result = climb_stairs(n - 1, memo) + climb_stairs(n - 2, memo)
+    memo[n] = result
+    return result
+
+print(climb_stairs(5))
+
+coin change
+def coin_change(target, arr):
+    dp = [float('inf')] * (target + 1)
+    dp[0] = 0
+    for i in range(1, target + 1):
+        for coin in arr:
+            if coin <= i:
+                dp[i] = min(dp[i], dp[i - coin] + 1)
+    return dp[target] if dp[target] != float('inf') else -1
+
+print(coin_change(11, [1, 2, 5]))
+
+longest common subsequence (lcs)
+def lcs(arr, arr2):
+    n = len(arr)
+    m = len(arr2)
+    dp = [[0] * (m + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            if arr[i - 1] == arr2[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+    return dp[n][m]
+
+print(lcs("abcde", "ace"))
+
+knapsack problem
+def knapsack(arr, arr2, target):
+    n = len(arr)
+    dp = [[0] * (target + 1) for _ in range(n + 1)]
+    for i in range(1, n + 1):
+        for j in range(target + 1):
+            dp[i][j] = dp[i - 1][j]
+            if arr[i - 1] <= j:
+                candidate = dp[i - 1][j - arr[i - 1]] + arr2[i - 1]
+                dp[i][j] = max(dp[i][j], candidate)
+    return dp[n][target]
+
+weights = [1, 3, 4, 5]
+values = [10, 40, 50, 70]
+print(knapsack(weights, values, 8))
+
+linked list sort
+function sortList(head) {
+    if (!head || !head.next) return head;
+
+    // 1. Find middle with Fast & Slow pointers
+    let slow = head;
+    let fast = head.next;
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+    }
+
+    // 2. Split list into two halves
+    let mid = slow.next;
+    slow.next = null;
+
+    // 3. Recursive sort & merge
+    let left = sortList(head);
+    let right = sortList(mid);
+    return merge(left, right);
+}
+
+function merge(l1, l2) {
+    let dummy = { val: 0, next: null };
+    let curr = dummy;
+    while (l1 && l2) {
+        if (l1.val <= l2.val) {
+            curr.next = l1;
+            l1 = l1.next;
+        } else {
+            curr.next = l2;
+            l2 = l2.next;
+        }
+        curr = curr.next;
+    }
+    curr.next = l1 || l2;
+    return dummy.next;
+}
+
+python version
+def sort_list(head):
+    if not head or not head['next']:
+        return head
+
+    # 1. Fast & Slow pointers to find middle
+    slow, fast = head, head['next']
+    while fast and fast['next']:
+        slow = slow['next']
+        fast = fast['next']['next']
+
+    # 2. Split into two halves
+    mid = slow['next']
+    slow['next'] = None
+
+    # 3. Recurse and Merge
+    left = sort_list(head)
+    right = sort_list(mid)
+    return merge(left, right)
+
+
+def merge(l1, l2):
+    dummy = {'val': 0, 'next': None}
+    curr = dummy
+    while l1 and l2:
+        if l1['val'] <= l2['val']:
+            curr['next'], l1 = l1, l1['next']
+        else:
+            curr['next'], l2 = l2, l2['next']
+        curr = curr['next']
+    curr['next'] = l1 or l2
+    return dummy['next']
+
+horspool js
+function horspool(text, pattern) {
+    const m = pattern.length;
+    const n = text.length;
+    const shiftTable = {};
+
+    // 1. Build Bad-Symbol Shift Table
+    for (let i = 0; i < m - 1; i++) {
+        shiftTable[pattern[i]] = m - 1 - i;
+    }
+
+    // 2. Search text
+    let i = 0;
+    while (i <= n - m) {
+        let k = m - 1;
+        while (k >= 0 && pattern[k] === text[i + k]) {
+            k--;
+        }
+        if (k < 0) return i; // Found occurrence
+        const shift = shiftTable[text[i + m - 1]] || m;
+        i += shift;
+    }
+    return -1;
+}
+
+const text = "BARD LOVES BANANAS";
+const pattern = "BANANAS";
+console.log(horspool(text, pattern)); // 11    
+
+# Horspool's String Matching Algorithm
+def horspool(text: str, pattern: str) -> int:
+    m = len(pattern)
+    n = len(text)
+    if m > n or m == 0:
+        return -1
+
+    shift_table = {}
+    for i in range(m - 1):
+        shift_table[pattern[i]] = m - 1 - i
+
+    # 2. Search Text
+    i = 0
+    while i <= n - m:
+        k = m - 1
+        # Compare right-to-left
+        while k >= 0 and pattern[k] == text[i + k]:
+            k -= 1
+
+        if k < 0:
+            return i  # Match found at index i
+
+        # Shift based on text character aligned with pattern's last character
+        last_char = text[i + m - 1]
+        shift = shift_table.get(last_char, m)
+        i += shift
+
+    return -1
+
+
+text = "DATA STRUCTURES AND ALGORITHMS ANALYSIS"
+pattern = "ALGORITHMS"
+
+daily temparatures
+function dailyTemperatures(temperatures) {
+    const n = temperatures.length;
+    const ans = new Array(n).fill(0);
+    const stack = []; // Monotonic decreasing stack of indices
+
+    for (let i = 0; i < n; i++) {
+        while (stack.length > 0 && temperatures[i] > temperatures[stack[stack.length - 1]]) {
+            const prev = stack.pop();
+            ans[prev] = i - prev;
+        }
+        stack.push(i);
+    }
+    return ans;
+}
+
+const temps = [73, 74, 75, 71, 69, 72, 76, 73];
+console.log(dailyTemperatures(temps)); // [1, 1, 4, 2, 1, 1, 0, 0]
+
+# Daily Temperatures (Monotonic Decreasing Stack)
+def daily_temperatures(temperatures: list[int]) -> list[int]:
+    n = len(temperatures)
+    ans = [0] * n
+    stack = []  # Monotonic decreasing stack storing indices
+
+    for i in range(n):
+        while stack and temperatures[i] > temperatures[stack[-1]]:
+            prev = stack.pop()
+            ans[prev] = i - prev
+        stack.append(i)
+
+    return ans
+
+
+# Test Input
+temps = [73, 74, 75, 71, 69, 72, 76, 73]
+print("Days until warmer temp:", daily_temperatures(temps))
+# Output: [1, 1, 4, 2, 1, 1, 0, 0]
+
+max rectangle in histogram
+function largestRectangleArea(heights) {
+    let maxArea = 0;
+    const stack = []; // Monotonic increasing stack of indices
+    const extendedHeights = [...heights, 0];
+
+    for (let i = 0; i < extendedHeights.length; i++) {
+        const h = extendedHeights[i];
+        while (stack.length > 0 && h < extendedHeights[stack[stack.length - 1]]) {
+            const height = extendedHeights[stack.pop()];
+            const width = stack.length === 0 ? i : i - stack[stack.length - 1] - 1;
+            maxArea = Math.max(maxArea, height * width);
+        }
+        stack.push(i);
+    }
+    return maxArea;
+}
+
+console.log(largestRectangleArea([2, 1, 5, 6, 2, 3])); // 10
+
+# Largest Rectangle in Histogram (Monotonic Increasing Stack)
+def largest_rectangle_area(heights: list[int]) -> int:
+    max_area = 0
+    stack = []  # Monotonic increasing stack storing indices
+    extended_heights = heights + [0]  # Append dummy height 0 to flush stack at the end
+
+    for i, h in enumerate(extended_heights):
+        while stack and h < extended_heights[stack[-1]]:
+            height = extended_heights[stack.pop()]
+            width = i if not stack else i - stack[-1] - 1
+            max_area = max(max_area, height * width)
+        stack.append(i)
+
+    return max_area
+
+
+# Test Input
+heights = [2, 1, 5, 6, 2, 3]
+print("Max Rectangle Area:", largest_rectangle_area(heights))  # Output: 10
+
+doubly linked list 
+class DNode {
+    constructor(val) {
+        this.val = val;
+        this.prev = null;
+        this.next = null;
+    }
+}
+
+function insertAtHead(head, val) {
+    const newNode = new DNode(val);
+    if (head) {
+        newNode.next = head;
+        head.prev = newNode;
+    }
+    return newNode;
+}
+
+const initial = [10, 20, 30, 40];
+const val = 25;
+// Test snippet for Insert at Index
+class DNode {
+    constructor(val) {
+        this.val = val;
+        this.prev = null;
+        this.next = null;
+    }
+}
+
+1. ➕ Insert at Any Position (Index) — JavaScript & Python
+javascript
+
+
+class DNode {
+    constructor(val) {
+        this.val = val;
+        this.prev = null;
+        this.next = null;
+    }
+}
+function insertAtPosition(head, val, pos) {
+    const newNode = new DNode(val);
+    if (pos === 0) {
+        newNode.next = head;
+        if (head) head.prev = newNode;
+        return newNode;
+    }
+    let curr = head;
+    for (let i = 0; i < pos - 1 && curr.next; i++) {
+        curr = curr.next;
+    }
+    newNode.next = curr.next;
+    newNode.prev = curr;
+    if (curr.next) curr.next.prev = newNode;
+    curr.next = newNode;
+    return head;
+}
+const initial = [10, 20, 30, 40];
+const val = 25;
+const pos = 2; // Inserts 25 at index 2
+2. 🗑️ Delete at Any Position (Index)
+javascript
+
+
+function deleteAtPosition(head, pos) {
+    if (!head) return null;
+    if (pos === 0) {
+        const newHead = head.next;
+        if (newHead) newHead.prev = null;
+        return newHead;
+    }
+    let curr = head;
+    for (let i = 0; i < pos && curr; i++) {
+        curr = curr.next;
+    }
+    if (!curr) return head;
+    if (curr.prev) curr.prev.next = curr.next;
+    if (curr.next) curr.next.prev = curr.prev;
+    return head;
+}
+const initial = [10, 20, 30, 40, 50];
+const pos = 2; // Deletes node at index 2 (30)
+3. ↔️ Bidirectional Traversal (Forward & Reverse)
+python
+
+
+def traverse_doubly_list(head):
+    curr = head
+    tail = None
+    
+    # 1. Forward Traversal (head -> tail)
+    while curr:
+        print(curr.val)
+        if not curr.next:
+            tail = curr
+        curr = curr.next
+    
+    # 2. Reverse Traversal (tail -> head)
+    rev = tail
+    while rev:
+        print(rev.val)
+        rev = rev.prev
+initial_list = [10, 20, 30, 40]
+
+class DNode:
+    def __init__(self, val=0):
+        self.val = val
+        self.prev = None
+        self.next = None
+
+
+# Helper to convert list to Doubly Linked List
+def create_dll(arr):
+    if not arr:
+        return None
+    head = DNode(arr[0])
+    curr = head
+    for val in arr[1:]:
+        new_node = DNode(val)
+        curr.next = new_node
+        new_node.prev = curr
+        curr = curr.next
+    return head
+
+
+# 1. Insert at Any Position (Index)
+def insert_at_position(head, val, pos):
+    new_node = DNode(val)
+    if pos == 0:
+        new_node.next = head
+        if head:
+            head.prev = new_node
+        return new_node
+
+    curr = head
+    for _ in range(pos - 1):
+        if not curr.next:
+            break
+        curr = curr.next
+
+    new_node.next = curr.next
+    new_node.prev = curr
+    if curr.next:
+        curr.next.prev = new_node
+    curr.next = new_node
+    return head
+
+
+# 2. Delete at Any Position (Index)
+def delete_at_position(head, pos):
+    if not head:
+        return None
+    if pos == 0:
+        new_head = head.next
+        if new_head:
+            new_head.prev = None
+        return new_head
+
+    curr = head
+    for _ in range(pos):
+        if not curr:
+            break
+        curr = curr.next
+
+    if not curr:
+        return head
+    if curr.prev:
+        curr.prev.next = curr.next
+    if curr.next:
+        curr.next.prev = curr.prev
+    return head
+
+
+# 3. Bidirectional Traversal (Forward & Reverse)
+def traverse_doubly_list(head):
+    curr = head
+    tail = None
+
+    # Forward Traversal (head -> tail)
+    forward = []
+    while curr:
+        forward.append(curr.val)
+        if not curr.next:
+            tail = curr
+        curr = curr.next
+
+    # Reverse Traversal (tail -> head)
+    reverse = []
+    rev = tail
+    while rev:
+        reverse.append(rev.val)
+        rev = rev.prev
+
+    return forward, reverse
+
+
+# --- Execution Example ---
+head = create_dll([10, 20, 30, 40])
+
+# Test 1: Insert 25 at index 2 -> [10, 20, 25, 30, 40]
+head = insert_at_position(head, 25, 2)
+
+# Test 2: Delete at index 3 (deletes 30) -> [10, 20, 25, 40]
+head = delete_at_position(head, 3)
+
+# Test 3: Bidirectional Traversal
+fwd, rev = traverse_doubly_list(head)
+print("Forward:", fwd)  # [10, 20, 25, 40]
+print("Reverse:", rev)  # [40, 25, 20, 10]
+
+next greater element
+def next_greater_element(nums: list[int]) -> list[int]:
+    n = len(nums)
+    result = [-1] * n
+    stack = []  # Monotonic stack storing indices of elements waiting for a greater value
+
+    for i in range(n):
+
+        while stack and nums[i] > nums[stack[-1]]:
+            prev_index = stack.pop()
+            result[prev_index] = nums[i]
+
+        # Push current element's index onto the stack
+        stack.append(i)
+
+    return result
+nums = [4, 5, 2, 25, 7, 18]
+
+3 sum
+def three_sum(nums: list[int]) -> list[list[int]]:
+    nums.sort()
+    res = []
+
+    for i in range(len(nums) - 2):
+        if i > 0 and nums[i] == nums[i - 1]:
+            continue
+
+        left = i + 1
+        right = len(nums) - 1
+
+        while left < right:
+            total = nums[i] + nums[left] + nums[right]
+
+            if total == 0:
+                res.append([nums[i], nums[left], nums[right]])
+
+                while left < right and nums[left] == nums[left + 1]:
+                    left += 1
+                while left < right and nums[right] == nums[right - 1]:
+                    right -= 1
+
+                left += 1
+                right -= 1
+            elif total < 0:
+                left += 1
+            else:
+                right -= 1
+
+    return res
+
+
+nums = [-1, 0, 1, 2, -1, -4]
+print(three_sum(nums))
+
+binary search
+def binary_search(arr, target):
+    # Standard Binary Search on a sorted array
+    left, right = 0, len(arr) - 1
+
+    while left <= right:
+        mid = left + (right - left) // 2  # Prevents potential integer overflow
+
+        if arr[mid] == target:
+            return mid  # Target found, return index
+        elif arr[mid] < target:
+            left = mid + 1  # Search right half
+        else:
+            right = mid - 1  # Search left half
+
+    return -1  # Target not found
+
+# Test Input
+sorted_data = [2, 5, 8, 12, 16, 23, 38, 56, 72, 91]
+target_val = 23
+
+Container With Most Water
+def max_area(height: list[int]) -> int:
+    left = 0
+    right = len(height) - 1
+    max_water = 0
+
+    while left < right:
+        current_height = min(height[left], height[right])
+        width = right - left
+        current_water = current_height * width
+        max_water = max(max_water, current_water)
+
+        if height[left] < height[right]:
+            left += 1
+        else:
+            right -= 1
+
+    return max_water
+
+
+heights = [1, 8, 6, 2, 5, 4, 8, 3, 7]
+print("Max Water Area:", max_area(heights))
+
+import math
+
+# 1. Quick Sort
+def quick_sort(arr, start=0, end=None):
+    if end is None:
+        end = len(arr) - 1
+    if start < end:
+        pivot = arr[end]
+        i = start - 1
+        for j in range(start, end):
+            if arr[j] <= pivot:
+                i += 1
+                arr[i], arr[j] = arr[j], arr[i]
+        arr[i + 1], arr[end] = arr[end], arr[i + 1]
+        pivot_idx = i + 1
+        quick_sort(arr, start, pivot_idx - 1)
+        quick_sort(arr, pivot_idx + 1, end)
+    return arr
+
+# 2. Merge Sort
+def merge_sort(arr):
+    if len(arr) <= 1:
+        return arr
+    mid = len(arr) // 2
+    left = merge_sort(arr[:mid])
+    right = merge_sort(arr[mid:])
+    result = []
+    i = j = 0
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
+        else:
+            result.append(right[j])
+            j += 1
+    result.extend(left[i:])
+    result.extend(right[j:])
+    return result
+
+# 3. Insertion Sort
+def insertion_sort(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and arr[j] > key:
+            arr[j + 1] = arr[j]
+            j -= 1
+        arr[j + 1] = key
+    return arr
+
+# 4. Shell Sort
+def shell_sort(arr):
+    n = len(arr)
+    gap = n // 2
+    while gap > 0:
+        for i in range(gap, n):
+            tmp = arr[i]
+            j = i
+            while j >= gap and arr[j - gap] > tmp:
+                arr[j] = arr[j - gap]
+                j -= gap
+            arr[j] = tmp
+        gap //= 2
+    return arr
+
+# 5. Heap Sort
+def heap_sort(arr):
+    n = len(arr)
+    def heapify(heap_size, i):
+        largest = i
+        l = 2 * i + 1
+        r = 2 * i + 2
+        if l < heap_size and arr[l] > arr[largest]:
+            largest = l
+        if r < heap_size and arr[r] > arr[largest]:
+            largest = r
+        if largest != i:
+            arr[i], arr[largest] = arr[largest], arr[i]
+            heapify(heap_size, largest)
+
+    for i in range(n // 2 - 1, -1, -1):
+        heapify(n, i)
+    for i in range(n - 1, 0, -1):
+        arr[0], arr[i] = arr[i], arr[0]
+        heapify(i, 0)
+    return arr
+
+# 6. Counting Sort
+def counting_sort(arr):
+    if not arr:
+        return arr
+    maxv, minv = max(arr), min(arr)
+    span = maxv - minv + 1
+    count = [0] * span
+    for num in arr:
+        count[num - minv] += 1
+    for i in range(1, span):
+        count[i] += count[i - 1]
+    result = [0] * len(arr)
+    for num in reversed(arr):
+        count[num - minv] -= 1
+        result[count[num - minv]] = num
+    return result
+
+# 7. Radix Sort
+def _radix_counting_pass(arr, exp):
+    n = len(arr)
+    output = [0] * n
+    count = [0] * 10
+    for i in range(n):
+        digit = (arr[i] // exp) % 10
+        count[digit] += 1
+    for i in range(1, 10):
+        count[i] += count[i - 1]
+    for i in range(n - 1, -1, -1):
+        digit = (arr[i] // exp) % 10
+        count[digit] -= 1
+        output[count[digit]] = arr[i]
+    return output
+
+def radix_sort(arr):
+    if not arr:
+        return arr
+    maxv = max(arr)
+    exp = 1
+    while maxv // exp > 0:
+        arr = _radix_counting_pass(arr, exp)
+        exp *= 10
+    return arr
+
+# 8. Bubble Sort
+def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        swapped = False
+        for j in range(0, n - i - 1):
+            if arr[j] > arr[j + 1]:
+                arr[j], arr[j + 1] = arr[j + 1], arr[j]
+                swapped = True
+        if not swapped:
+            break
+    return arr
+
+# Verification Suite
+if __name__ == "__main__":
+    sample = [64, 34, 25, 12, 22, 11, 90]
+    print("Quick Sort:    ", quick_sort(list(sample)))
+    print("Merge Sort:    ", merge_sort(list(sample)))
+    print("Insertion Sort:", insertion_sort(list(sample)))
+    print("Shell Sort:    ", shell_sort(list(sample)))
+    print("Heap Sort:     ", heap_sort(list(sample)))
+    print("Counting Sort: ", counting_sort(list(sample)))
+    print("Radix Sort:    ", radix_sort(list(sample)))
+    print("Bubble Sort:   ", bubble_sort(list(sample)))
+
+elavulate rpn reverse polish notation
+def eval_rpn(tokens: list[str]) -> int:
+    stack = []
+
+    for token in tokens:
+        if token == "+":
+            stack.append(stack.pop() + stack.pop())
+        elif token == "-":
+            b, a = stack.pop(), stack.pop()
+            stack.append(a - b)
+        elif token == "*":
+            stack.append(stack.pop() * stack.pop())
+        elif token == "/":
+            b, a = stack.pop(), stack.pop()
+            stack.append(int(a / b))
+        else:
+            stack.append(int(token))
+
+    return stack[0]
+
+
+tokens = ["10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"]
+print("Evaluated RPN Result:", eval_rpn(tokens))
+
+prims minimum spanning tree
+import heapq
+
+
+def prim_mst(n: int, edges: list[list[int]]) -> tuple[int, list[tuple[int, int, int]]]:
+    adj = {i: [] for i in range(n)}
+    for u, v, w in edges:
+        adj[u].append((w, v))
+        adj[v].append((w, u))
+
+    min_heap = [(0, 0, -1)]
+    visited = [False] * n
+    total_weight = 0
+    mst_edges = []
+
+    while min_heap:
+        weight, u, parent = heapq.heappop(min_heap)
+
+        if visited[u]:
+            continue
+
+        visited[u] = True
+        total_weight += weight
+
+        if parent != -1:
+            mst_edges.append((parent, u, weight))
+
+        for edge_weight, v in adj[u]:
+            if not visited[v]:
+                heapq.heappush(min_heap, (edge_weight, v, u))
+
+    return total_weight, mst_edges
+
+
+n = 5
+edges = [
+    [0, 1, 2],
+    [0, 3, 6],
+    [1, 2, 3],
+    [1, 3, 8],
+    [1, 4, 5],
+    [2, 4, 7],
+    [3, 4, 9],
+]
+
+weight, mst = prim_mst(n, edges)
+print("Total MST Weight:", weight)
+print("MST Edges (u, v, weight):", mst)
+
+subsets
+def subsets(nums: list[int]) -> list[list[int]]:
+    res = []
+
+    def backtrack(index: int, path: list[int]):
+        res.append(path.copy())
+
+        for i in range(index, len(nums)):
+            path.append(nums[i])
+            backtrack(i + 1, path)
+            path.pop()
+
+    backtrack(0, [])
+    return res
+
+
+nums = [1, 2, 3]
+print("Subsets:", subsets(nums))
+
+topological sort
+def topological_sort_dfs(v: int, adj: list[list[int]]) -> list[int]:
+    visited = [0] * v  # 0: Unvisited, 1: Visiting (in stack), 2: Visited
+    stack = []
+
+    def dfs(node: int) -> bool:
+        visited[node] = 1  # Mark current node as visiting
+
+        for neighbor in adj[node]:
+            if visited[neighbor] == 1:
+                return True  # Cycle detected
+            if visited[neighbor] == 0:
+                if dfs(neighbor):
+                    return True
+
+        visited[node] = 2  # Mark current node as fully visited
+        stack.append(node)  # Post-order placement
+        return False
+
+    for i in range(v):
+        if visited[i] == 0:
+            if dfs(i):
+                return []  # Return empty list if graph has a cycle (not a DAG)
+
+    return stack[::-1]
+
+
+v = 6
+adj = [[] for _ in range(v)]
+edges = [[5, 2], [5, 0], [4, 0], [4, 1], [2, 3], [3, 1]]
+
+for u, dest in edges:
+    adj[u].append(dest)
+
+print("Topological Sort Order (DFS):", topological_sort_dfs(v, adj))
+
+interval scgeduling
+def interval_scheduling(intervals: list[list[int]]) -> list[list[int]]:
+    intervals.sort(key=lambda x: x[1])
+
+    selected = []
+    last_end_time = float("-inf")
+
+    for start, end in intervals:
+        if start >= last_end_time:
+            selected.append([start, end])
+            last_end_time = end
+
+    return selected
+
+
+intervals = [[1, 3], [2, 4], [3, 6], [5, 7], [6, 8], [8, 10]]
+result = interval_scheduling(intervals)
+
+print("Maximum Non-Overlapping Intervals:", len(result))
+print("Selected Intervals:", result)
+
+intersection
+def intersection(nums1: list[int], nums2: list[int]) -> list[int]:
+    set1 = set(nums1)
+    res = []
+
+    for num in nums2:
+        if num in set1:
+            res.append(num)
+            set1.remove(num)
+
+    return res
+
+
+nums1 = [4, 9, 5]
+nums2 = [9, 4, 9, 8, 4]
+print("Intersection:", intersection(nums1, nums2))
+
+move zeroes
+def move_zeroes(nums: list[int]) -> None:
+    insert_pos = 0
+
+    for i in range(len(nums)):
+        if nums[i] != 0:
+            nums[insert_pos], nums[i] = nums[i], nums[insert_pos]
+            insert_pos += 1
+
+
+arr = [0, 1, 0, 3, 12]
+move_zeroes(arr)
+print("Modified Array:", arr)
+
+linear search
+def linear_search(arr: list[int], target: int) -> int:
+    for i in range(len(arr)):
+        if arr[i] == target:
+            return i
+    return -1
+
+
+numbers = [10, 50, 30, 70, 40, 20]
+target_val = 30
+
+
+search in rotated array
+def search_rotated(nums, target):
+    left = 0
+    right = len(nums) - 1
+
+    while left <= right:
+        mid = (left + right) // 2
+
+        if nums[mid] == target:
+            return mid
+
+        if nums[left] <= nums[mid]:
+            if nums[left] <= target < nums[mid]:
+                right = mid - 1
+            else:
+                left = mid + 1
+        else:
+            if nums[mid] < target <= nums[right]:
+                left = mid + 1
+            else:
+                right = mid - 1
+
+    return -1
+
+
+nums = [4, 5, 6, 7, 0, 1, 2]
+target = 0
+
+print(search_rotated(nums, target))
+
+Lower bound
+def lower_bound(arr, target):
+    left = 0
+    right = len(arr)
+
+    while left < right:
+        mid = (left + right) // 2
+
+        if arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid
+
+    return left
+
+
+arr = [1, 2, 2, 2, 4, 5]
+target = 2
+
+print(lower_bound(arr, target))
+
+Upper bound
+def upper_bound(arr, target):
+    left = 0
+    right = len(arr)
+
+    while left < right:
+        mid = (left + right) // 2
+
+        if arr[mid] <= target:
+            left = mid + 1
+        else:
+            right = mid
+
+    return left
+
+
+arr = [1, 2, 2, 2, 4, 5]
+target = 2
+
+print(upper_bound(arr, target))
+
+Insert interval
+def insert_interval(intervals, new_interval):
+    result = []
+    i = 0
+
+    while i < len(intervals) and intervals[i][1] < new_interval[0]:
+        result.append(intervals[i])
+        i += 1
+
+    while i < len(intervals) and intervals[i][0] <= new_interval[1]:
+        new_interval[0] = min(new_interval[0], intervals[i][0])
+        new_interval[1] = max(new_interval[1], intervals[i][1])
+        i += 1
+
+    result.append(new_interval)
+
+    while i < len(intervals):
+        result.append(intervals[i])
+        i += 1
+
+    return result
+
+
+intervals = [[1, 3], [6, 9]]
+new_interval = [2, 5]
+
+print(insert_interval(intervals, new_interval))
+
+invert tree 
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def invert_tree(root):
+    if root is None:
+        return None
+
+    root.left, root.right = root.right, root.left
+
+    invert_tree(root.left)
+    invert_tree(root.right)
+
+    return root
+
+
+root = TreeNode(
+    4,
+    TreeNode(2, TreeNode(1), TreeNode(3)),
+    TreeNode(7, TreeNode(6), TreeNode(9))
+)
+
+root = invert_tree(root)
+
+Lowest Common Ancestor
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def lowest_common_ancestor(root, p, q):
+    if root is None:
+        return None
+
+    if root == p or root == q:
+        return root
+
+    left = lowest_common_ancestor(root.left, p, q)
+    right = lowest_common_ancestor(root.right, p, q)
+
+    if left and right:
+        return root
+
+    return left if left else right
+
+
+root = TreeNode(3)
+root.left = TreeNode(5)
+root.right = TreeNode(1)
+
+root.left.left = TreeNode(6)
+root.left.right = TreeNode(2)
+
+p = root.left.left
+q = root.left.right
+
+answer = lowest_common_ancestor(root, p, q)
+
+print(answer.val)
+
+Longest Increasing Subsequence — LIS
+
+def longest_increasing_subsequence(nums):
+    if not nums:
+        return 0
+
+    dp = [1] * len(nums)
+
+    for i in range(len(nums)):
+        for j in range(i):
+            if nums[j] < nums[i]:
+                dp[i] = max(dp[i], dp[j] + 1)
+
+    return max(dp)
+
+
+nums = [10, 9, 2, 5, 3, 7, 101, 18]
+
+print(longest_increasing_subsequence(nums))
+
+Online Stock Span
+def stock_span(prices):
+    stack = []
+    spans = []
+
+    for i, price in enumerate(prices):
+        while stack and prices[stack[-1]] <= price:
+            stack.pop()
+
+        if not stack:
+            span = i + 1
+        else:
+            span = i - stack[-1]
+
+        spans.append(span)
+        stack.append(i)
+
+    return spans
+
+
+prices = [100, 80, 60, 70, 60, 75, 85]
+
+print(stock_span(prices))
+
+Word Break
+def word_break(s, word_dict):
+    dp = [False] * (len(s) + 1)
+    dp[0] = True
+
+    for i in range(1, len(s) + 1):
+        for j in range(i):
+            if dp[j] and s[j:i] in word_dict:
+                dp[i] = True
+                break
+
+    return dp[len(s)]
+
+
+s = "leetcode"
+word_dict = {"leet", "code"}
+
+print(word_break(s, word_dict))
+
+
+House Robber II
+def rob_linear(nums):
+    prev2 = 0
+    prev1 = 0
+
+    for money in nums:
+        current = max(prev1, prev2 + money)
+        prev2 = prev1
+        prev1 = current
+
+    return prev1
+
+
+def house_robber_ii(nums):
+    if not nums:
+        return 0
+
+    if len(nums) == 1:
+        return nums[0]
+
+    return max(
+        rob_linear(nums[:-1]),
+        rob_linear(nums[1:])
+    )
+
+
+nums = [2, 3, 2]
+
+print(house_robber_ii(nums))
+
+
+Interval List Intersections
+def interval_intersection(first_list, second_list):
+    i = 0
+    j = 0
+    result = []
+
+    while i < len(first_list) and j < len(second_list):
+        start = max(first_list[i][0], second_list[j][0])
+        end = min(first_list[i][1], second_list[j][1])
+
+        if start <= end:
+            result.append([start, end])
+
+        if first_list[i][1] < second_list[j][1]:
+            i += 1
+        else:
+            j += 1
+
+    return result
+
+
+first_list = [[0, 2], [5, 10], [13, 23], [24, 25]]
+second_list = [[1, 5], [8, 12], [15, 24], [25, 26]]
+
+print(interval_intersection(first_list, second_list))
+
+
+## Linked List
+
+### Singly Linked List - Insert
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+
+def insert_at_position(head, value, position):
+    new_node = Node(value)
+
+    if position == 0:
+        new_node.next = head
+        return new_node
+
+    current = head
+
+    for _ in range(position - 1):
+        if current is None:
+            return head
+        current = current.next
+
+    if current is None:
+        return head
+
+    new_node.next = current.next
+    current.next = new_node
+
+    return head
+
+
+head = Node(10)
+head.next = Node(20)
+head.next.next = Node(30)
+head.next.next.next = Node(40)
+
+head = insert_at_position(head, 25, 2)
+
+### Singly Linked List - Delete
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+
+def delete_value(head, target):
+    if head is None:
+        return None
+
+    if head.data == target:
+        return head.next
+
+    prev = head
+    current = head.next
+
+    while current is not None:
+        if current.data == target:
+            prev.next = current.next
+            return head
+
+        prev = current
+        current = current.next
+
+    return head
+
+
+head = Node(10)
+head.next = Node(20)
+head.next.next = Node(30)
+head.next.next.next = Node(40)
+
+head = delete_value(head, 30)
+
+### Singly Linked List - Reverse
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+
+def reverse_list(head):
+    prev = None
+    current = head
+
+    while current is not None:
+        next_node = current.next
+        current.next = prev
+        prev = current
+        current = next_node
+
+    return prev
+
+
+head = Node(10)
+head.next = Node(20)
+head.next.next = Node(30)
+head.next.next.next = Node(40)
+
+head = reverse_list(head)
+
+
+
+### Inorder - Recursive
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def inorder(root):
+    if root is None:
+        return []
+
+    return inorder(root.left) + [root.val] + inorder(root.right)
+
+
+root = TreeNode(
+    1,
+    TreeNode(2),
+    TreeNode(3)
+)
+
+print(inorder(root))
+
+Inorder - Iterative
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def inorder_iterative(root):
+    result = []
+    stack = []
+    current = root
+
+    while stack or current:
+        while current:
+            stack.append(current)
+            current = current.left
+
+        current = stack.pop()
+        result.append(current.val)
+
+        current = current.right
+
+    return result
+
+
+root = TreeNode(
+    1,
+    TreeNode(2),
+    TreeNode(3)
+)
+
+print(inorder_iterative(root))
+
+### Preorder - Recursive
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def preorder(root):
+    if root is None:
+        return []
+
+    return [root.val] + preorder(root.left) + preorder(root.right)
+
+
+root = TreeNode(
+    1,
+    TreeNode(2),
+    TreeNode(3)
+)
+
+print(preorder(root))
+
+### Preorder - Iterative
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def preorder_iterative(root):
+    if root is None:
+        return []
+
+    result = []
+    stack = [root]
+
+    while stack:
+        node = stack.pop()
+        result.append(node.val)
+
+        if node.right:
+            stack.append(node.right)
+
+        if node.left:
+            stack.append(node.left)
+
+    return result
+
+
+root = TreeNode(
+    1,
+    TreeNode(2),
+    TreeNode(3)
+)
+
+print(preorder_iterative(root))
+
+### Postorder - Recursive
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def postorder(root):
+    if root is None:
+        return []
+
+    return postorder(root.left) + postorder(root.right) + [root.val]
+
+
+root = TreeNode(
+    1,
+    TreeNode(2),
+    TreeNode(3)
+)
+
+print(postorder(root))
+
+### Postorder - Iterative
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def postorder_iterative(root):
+    if root is None:
+        return []
+
+    stack1 = [root]
+    stack2 = []
+    result = []
+
+    while stack1:
+        node = stack1.pop()
+        stack2.append(node)
+
+        if node.left:
+            stack1.append(node.left)
+
+        if node.right:
+            stack1.append(node.right)
+
+    while stack2:
+        result.append(stack2.pop().val)
+
+    return result
+
+
+root = TreeNode(
+    1,
+    TreeNode(2),
+    TreeNode(3)
+)
+
+print(postorder_iterative(root))
+
+### Level Order - BFS
+from collections import deque
+
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def level_order(root):
+    if root is None:
+        return []
+
+    result = []
+    queue = deque([root])
+
+    while queue:
+        level = []
+
+        for _ in range(len(queue)):
+            node = queue.popleft()
+            level.append(node.val)
+
+            if node.left:
+                queue.append(node.left)
+
+            if node.right:
+                queue.append(node.right)
+
+        result.append(level)
+
+    return result
+
+
+root = TreeNode(
+    1,
+    TreeNode(2, TreeNode(4), TreeNode(5)),
+    TreeNode(3, TreeNode(6), TreeNode(7))
+)
+
+print(level_order(root))
+
+top k frequent elements
+import heapq
+from collections import Counter
+
+
+def top_k_frequent(nums, k):
+    frequency = Counter(nums)
+
+    heap = []
+
+    for num, count in frequency.items():
+        heapq.heappush(heap, (count, num))
+
+        if len(heap) > k:
+            heapq.heappop(heap)
+
+    return [num for count, num in heap]
+
+
+nums = [1, 1, 1, 2, 2, 3]
+k = 2
+
+print("Top K Frequent:", top_k_frequent(nums, k))
+# Output: [2, 1]
+
+kth largest element
+import heapq
+
+
+def kth_largest(nums, k):
+    heap = []
+
+    for num in nums:
+        heapq.heappush(heap, num)
+
+        if len(heap) > k:
+            heapq.heappop(heap)
+
+    return heap[0]
+
+
+nums = [3, 2, 1, 5, 6, 4]
+k = 2
+
+print("Kth Largest:", kth_largest(nums, k))
+# Output: 5
+
+two sum hashmap
+def two_sum(nums, target):
+    seen = {}
+
+    for i, num in enumerate(nums):
+        complement = target - num
+
+        if complement in seen:
+            return [seen[complement], i]
+
+        seen[num] = i
+
+    return []
+
+
+nums = [2, 7, 11, 15]
+target = 9
+
+print("Two Sum:", two_sum(nums, target))
+
+
