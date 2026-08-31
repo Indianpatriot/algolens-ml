@@ -117,7 +117,5 @@ Contributions, issue reports, and algorithm submissions are welcome. Please open
 
 
 
-## 📄 License
 
-This project is licensed under the MIT License (or your specified license). See `LICENSE` for details.
 
