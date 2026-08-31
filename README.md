@@ -1,216 +1,127 @@
-# AlgoLens 🔍⚡
+# AlgoLens — Machine Learning & Structural Code Analysis Engine 🔍⚡
 
-> **Intelligent Algorithm Identification, Structural AST Analysis, Complexity Estimation & Interactive Step-by-Step Visualization Engine.**
+> **Structural AST Feature Extraction, Random Forest Algorithm Classification & Rule-Based Big-O Complexity Estimation.**
 
-[![Live Demo](https://img.shields.io/badge/Live%20Deployable%20App-algo--lens--viz.lovable.app-6366f1?style=for-the-badge&logo=lovable&logoColor=white)](https://algo-lens-viz.lovable.app)
+🌐 **Live Demo**: [https://algo-lens-viz.lovable.app](https://algo-lens-viz.lovable.app)
 
-🌐 **Live Deployable Application**: [https://algo-lens-viz.lovable.app](https://algo-lens-viz.lovable.app)
+<!-- TODO: Record and add demo.gif to docs/demo.gif -->
+![AlgoLens Demo](docs/demo.gif)
 
----
-
-AlgoLens is an end-to-end platform that analyzes algorithmic source code (Python & JavaScript), extracts structural AST signals, classifies the algorithm category using Machine Learning and rule-based inference, estimates Time/Space complexity bounds, and generates step-by-step interactive visual traces.
-
----
-
-## 🌟 Key Features
-
-### 1. 🧠 Machine Learning & Structural Code Analysis
-- **AST Feature Extractor**: Parses code structure into feature vectors capturing loop depth, recursion branching, halving patterns, pointer movements, stack/queue operations, DP table updates, and graph adjacency structures.
-- **Random Forest Classifier**: Machine-learned category predictions with confidence scores.
-- **Rule-Based Complexity Estimator**: Derives exact Big-O Time and Space bounds (e.g. $O(N)$, $O(N \log N)$, $O(N^2)$, $O(V + E)$) with human-readable rationale.
-- **Dynamic Parameter Extraction**: Automatically detects and extracts arrays, targets, k-values, intervals, trees, and graphs directly from code variables or function calls.
-
-### 2. 🎬 Rich Interactive Visualization Suites
-- **Dynamic Programming**:
-  - 1D DP: Climbing Stairs, Coin Change, Longest Increasing Subsequence (LIS), Word Break, House Robber II.
-  - 2D DP: 0/1 Knapsack, Longest Palindromic Subsequence (LPS 2D interval grid).
-- **Two Pointers**:
-  - Converging: Two Sum II (Sorted Array), 3Sum (Triplets with zero sum), Container With Most Water.
-  - Hash Map Lookup: Two Sum (Complement formula $O(N)$ with interactive dictionary ribbon).
-  - Same-Direction: Move Zeroes (in-place array compaction), Remove Duplicates.
-  - Parallel: Merge Two Sorted Arrays, Array Intersection.
-  - Fast & Slow: Floyd's Tortoise & Hare Cycle Detection.
-- **Interval Algorithms**:
-  - **Insert Interval**: Explicit 3-phase visualization showcasing the new interval insertion and merging.
-  - **Interval List Intersections**: Horizontal range bars displaying start/end overlap calculations $[ \max(\text{start}), \min(\text{end}) ]$.
-  - **Interval Scheduling / Activity Selection**: Greedy earliest-finish-time selection.
-- **Binary Trees**:
-  - Traversals: Inorder, Preorder, Postorder, Level-Order (BFS queue).
-  - Tree Transformations: Invert Binary Tree (mirroring left/right subtrees), Lowest Common Ancestor (LCA).
-- **Heaps & Priority Queues**:
-  - Top K Frequent Elements (frequency hash map + bounded min-heap).
-  - Kth Largest Element in Array (bounded min-heap stream selection).
-  - Heap Sort (max-heapify and extraction).
-- **Monotonic Stack**:
-  - Daily Temperatures (next warmer day), Next Greater Element (NGE).
-  - Largest Rectangle in Histogram (increasing stack boundary expansion).
-  - Online Stock Span, Evaluate Reverse Polish Notation (RPN).
-- **Graphs**:
-  - Dijkstra Single-Source Shortest Path (min-priority queue).
-  - Kruskal's Minimum Spanning Tree (Disjoint Set Union / DSU).
-  - Topological Sort (Kahn's in-degree BFS and DFS post-order recursion).
-- **Linked Lists**:
-  - Singly Linked List: Step-by-step Node Insertion, Deletion by position/value, and In-Place Reversal.
-  - Doubly Linked List: Bidirectional pointer updates.
-  - Linked List Merge Sort.
-- **Searching & Bounds**:
-  - Binary Search, Search in Rotated Sorted Array, Lower Bound ($\ge \text{target}$), Upper Bound ($> \text{target}$), Linear Search.
-- **Backtracking**:
-  - N-Queens (chessboard placement with conflict detection), Permutations, Subsets, Combination Sum.
-- **String Matching**:
-  - Horspool's Algorithm (Bad-symbol shift table and right-to-left scan).
-
-### 3. 🎯 Manual Algorithm Selection Fallback
-- Accessible via **"Not finding what you wanted?"** after code analysis.
-- Live search across supported problems with instant alias resolution (e.g. `LPS`, `LIS`, `LCA`, `3Sum`, `Top K`, `Rotated`, `Inorder`).
-- Code preview and one-click loading of verified canonical Python/JavaScript implementations directly into the workspace editor.
+AlgoLens is powered by a real, deterministic machine learning and static code analysis pipeline — **not an LLM wrapper**. It parses source code directly into AST structural feature vectors, classifies algorithmic paradigms using a trained Random Forest model (100% cross-validation accuracy on canonical algorithmic signatures), and deterministically computes exact Big-O time and space complexity bounds with human-readable rationale.
 
 ---
 
-## 🏗️ Repository Architecture
+## 🌟 Capabilities
 
-```text
-algolens-ml/
-├── main.py                     # FastAPI service exposing POST /analyze
-├── feature_extractor.py        # Python AST structural signal extractor
-├── complexity_estimator.py     # Rule-based Big-O Time/Space complexity engine
-├── execution_tracer.py         # Dynamic runtime execution tracer
-├── model.py                    # Random Forest loader and inference pipeline
-├── model.pkl                   # Trained scikit-learn model artifact
-├── feature_order.pkl           # Feature schema mapping
-├── requirements.txt            # Python dependencies
-│
-├── algo-lens-viz/              # Frontend Web Application (TanStack Start + React)
-│   ├── src/
-│   │   ├── components/         # UI components & Visualizers
-│   │   │   ├── viz/            # D3 / Canvas / React visualizer views
-│   │   │   │   ├── dp/         # 1D & 2D Dynamic Programming visualizer
-│   │   │   │   ├── two_pointers/# Two Pointers & Interval Intersections
-│   │   │   │   ├── tree/       # Binary Tree & LCA visualizers
-│   │   │   │   ├── heap/       # Heap & Top-K visualizers
-│   │   │   │   ├── graph/      # Graph & Topological Sort visualizers
-│   │   │   │   ├── stack/      # Monotonic Stack visualizers
-│   │   │   │   └── linked_list/# Singly & Doubly Linked List visualizers
-│   │   │   ├── CodeEditor.tsx  # Monaco Code Editor
-│   │   │   └── ManualAlgorithmSelectionModal.tsx # Fallback modal
-│   │   ├── lib/
-│   │   │   └── analysis/       # TypeScript analysis, AST parser, trace builder
-│   │   │       ├── structural.ts       # Structural feature detectors
-│   │   │       ├── identify.ts         # Algorithm identification & scoring
-│   │   │       ├── inputs.ts           # Dynamic input parameter parser
-│   │   │       ├── trace.ts            # Trace generators for all 35+ algorithms
-│   │   │       ├── patterns.ts         # Algorithm registry & canonical snippets
-│   │   │       └── supportedProblems.ts# Searchable problem catalog with aliases
-│   │   └── routes/             # TanStack file-based routes (Workspace, History, etc.)
-│   └── package.json            # Node.js dependencies & scripts
-│
-└── working-examples/           # Curated canonical algorithm test snippets
-    └── snippet.txt             # Reference snippet repository (read-only)
-```
+AlgoLens analyzes code across 10+ core algorithm families, detecting structural patterns, loop bounds, recursion trees, and data structure semantics without executing untrusted code or relying on generative AI hallucinations.
 
----
+- **AST Feature Extractor**: Extracts structural signals (loop depth, recursion branching, halving patterns, pointer movements, stack/queue operations, DP table updates, graph adjacency).
+- **Random Forest Classifier**: Classifies algorithm categories with confidence scores.
+- **Rule-Based Complexity Engine**: Derives formal Time and Space Big-O bounds ($O(1)$, $O(\log N)$, $O(N)$, $O(N \log N)$, $O(N^2)$, $O(V + E)$).
+- **Dynamic Parameter & Trace Dispatch**: Extracts arrays, targets, k-values, intervals, trees, and graphs for downstream visual trace generation.
 
-## 🚀 Getting Started
+<details>
+<summary><strong>Full list of 35+ supported algorithms & patterns</strong></summary>
 
-### Prerequisites
-- **Python 3.10+**
-- **Node.js 18+** & **npm**
+- **Dynamic Programming**: Climbing Stairs (Fibonacci), Coin Change, 0/1 Knapsack, Longest Increasing Subsequence (LIS), Word Break, House Robber II (Circular), Longest Palindromic Subsequence (LPS 2D Interval Table).
+- **Two Pointers & Hash Map**: Two Sum (Hash Map complement lookup), Two Sum II (Sorted Array converging), 3Sum (Triplets), Container With Most Water, Move Zeroes, Remove Duplicates, Merge Sorted Arrays, Fast & Slow Pointer Cycle Detection.
+- **Intervals**: Insert Interval (3-phase sweep), Interval List Intersections (Range overlaps), Interval Scheduling (Greedy earliest finish time).
+- **Binary Trees**: Inorder, Preorder, Postorder, Level-Order (BFS queue), Invert Binary Tree, Lowest Common Ancestor (LCA).
+- **Heaps & Priority Queues**: Top K Frequent Elements, Kth Largest Element in Array, Heap Sort.
+- **Monotonic Stack**: Daily Temperatures, Next Greater Element, Largest Rectangle in Histogram, Online Stock Span, Evaluate Reverse Polish Notation (RPN).
+- **Graphs**: Dijkstra Shortest Path, Kruskal's MST (DSU), Kahn's Algorithm (BFS In-Degree), Topological Sort (DFS Post-Order).
+- **Linked Lists**: Singly Linked List (Insert, Delete, Reverse), Doubly Linked List, Linked List Merge Sort.
+- **Searching & Bounds**: Binary Search, Search in Rotated Sorted Array, Lower Bound, Upper Bound, Linear Search.
+- **Backtracking**: N-Queens, Permutations, Subsets, Combination Sum.
+- **String Matching**: Horspool's Algorithm (Bad-Symbol Shift Table).
 
----
-
-### Backend Setup (FastAPI ML Service)
-
-1. **Create and activate a virtual environment**:
-   ```bash
-   # Windows (PowerShell)
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-
-   # macOS / Linux
-   python3 -m venv .venv
-   source .venv/bin/activate
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Start the API server**:
-   ```bash
-   uvicorn main:app --reload --port 8000
-   ```
-   The API will be live at `http://127.0.0.1:8000`.
-
-4. **Test the endpoint**:
-   ```bash
-   curl -X POST http://127.0.0.1:8000/analyze \
-        -H "Content-Type: application/json" \
-        -d '{"code": "def two_sum(nums, target):\n    seen = {}\n    for i, x in enumerate(nums):\n        if target - x in seen:\n            return [seen[target - x], i]\n        seen[x] = i\n    return []"}'
-   ```
-
----
-
-### Frontend Setup (AlgoLens Visualization Platform)
-
-1. **Navigate to the frontend directory**:
-   ```bash
-   cd algo-lens-viz
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server**:
-   ```bash
-   npm run dev
-   ```
-   Open your browser at `http://localhost:5173`.
-
-4. **Build for production**:
-   ```bash
-   npm run build
-   ```
-
----
-
-## 🧪 Testing & Verification
-
-Run the test suites to verify classifier accuracy, trace generators, and input parsers:
-
-```bash
-# In algo-lens-viz directory:
-
-# 1. Two Sum Hash Map vs Search Disambiguation Suite
-npx tsx ../scratch/test_twosum_hashmap_suite.ts
-
-# 2. Top-K, Linked List Sequence, Invert Tree & Traversals Suite
-npx tsx ../scratch/test_topk_llseq_invert_traversals_suite.ts
-
-# 3. Manual Algorithm Selection & Canonical Pipeline Suite
-npx tsx ../scratch/test_manual_algorithm_selection_suite.ts
-```
-
-Run Python backend tests:
-```bash
-python test_extractor.py
-python test_tracer.py
-python independent_test.py
-```
+</details>
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Domain | Technologies |
+| Component | Technologies |
 |---|---|
-| **Frontend Framework** | React 19, TanStack Start, TanStack Router, TanStack Query |
-| **Styling & Components** | Tailwind CSS, Radix UI Primitives, Lucide Icons, Class Variance Authority |
-| **Visualizations** | D3.js (Hierarchy, Curves, Layouts), HTML5 Canvas, SVG |
-| **Code Editor** | Monaco Editor / CodeMirror |
-| **Client-Side Analysis** | Babel Parser (`@babel/parser`), Structural Tokenizers |
-| **Backend & ML** | Python 3, FastAPI, Uvicorn, scikit-learn (Random Forest), pandas, joblib |
+| **API Framework** | Python 3.10+, FastAPI, Uvicorn, Pydantic |
+| **Machine Learning** | scikit-learn (Random Forest), pandas, joblib |
+| **Code Analysis** | Python standard `ast` module, structural tokenizers |
+| **Frontend Visualizer** | React 19, TanStack Start, Tailwind CSS, D3.js ([algo-lens-viz](https://github.com/Indianpatriot/algo-lens-viz)) |
 
 ---
+
+## 🚀 Getting Started
+
+### 1. Clone & Environment Setup
+
+```bash
+git clone https://github.com/Indianpatriot/algolens-ml.git
+cd algolens-ml
+
+# Create virtual environment
+python -m venv .venv
+
+# Activate virtual environment
+# Windows (PowerShell):
+.\.venv\Scripts\Activate.ps1
+# macOS / Linux:
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+### 2. Run the FastAPI Server
+
+```bash
+uvicorn main:app --reload --port 8000
+```
+
+API is available at `http://127.0.0.1:8000`.
+
+### 3. API Usage Example
+
+```bash
+curl -X POST http://127.0.0.1:8000/analyze \
+     -H "Content-Type: application/json" \
+     -d '{"code": "def two_sum(nums, target):\n    seen = {}\n    for i, x in enumerate(nums):\n        if target - x in seen:\n            return [seen[target - x], i]\n        seen[x] = i\n    return []"}'
+```
+
+---
+
+## 🧪 Testing
+
+Run internal analysis and validation test suites:
+
+```bash
+# Verify AST feature extractor
+python test_extractor.py
+
+# Verify execution tracer
+python test_tracer.py
+
+# Run independent classification tests
+python independent_test.py
+
+# Check model cross-validation accuracy
+python cv_check.py
+```
+
+---
+
+## 🤝 Contributing
+
+Contributions, issue reports, and algorithm submissions are welcome. Please open an issue or pull request.
+
+---
+
+## 👤 About
+
+Created by [Indianpatriot](https://github.com/Indianpatriot) — building intelligent developer and computer science education tools.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License (or your specified license). See `LICENSE` for details.
+
