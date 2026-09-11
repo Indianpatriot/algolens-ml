@@ -203,13 +203,53 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
     if (
         (features.get("uses_queue", 0) == 1.0 or "queue" in code_lower or "deque" in code_lower or "pop(0)" in code_lower or "popleft" in code_lower)
         and not features.get("has_visited_like_var", 0)
-        and not features.get("uses_adjacency_structure", 0)
-        and not features.get("has_topological_sort_pattern", 0)
     ):
         return (
             "Queue",
             0.99,
             "Detected Queue (FIFO) data structure operations (enqueue/dequeue sequence).",
+        )
+
+    # 16. 3Sum (Two Pointers): Sorted array + outer loop + converging two pointers
+    if (
+        ("three_sum" in code_lower or "threesum" in code_lower or "3sum" in code_lower)
+        or (
+            ("sort()" in code_lower or "sorted(" in code_lower)
+            and ("left" in code_lower and "right" in code_lower)
+            and ("left < right" in code_lower or "l < r" in code_lower)
+            and ("+ nums[" in code_lower or "+ arr[" in code_lower or "total" in code_lower or "sum" in code_lower)
+        )
+    ):
+        return (
+            "3Sum",
+            0.99,
+            "Detected 3Sum two-pointer pattern (sorted preprocessing with fixed outer loop and converging inner two pointers).",
+        )
+
+    # 17. Prim's Algorithm (Minimum Spanning Tree): Priority queue / min-heap + visited set + edge weight tuples without distance relaxation
+    if (
+        ("heappop" in code_lower or "heappush" in code_lower or "heap" in code_lower or "priorityqueue" in code_lower)
+        and ("visited" in code_lower or "in_mst" in code_lower or "mst" in code_lower)
+        and ("weight" in code_lower or "cost" in code_lower)
+        and not features.get("has_dist_relaxation", 0)
+        and ("prim" in code_lower or "mst" in code_lower or "edge_weight" in code_lower or "(0," in code_lower or "[(0" in code_lower)
+    ):
+        return (
+            "Prim's Algorithm",
+            0.99,
+            "Detected Prim's MST algorithm (min-heap priority queue with visited cut set and edge weight selection).",
+        )
+
+    # 18. Array Intersection (Hash Set): Set initialization + membership checking
+    if (
+        ("set(" in code_lower or "new set" in code_lower)
+        and ("in set" in code_lower or ".has(" in code_lower or ".remove(" in code_lower or "set1" in code_lower)
+        and ("intersection" in code_lower or "intersect" in code_lower or ("nums1" in code_lower and "nums2" in code_lower))
+    ):
+        return (
+            "Array Intersection",
+            0.99,
+            "Detected Array Intersection using Hash Set (set creation and element membership checking).",
         )
 
     return None
