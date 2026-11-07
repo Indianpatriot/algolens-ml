@@ -40,8 +40,8 @@ app = FastAPI(title="AlgoLens Analysis API")
 # shipping - "*" is fine for local development only.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=["https://algo-lens-viz.vercel.app", "http://localhost:5173"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
