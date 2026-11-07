@@ -34,3 +34,7 @@ data/dataset_debug.json
 # Frontend project lives as a nested folder here but has its own separate
 # git repo - never let this repo's git operations touch it
 algo-lens-viz/
+.env
+
+__pycache__/
+*.pyc
