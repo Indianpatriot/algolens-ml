@@ -159,9 +159,196 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
             "Detected fixed-span frequency count array allocation ([0] * span) and element-indexed incrementation.",
         )
 
-    # 7c. BFS (Breadth-First Search): Queue frontier exploration + visited set tracking
+    # 7c. All-Pairs Shortest Path (repeated Bellman-Ford): outer loop over sources running SSSP
     if (
-        (features.get("has_queue_while_loop", 0) == 1.0 or features.get("uses_queue", 0) == 1.0)
+        features.get("has_apsp_nested_sources", 0) == 1.0
+        or ("apsp" in code_lower and ("bellman" in code_lower or "dist" in code_lower))
+        or (
+            features.get("has_bellman_ford_edges_loop", 0) == 1.0
+            and ("for src in" in code_lower or "for u in range" in code_lower or "matrix" in code_lower)
+        )
+    ):
+        return (
+            "All-Pairs Shortest Path (repeated Bellman-Ford)",
+            0.99,
+            "Detected All-Pairs Shortest Path running repeated Bellman-Ford SSSP passes across all source vertices.",
+        )
+
+    # 7d. DAG Shortest Path: topological ordering followed by edge relaxation
+    if (
+        features.get("has_dag_relaxation_loop", 0) == 1.0
+        or (
+            (features.get("has_topological_sort_pattern", 0) == 1.0 or features.get("has_topological_sort_kahn", 0) == 1.0 or "topo" in code_lower)
+            and (features.get("has_dist_relaxation", 0) == 1.0 or "dist[" in code_lower)
+            and not features.get("uses_priority_queue", 0)
+            and "heappop" not in code_lower
+        )
+    ):
+        return (
+            "DAG Shortest Path",
+            0.99,
+            "Detected DAG Shortest Path: linear-time single-source shortest path using topological ordering followed by edge relaxation.",
+        )
+
+    # 7e. Bellman-Ford: V-1 edge relaxation passes with negative cycle check
+    if (
+        features.get("has_bellman_ford_edges_loop", 0) == 1.0
+        or features.get("has_negative_cycle_check", 0) == 1.0
+        or ("bellman" in code_lower and ("edges" in code_lower or "dist" in code_lower or "negative" in code_lower))
+    ):
+        return (
+            "Bellman-Ford",
+            0.99,
+            "Detected Bellman-Ford single-source shortest path with V-1 edge relaxation passes and negative cycle detection.",
+        )
+
+    # 7f. 0-1 BFS: deque frontier pushing 0-weight edges to front and 1-weight edges to back
+    if (
+        features.get("has_deque_appendleft", 0) == 1.0
+        or (features.get("has_zero_one_weights", 0) == 1.0 and (features.get("uses_queue", 0) == 1.0 or "deque" in code_lower))
+        or ("appendleft" in code_lower and ("weight" in code_lower or "dist" in code_lower))
+    ):
+        return (
+            "0-1 BFS",
+            0.99,
+            "Detected 0-1 BFS with double-ended queue (deque) pushing 0-weight edges to front and 1-weight edges to back.",
+        )
+
+    # 7g. Dijkstra's Algorithm (Single-Source Shortest Path): Priority queue + distance relaxation
+    if (
+        (
+            features.get("has_priority_queue_traversal", 0) == 1.0
+            or features.get("uses_priority_queue", 0) == 1.0
+            or "heappop" in code_lower
+        )
+        and (
+            features.get("has_dist_relaxation", 0) == 1.0
+            or "dijkstra" in code_lower
+            or ("dist" in code_lower and ("< dist[" in code_lower or "+ weight" in code_lower or "+ w" in code_lower))
+        )
+        and features.get("has_mst_weight_accumulation", 0) == 0.0
+    ):
+        return (
+            "Dijkstra's Algorithm",
+            0.99,
+            "Detected Dijkstra's SSSP algorithm (min-heap priority queue with edge distance relaxation).",
+        )
+
+    # 7h. Prim's Algorithm (Minimum Spanning Tree): Priority queue + cut set without distance relaxation
+    if (
+        (
+            features.get("has_priority_queue_traversal", 0) == 1.0
+            or features.get("uses_priority_queue", 0) == 1.0
+            or "heappop" in code_lower
+            or "heappush" in code_lower
+        )
+        and (
+            features.get("has_mst_weight_accumulation", 0) == 1.0
+            or features.get("has_mst_edge_building", 0) == 1.0
+            or (features.get("has_weighted_adjacency", 0) == 1.0 and features.get("has_lazy_deletion_on_pop", 0) == 1.0)
+            or ("prim" in code_lower and ("graph" in code_lower or "adj" in code_lower or "mst" in code_lower))
+            or ("mst" in code_lower and ("visited" in code_lower or "seen" in code_lower or "total" in code_lower))
+        )
+        and features.get("has_dist_relaxation", 0) == 0.0
+        and not any(k in code_lower for k in ("dijkstra", "shortest_path"))
+    ):
+        return (
+            "Prim's Algorithm",
+            0.99,
+            "Detected Prim's MST algorithm (min-heap priority queue with visited cut set, edge weight selection, and lazy deletion).",
+        )
+
+    # 7i. Topological Sort (Kahn's algorithm)
+    if (
+        features.get("has_topological_sort_kahn", 0) == 1.0
+        or (
+            features.get("has_topological_sort_pattern", 0) == 1.0
+            and (features.get("uses_queue", 0) == 1.0 or "in_degree" in code_lower or "indegree" in code_lower)
+        )
+    ) and features.get("has_dag_relaxation_loop", 0) == 0.0:
+        return (
+            "Topological Sort (Kahn)",
+            0.99,
+            "Detected Kahn's algorithm for topological sorting using in-degree tracking and queue processing.",
+        )
+
+    # 7j. Topological Sort (DFS post-order with cycle detection)
+    if (
+        features.get("has_topological_sort_dfs", 0) == 1.0
+        or features.get("has_cycle_path_set", 0) == 1.0
+        or (
+            features.get("has_topo_dfs_postorder", 0) == 1.0
+            and (features.get("has_reversed_stack_return", 0) == 1.0 or features.get("has_three_color_cycle_detection", 0) == 1.0)
+        )
+    ) and features.get("has_dag_relaxation_loop", 0) == 0.0 and not features.get("has_dist_relaxation", 0):
+        return (
+            "Topological Sort (DFS)",
+            0.99,
+            "Detected DFS-based topological sort with cycle detection and post-order result reversal.",
+        )
+
+    # 7k. Topological Sort generic fallback
+    if (
+        (
+            features.get("has_topological_sort_pattern", 0) == 1.0
+            or ("topological" in code_lower or "topo_sort" in code_lower or "toposort" in code_lower)
+        )
+        and features.get("has_dp_table_indexing", 0) == 0.0
+        and features.get("has_priority_queue_traversal", 0) == 0.0
+        and features.get("has_dag_relaxation_loop", 0) == 0.0
+    ):
+        return (
+            "Topological Sort",
+            0.99,
+            "Detected DAG topological sort with cycle detection, in-degree/DFS post-order ordering.",
+        )
+
+    # 7l. DFS (iterative): stack + reversed neighbor iteration or stack.extend
+    if (
+        (
+            features.get("has_reversed_neighbor_traversal", 0) == 1.0
+            or features.get("has_stack_extend_neighbors", 0) == 1.0
+            or (
+                (features.get("uses_stack", 0) == 1.0 or "stack" in code_lower or "stk" in code_lower)
+                and (features.get("uses_adjacency_structure", 0) == 1.0 or features.get("has_adjacency_iteration", 0) == 1.0)
+                and ("pop(" in code_lower or ".pop()" in code_lower)
+            )
+        )
+        and features.get("has_topological_sort_pattern", 0) == 0.0
+        and features.get("has_topological_sort_kahn", 0) == 0.0
+        and features.get("has_topological_sort_dfs", 0) == 0.0
+        and features.get("has_dag_relaxation_loop", 0) == 0.0
+        and features.get("has_dist_relaxation", 0) == 0.0
+        and features.get("has_backtracking_undo_pattern", 0) == 0.0
+        and features.get("uses_queue", 0) == 0.0
+    ):
+        return (
+            "DFS (iterative)",
+            0.99,
+            "Detected iterative DFS graph traversal with LIFO stack frontier and neighbor traversal.",
+        )
+
+    # 7m. DFS (recursive): recursion over graph adjacency with visited state
+    if (
+        features.get("has_recursion", 0) == 1.0
+        and (features.get("uses_adjacency_structure", 0) == 1.0 or features.get("has_adjacency_iteration", 0) == 1.0)
+        and (features.get("has_visited_like_var", 0) == 1.0 or features.get("uses_set", 0) == 1.0 or "visited" in code_lower)
+        and features.get("has_backtracking_undo_pattern", 0) == 0.0
+        and features.get("has_topological_sort_pattern", 0) == 0.0
+        and features.get("has_topological_sort_dfs", 0) == 0.0
+        and features.get("has_dag_relaxation_loop", 0) == 0.0
+        and features.get("has_dist_relaxation", 0) == 0.0
+        and not any(k in code_lower for k in ("n_queens", "permute", "combination_sum", "word_search"))
+    ):
+        return (
+            "DFS",
+            0.99,
+            "Detected recursive depth-first search graph traversal with visited state tracking.",
+        )
+
+    # 7n. BFS (Breadth-First Search): Queue frontier exploration + visited set tracking
+    if (
+        (features.get("has_queue_while_loop", 0) == 1.0 or features.get("uses_queue", 0) == 1.0 or "deque" in code_lower or "queue" in code_lower)
         and (features.get("has_queue_pop", 0) == 1.0 or "popleft" in code_lower or "pop(0)" in code_lower)
         and (
             features.get("has_visited_check_before_enqueue", 0) == 1.0
@@ -173,8 +360,11 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
         and features.get("has_dp_table_indexing", 0) == 0.0
         and features.get("has_memo_dict_access", 0) == 0.0
         and features.get("has_topological_sort_pattern", 0) == 0.0
+        and features.get("has_topological_sort_kahn", 0) == 0.0
         and features.get("has_priority_queue_traversal", 0) == 0.0
         and features.get("uses_priority_queue", 0) == 0.0
+        and features.get("has_deque_appendleft", 0) == 0.0
+        and features.get("has_dist_relaxation", 0) == 0.0
         and "heappop" not in code_lower
         and "heappush" not in code_lower
     ):
@@ -182,33 +372,6 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
             "BFS",
             0.99,
             "Detected BFS queue frontier exploration with visited state tracking and adjacency iteration.",
-        )
-
-    # 7d. Topological Sort: DAG dependency ordering (Kahn's in-degree queue or DFS post-order ordering with cycle detection)
-    if (
-        (
-            features.get("has_topological_sort_pattern", 0) == 1.0
-            or (
-                features.get("has_topo_dfs_postorder", 0) == 1.0
-                and (features.get("has_reversed_stack_return", 0) == 1.0 or features.get("has_three_color_cycle_detection", 0) == 1.0)
-            )
-            or ("in_degree" in code_lower and (features.get("uses_queue", 0) == 1.0 or "popleft" in code_lower or "pop(0)" in code_lower))
-            or (
-                ("topological" in code_lower or "topo_sort" in code_lower or "toposort" in code_lower)
-                and (features.get("uses_adjacency_structure", 0) == 1.0 or features.get("has_adjacency_iteration", 0) == 1.0 or "adj" in code_lower or "graph" in code_lower)
-            )
-        )
-        and features.get("has_dp_table_indexing", 0) == 0.0
-        and features.get("has_priority_queue_traversal", 0) == 0.0
-        and features.get("uses_priority_queue", 0) == 0.0
-        and "heappop" not in code_lower
-        and "heappush" not in code_lower
-        and features.get("has_two_pointer_pattern", 0) == 0.0
-    ):
-        return (
-            "Topological Sort",
-            0.99,
-            "Detected DAG topological sort with cycle detection, in-degree/DFS post-order ordering.",
         )
 
     # 8. Binary Search: Midpoint halving calculation in single loop with no recursion
@@ -519,7 +682,21 @@ def predict_algorithm(code: str, features: Optional[Dict[str, float]] = None) ->
     # Structural contradiction checks:
     # If structural features indicate graph adjacency but ML predicts sorting/DP without graph structures
     is_graph_code = features.get("uses_adjacency_structure", 0) == 1.0 or features.get("has_adjacency_iteration", 0) == 1.0
-    if is_graph_code and prediction not in ("BFS", "DFS", "Topological Sort", "Union-Find"):
+    if is_graph_code and prediction not in (
+        "BFS",
+        "DFS",
+        "DFS (iterative)",
+        "Topological Sort",
+        "Topological Sort (Kahn)",
+        "Topological Sort (DFS)",
+        "Bellman-Ford",
+        "0-1 BFS",
+        "All-Pairs Shortest Path (repeated Bellman-Ford)",
+        "DAG Shortest Path",
+        "Dijkstra's Algorithm",
+        "Prim's Algorithm",
+        "Union-Find",
+    ):
         return "Uncertain", round(top1_prob, 4)
 
     # If structural features indicate intervals/greedy but ML predicts DP

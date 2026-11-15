@@ -50,7 +50,7 @@ def topological_sort_dfs(v: int, adj: list[list[int]]) -> list[int]:
     assert feats["has_reversed_stack_return"] == 1.0, "has_reversed_stack_return extracted"
 
     algo, conf = predict_algorithm(code, feats)
-    assert algo == "Topological Sort", f"Expected 'Topological Sort' but got '{algo}'"
+    assert algo.startswith("Topological Sort"), f"Expected 'Topological Sort' but got '{algo}'"
     assert conf >= 0.95, f"Expected confidence >= 0.95, got {conf}"
 
     cx = estimate_complexity_from_features(feats, algorithm=algo, class_confidence=conf)
@@ -83,7 +83,7 @@ def topo_iterative(n, edges):
 """
     feats = extract_features(code)
     algo, conf = predict_algorithm(code, feats)
-    assert algo == "Topological Sort", f"Expected 'Topological Sort' but got '{algo}'"
+    assert algo.startswith("Topological Sort"), f"Expected 'Topological Sort' but got '{algo}'"
     print(f"[PASS] Topo Sort DFS Iterative -> {algo} (conf: {conf})")
 
 def test_topological_sort_kahn():
@@ -108,7 +108,7 @@ def topo_kahn(num_courses, prerequisites):
 """
     feats = extract_features(code)
     algo, conf = predict_algorithm(code, feats)
-    assert algo == "Topological Sort", f"Expected 'Topological Sort' but got '{algo}'"
+    assert algo.startswith("Topological Sort"), f"Expected 'Topological Sort' but got '{algo}'"
     assert conf >= 0.95, f"Expected confidence >= 0.95, got {conf}"
     print(f"[PASS] Topo Sort Kahn's -> {algo} (conf: {conf})")
 

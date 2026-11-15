@@ -585,6 +585,26 @@ CANONICAL_ALGORITHM_COMPLEXITY = {
         ),
         "confidence": "high",
     },
+    "DFS": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "reasoning": (
+            "Depth-first search traverses vertices and incident edges recursively or via stack: "
+            "visits each vertex and explores every incident edge once → O(V + E) time, "
+            "with O(V) auxiliary space for visited set and recursion call stack depth."
+        ),
+        "confidence": "high",
+    },
+    "DFS (iterative)": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "reasoning": (
+            "Iterative depth-first search traverses vertices and incident edges using an explicit LIFO stack: "
+            "visits each vertex and explores every incident edge once → O(V + E) time, "
+            "with O(V) auxiliary space for visited set and stack frontier."
+        ),
+        "confidence": "high",
+    },
     "Prim's Algorithm": {
         "time": "O(E log V)",
         "space": "O(V + E)",
@@ -597,21 +617,84 @@ CANONICAL_ALGORITHM_COMPLEXITY = {
     },
     "Dijkstra's Algorithm": {
         "time": "O((V + E) log V)",
-        "space": "O(V + E)",
+        "space": "O(V)",
         "reasoning": (
             "Single-source shortest path using binary min-heap priority queue and edge distance relaxation: "
             "each vertex extraction takes O(log V) and each edge relaxation takes O(log V) → O((V + E) log V) time, "
-            "with O(V + E) auxiliary space for distance vector, visited set, and priority queue."
+            "with O(V) auxiliary space for distance vector and priority queue."
+        ),
+        "confidence": "high",
+    },
+    "Bellman-Ford": {
+        "time": "O(V * E)",
+        "space": "O(V)",
+        "reasoning": (
+            "Single-source shortest path relaxing all E edges across V-1 passes followed by a negative-cycle check pass: "
+            "runs in O(V * E) time, with O(V) auxiliary space for the distance vector."
+        ),
+        "confidence": "high",
+    },
+    "0-1 BFS": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "reasoning": (
+            "Single-source shortest path on 0-1 weighted graph using double-ended queue (deque): "
+            "0-weight edges pushed to front, 1-weight edges to back → O(V + E) time, with O(V) deque space."
+        ),
+        "confidence": "high",
+    },
+    "All-Pairs Shortest Path (repeated Bellman-Ford)": {
+        "time": "O(V^2 * E)",
+        "space": "O(V^2)",
+        "reasoning": (
+            "All-pairs shortest paths computed by running Bellman-Ford from each of the V vertices: "
+            "each run takes O(V * E) → O(V^2 * E) total time, with O(V^2) space for the distance matrix."
+        ),
+        "confidence": "high",
+    },
+    "Topological Sort": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "reasoning": (
+            "DAG topological ordering via Kahn's algorithm or DFS traverses every vertex and edge: "
+            "O(V + E) time, with O(V) auxiliary space for in-degree counts and frontier queue or recursion stack."
+        ),
+        "confidence": "high",
+    },
+    "Topological Sort (Kahn)": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "reasoning": (
+            "Kahn's algorithm maintains in-degrees and processes zero in-degree vertices via FIFO queue: "
+            "traverses all vertices and edges once → O(V + E) time with O(V) queue and in-degree table space."
+        ),
+        "confidence": "high",
+    },
+    "Topological Sort (DFS)": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "reasoning": (
+            "DFS-based topological ordering appends nodes post-order upon backtrack and reverses result: "
+            "detects cycles using active path set or 3-color marks → O(V + E) time with O(V) call stack and visited space."
+        ),
+        "confidence": "high",
+    },
+    "DAG Shortest Path": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "reasoning": (
+            "Single-source shortest path on a Directed Acyclic Graph: computes topological order in O(V + E), "
+            "then relaxes edges incident to each vertex in topological order in O(V + E) → O(V + E) total time with O(V) space."
         ),
         "confidence": "high",
     },
     "Kruskal's Algorithm": {
         "time": "O(E log E)",
-        "space": "O(V + E)",
+        "space": "O(V)",
         "reasoning": (
             "Minimum spanning tree using edge sorting and Disjoint Set Union (DSU / Union-Find) with path compression: "
             "sorting edges takes O(E log E), while almost-linear DSU operations take O(E alpha(V)) → O(E log E) time "
-            "with O(V + E) space for edge list and DSU parent/rank arrays."
+            "with O(V) space for DSU parent/rank arrays."
         ),
         "confidence": "high",
     },

@@ -448,6 +448,102 @@
     "label": "DFS"
   },
   {
+    "code": "def dfs(graph, start):\n    # Iterative DFS with reversed neighbor loop maintaining order\n    visited = set()\n    stack = [start]\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            print(node)\n            for neighbor in reversed(graph.get(node, [])):\n                if neighbor not in visited:\n                    stack.append(neighbor)\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def depth_first_search(graph, start):\n    visited = set()\n    stack = [start]\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            print(node)\n            for neighbor in reversed(graph.get(node, [])):\n                if neighbor not in visited:\n                    stack.append(neighbor)\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def explore(graph, start):\n    # Iterative DFS with reversed neighbor loop maintaining order\n    visited = set()\n    stack = [start]\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            print(node)\n            for neighbor in reversed(graph.get(node, [])):\n                if neighbor not in visited:\n                    stack.append(neighbor)\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def traverse_dfs(graph, start):\n    visited = set()\n    stack = [start]\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            print(node)\n            for neighbor in reversed(graph.get(node, [])):\n                if neighbor not in visited:\n                    stack.append(neighbor)\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def dfs(graph, start):\n    # Iterative DFS with reversed neighbor loop maintaining order\n    visited = set()\n    stack = [start]\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            print(node)\n            for neighbor in reversed(graph.get(node, [])):\n                if neighbor not in visited:\n                    stack.append(neighbor)\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def depth_first_search(graph, start):\n    visited = set()\n    stack = [start]\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            print(node)\n            for neighbor in reversed(graph.get(node, [])):\n                if neighbor not in visited:\n                    stack.append(neighbor)\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def explore(graph, start):\n    # Iterative DFS with reversed neighbor loop maintaining order\n    visited = set()\n    stack = [start]\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            print(node)\n            for neighbor in reversed(graph.get(node, [])):\n                if neighbor not in visited:\n                    stack.append(neighbor)\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def traverse_dfs(graph, start):\n    visited = set()\n    stack = [start]\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            print(node)\n            for neighbor in reversed(graph.get(node, [])):\n                if neighbor not in visited:\n                    stack.append(neighbor)\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def depth_first_search(graph, start):\n    # Iterative DFS using stack.extend for adjacency neighbors\n    visited = set()\n    stack = [start]\n    order = []\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            order.append(node)\n            stack.extend(graph.get(node, []))\n    return order\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def explore(graph, start):\n    visited = set()\n    stack = [start]\n    order = []\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            order.append(node)\n            stack.extend(graph.get(node, []))\n    return order\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def traverse_dfs(graph, start):\n    # Iterative DFS using stack.extend for adjacency neighbors\n    visited = set()\n    stack = [start]\n    order = []\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            order.append(node)\n            stack.extend(graph.get(node, []))\n    return order\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def dfs(graph, start):\n    visited = set()\n    stack = [start]\n    order = []\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            order.append(node)\n            stack.extend(graph.get(node, []))\n    return order\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def depth_first_search(graph, start):\n    # Iterative DFS using stack.extend for adjacency neighbors\n    visited = set()\n    stack = [start]\n    order = []\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            order.append(node)\n            stack.extend(graph.get(node, []))\n    return order\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def explore(graph, start):\n    visited = set()\n    stack = [start]\n    order = []\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            order.append(node)\n            stack.extend(graph.get(node, []))\n    return order\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def traverse_dfs(graph, start):\n    # Iterative DFS using stack.extend for adjacency neighbors\n    visited = set()\n    stack = [start]\n    order = []\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            order.append(node)\n            stack.extend(graph.get(node, []))\n    return order\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def dfs(graph, start):\n    visited = set()\n    stack = [start]\n    order = []\n    while stack:\n        node = stack.pop()\n        if node not in visited:\n            visited.add(node)\n            order.append(node)\n            stack.extend(graph.get(node, []))\n    return order\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def explore(graph):\n    # Recursive DFS using nested explore helper function\n    visited = []\n    def explore(node):\n        visited.append(node)\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                explore(neighbor)\n    for v in graph:\n        if v not in visited:\n            explore(v)\n    return visited\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def traverse_dfs(graph):\n    visited = []\n    def explore(node):\n        visited.append(node)\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                explore(neighbor)\n    for v in graph:\n        if v not in visited:\n            explore(v)\n    return visited\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def dfs(graph):\n    # Recursive DFS using nested explore helper function\n    visited = []\n    def explore(node):\n        visited.append(node)\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                explore(neighbor)\n    for v in graph:\n        if v not in visited:\n            explore(v)\n    return visited\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def depth_first_search(graph):\n    visited = []\n    def explore(node):\n        visited.append(node)\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                explore(neighbor)\n    for v in graph:\n        if v not in visited:\n            explore(v)\n    return visited\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def explore(graph):\n    # Recursive DFS using nested explore helper function\n    visited = []\n    def explore(node):\n        visited.append(node)\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                explore(neighbor)\n    for v in graph:\n        if v not in visited:\n            explore(v)\n    return visited\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def traverse_dfs(graph):\n    visited = []\n    def explore(node):\n        visited.append(node)\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                explore(neighbor)\n    for v in graph:\n        if v not in visited:\n            explore(v)\n    return visited\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def dfs(graph):\n    # Recursive DFS using nested explore helper function\n    visited = []\n    def explore(node):\n        visited.append(node)\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                explore(neighbor)\n    for v in graph:\n        if v not in visited:\n            explore(v)\n    return visited\n",
+    "label": "DFS"
+  },
+  {
+    "code": "def depth_first_search(graph):\n    visited = []\n    def explore(node):\n        visited.append(node)\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                explore(neighbor)\n    for v in graph:\n        if v not in visited:\n            explore(v)\n    return visited\n",
+    "label": "DFS"
+  },
+  {
     "code": "def solve(n, memo=None):\n    # top-down memoized DP (climbing stairs style)\n    if memo is None:\n        memo = {}\n    if n <= 1:\n        return 1\n    if n in memo:\n        return memo[n]\n    result = solve(n - 1, memo) + solve(n - 2, memo)\n    memo[n] = result\n    return result\n",
     "label": "Dynamic Programming"
   },
@@ -1984,6 +2080,38 @@
     "label": "Topological Sort"
   },
   {
+    "code": "def topological_sort(graph):\n    # DFS topological sort with cycle detection using path set\n    visited = set()\n    path = set()\n    result = []\n    def dfs(node):\n        visited.add(node)\n        path.add(node)\n        for neighbor in graph.get(node, []):\n            if neighbor in path:\n                return False\n            if neighbor not in visited:\n                if not dfs(neighbor):\n                    return False\n        path.remove(node)\n        result.append(node)\n        return True\n    for node in graph:\n        if node not in visited:\n            if not dfs(node):\n                return []\n    return result[::-1]\n",
+    "label": "Topological Sort"
+  },
+  {
+    "code": "def topo_sort(graph):\n    visited = set()\n    path = set()\n    result = []\n    def dfs(node):\n        visited.add(node)\n        path.add(node)\n        for neighbor in graph.get(node, []):\n            if neighbor in path:\n                return False\n            if neighbor not in visited:\n                if not dfs(neighbor):\n                    return False\n        path.remove(node)\n        result.append(node)\n        return True\n    for node in graph:\n        if node not in visited:\n            if not dfs(node):\n                return []\n    return result[::-1]\n",
+    "label": "Topological Sort"
+  },
+  {
+    "code": "def find_order(graph):\n    # DFS topological sort with cycle detection using path set\n    visited = set()\n    path = set()\n    result = []\n    def dfs(node):\n        visited.add(node)\n        path.add(node)\n        for neighbor in graph.get(node, []):\n            if neighbor in path:\n                return False\n            if neighbor not in visited:\n                if not dfs(neighbor):\n                    return False\n        path.remove(node)\n        result.append(node)\n        return True\n    for node in graph:\n        if node not in visited:\n            if not dfs(node):\n                return []\n    return result[::-1]\n",
+    "label": "Topological Sort"
+  },
+  {
+    "code": "def schedule_tasks(graph):\n    visited = set()\n    path = set()\n    result = []\n    def dfs(node):\n        visited.add(node)\n        path.add(node)\n        for neighbor in graph.get(node, []):\n            if neighbor in path:\n                return False\n            if neighbor not in visited:\n                if not dfs(neighbor):\n                    return False\n        path.remove(node)\n        result.append(node)\n        return True\n    for node in graph:\n        if node not in visited:\n            if not dfs(node):\n                return []\n    return result[::-1]\n",
+    "label": "Topological Sort"
+  },
+  {
+    "code": "def topological_sort(graph):\n    # DFS topological sort with cycle detection using path set\n    visited = set()\n    path = set()\n    result = []\n    def dfs(node):\n        visited.add(node)\n        path.add(node)\n        for neighbor in graph.get(node, []):\n            if neighbor in path:\n                return False\n            if neighbor not in visited:\n                if not dfs(neighbor):\n                    return False\n        path.remove(node)\n        result.append(node)\n        return True\n    for node in graph:\n        if node not in visited:\n            if not dfs(node):\n                return []\n    return result[::-1]\n",
+    "label": "Topological Sort"
+  },
+  {
+    "code": "def topo_sort(graph):\n    visited = set()\n    path = set()\n    result = []\n    def dfs(node):\n        visited.add(node)\n        path.add(node)\n        for neighbor in graph.get(node, []):\n            if neighbor in path:\n                return False\n            if neighbor not in visited:\n                if not dfs(neighbor):\n                    return False\n        path.remove(node)\n        result.append(node)\n        return True\n    for node in graph:\n        if node not in visited:\n            if not dfs(node):\n                return []\n    return result[::-1]\n",
+    "label": "Topological Sort"
+  },
+  {
+    "code": "def find_order(graph):\n    # DFS topological sort with cycle detection using path set\n    visited = set()\n    path = set()\n    result = []\n    def dfs(node):\n        visited.add(node)\n        path.add(node)\n        for neighbor in graph.get(node, []):\n            if neighbor in path:\n                return False\n            if neighbor not in visited:\n                if not dfs(neighbor):\n                    return False\n        path.remove(node)\n        result.append(node)\n        return True\n    for node in graph:\n        if node not in visited:\n            if not dfs(node):\n                return []\n    return result[::-1]\n",
+    "label": "Topological Sort"
+  },
+  {
+    "code": "def schedule_tasks(graph):\n    visited = set()\n    path = set()\n    result = []\n    def dfs(node):\n        visited.add(node)\n        path.add(node)\n        for neighbor in graph.get(node, []):\n            if neighbor in path:\n                return False\n            if neighbor not in visited:\n                if not dfs(neighbor):\n                    return False\n        path.remove(node)\n        result.append(node)\n        return True\n    for node in graph:\n        if node not in visited:\n            if not dfs(node):\n                return []\n    return result[::-1]\n",
+    "label": "Topological Sort"
+  },
+  {
     "code": "def interval_scheduling(intervals: list[list[int]]) -> list[list[int]]:\n    # Greedy interval scheduling / activity selection by earliest finish time\n    intervals.sort(key=lambda x: x[1])\n    selected = []\n    last_end_time = float('-inf')\n\n    for start, end in intervals:\n        if start >= last_end_time:\n            selected.append([start, end])\n            last_end_time = end\n\n    return selected\n",
     "label": "Greedy / Interval Scheduling"
   },
@@ -2110,6 +2238,518 @@
   {
     "code": "def erase_overlap(intervals: list[list[int]]) -> bool:\n    intervals.sort(key=lambda x: x[0])\n    for i in range(len(intervals) - 1):\n        if intervals[i][1] > intervals[i + 1][0]:\n            return False\n    return True\n",
     "label": "Greedy / Interval Scheduling"
+  },
+  {
+    "code": "def bellman_ford(vertices, edges, start):\n    # Bellman-Ford algorithm relaxing all edges V-1 times\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for _ in range(vertices - 1):\n        updated = False\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                updated = True\n        if not updated:\n            break\n    # Negative cycle detection pass\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def shortest_paths_bf(vertices, edges, start):\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for _ in range(vertices - 1):\n        updated = False\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                updated = True\n        if not updated:\n            break\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def find_shortest_paths(vertices, edges, start):\n    # Bellman-Ford algorithm relaxing all edges V-1 times\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for _ in range(vertices - 1):\n        updated = False\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                updated = True\n        if not updated:\n            break\n    # Negative cycle detection pass\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bf_relax(vertices, edges, start):\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for _ in range(vertices - 1):\n        updated = False\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                updated = True\n        if not updated:\n            break\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bellman_ford(vertices, edges, start):\n    # Bellman-Ford algorithm relaxing all edges V-1 times\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for _ in range(vertices - 1):\n        updated = False\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                updated = True\n        if not updated:\n            break\n    # Negative cycle detection pass\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def shortest_paths_bf(vertices, edges, start):\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for _ in range(vertices - 1):\n        updated = False\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                updated = True\n        if not updated:\n            break\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def find_shortest_paths(vertices, edges, start):\n    # Bellman-Ford algorithm relaxing all edges V-1 times\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for _ in range(vertices - 1):\n        updated = False\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                updated = True\n        if not updated:\n            break\n    # Negative cycle detection pass\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bf_relax(vertices, edges, start):\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for _ in range(vertices - 1):\n        updated = False\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                updated = True\n        if not updated:\n            break\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def shortest_paths_bf(num_nodes, graph, source):\n    # Bellman-Ford on adjacency list with relaxation and negative cycle check\n    distances = {i: float('inf') for i in range(num_nodes)}\n    distances[source] = 0\n    for iteration in range(num_nodes - 1):\n        changed = False\n        for u in range(num_nodes):\n            if distances[u] == float('inf'):\n                continue\n            for v, weight in graph.get(u, []):\n                if distances[u] + weight < distances[v]:\n                    distances[v] = distances[u] + weight\n                    changed = True\n        if not changed:\n            break\n    for u in range(num_nodes):\n        for v, weight in graph.get(u, []):\n            if distances[u] + weight < distances[v]:\n                raise ValueError(\"Negative cycle detected\")\n    return distances\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def find_shortest_paths(num_nodes, graph, source):\n    distances = {i: float('inf') for i in range(num_nodes)}\n    distances[source] = 0\n    for iteration in range(num_nodes - 1):\n        changed = False\n        for u in range(num_nodes):\n            if distances[u] == float('inf'):\n                continue\n            for v, weight in graph.get(u, []):\n                if distances[u] + weight < distances[v]:\n                    distances[v] = distances[u] + weight\n                    changed = True\n        if not changed:\n            break\n    for u in range(num_nodes):\n        for v, weight in graph.get(u, []):\n            if distances[u] + weight < distances[v]:\n                raise ValueError(\"Negative cycle detected\")\n    return distances\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bf_relax(num_nodes, graph, source):\n    # Bellman-Ford on adjacency list with relaxation and negative cycle check\n    distances = {i: float('inf') for i in range(num_nodes)}\n    distances[source] = 0\n    for iteration in range(num_nodes - 1):\n        changed = False\n        for u in range(num_nodes):\n            if distances[u] == float('inf'):\n                continue\n            for v, weight in graph.get(u, []):\n                if distances[u] + weight < distances[v]:\n                    distances[v] = distances[u] + weight\n                    changed = True\n        if not changed:\n            break\n    for u in range(num_nodes):\n        for v, weight in graph.get(u, []):\n            if distances[u] + weight < distances[v]:\n                raise ValueError(\"Negative cycle detected\")\n    return distances\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bellman_ford(num_nodes, graph, source):\n    distances = {i: float('inf') for i in range(num_nodes)}\n    distances[source] = 0\n    for iteration in range(num_nodes - 1):\n        changed = False\n        for u in range(num_nodes):\n            if distances[u] == float('inf'):\n                continue\n            for v, weight in graph.get(u, []):\n                if distances[u] + weight < distances[v]:\n                    distances[v] = distances[u] + weight\n                    changed = True\n        if not changed:\n            break\n    for u in range(num_nodes):\n        for v, weight in graph.get(u, []):\n            if distances[u] + weight < distances[v]:\n                raise ValueError(\"Negative cycle detected\")\n    return distances\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def shortest_paths_bf(num_nodes, graph, source):\n    # Bellman-Ford on adjacency list with relaxation and negative cycle check\n    distances = {i: float('inf') for i in range(num_nodes)}\n    distances[source] = 0\n    for iteration in range(num_nodes - 1):\n        changed = False\n        for u in range(num_nodes):\n            if distances[u] == float('inf'):\n                continue\n            for v, weight in graph.get(u, []):\n                if distances[u] + weight < distances[v]:\n                    distances[v] = distances[u] + weight\n                    changed = True\n        if not changed:\n            break\n    for u in range(num_nodes):\n        for v, weight in graph.get(u, []):\n            if distances[u] + weight < distances[v]:\n                raise ValueError(\"Negative cycle detected\")\n    return distances\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def find_shortest_paths(num_nodes, graph, source):\n    distances = {i: float('inf') for i in range(num_nodes)}\n    distances[source] = 0\n    for iteration in range(num_nodes - 1):\n        changed = False\n        for u in range(num_nodes):\n            if distances[u] == float('inf'):\n                continue\n            for v, weight in graph.get(u, []):\n                if distances[u] + weight < distances[v]:\n                    distances[v] = distances[u] + weight\n                    changed = True\n        if not changed:\n            break\n    for u in range(num_nodes):\n        for v, weight in graph.get(u, []):\n            if distances[u] + weight < distances[v]:\n                raise ValueError(\"Negative cycle detected\")\n    return distances\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bf_relax(num_nodes, graph, source):\n    # Bellman-Ford on adjacency list with relaxation and negative cycle check\n    distances = {i: float('inf') for i in range(num_nodes)}\n    distances[source] = 0\n    for iteration in range(num_nodes - 1):\n        changed = False\n        for u in range(num_nodes):\n            if distances[u] == float('inf'):\n                continue\n            for v, weight in graph.get(u, []):\n                if distances[u] + weight < distances[v]:\n                    distances[v] = distances[u] + weight\n                    changed = True\n        if not changed:\n            break\n    for u in range(num_nodes):\n        for v, weight in graph.get(u, []):\n            if distances[u] + weight < distances[v]:\n                raise ValueError(\"Negative cycle detected\")\n    return distances\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bellman_ford(num_nodes, graph, source):\n    distances = {i: float('inf') for i in range(num_nodes)}\n    distances[source] = 0\n    for iteration in range(num_nodes - 1):\n        changed = False\n        for u in range(num_nodes):\n            if distances[u] == float('inf'):\n                continue\n            for v, weight in graph.get(u, []):\n                if distances[u] + weight < distances[v]:\n                    distances[v] = distances[u] + weight\n                    changed = True\n        if not changed:\n            break\n    for u in range(num_nodes):\n        for v, weight in graph.get(u, []):\n            if distances[u] + weight < distances[v]:\n                raise ValueError(\"Negative cycle detected\")\n    return distances\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def find_shortest_paths(v: int, edge_list: list[list[int]], src: int) -> list[float]:\n    # Single-source shortest path with negative weight edges\n    d = [float('inf')] * v\n    d[src] = 0.0\n    for i in range(v - 1):\n        has_change = False\n        for u, dest, cost in edge_list:\n            if d[u] + cost < d[dest]:\n                d[dest] = d[u] + cost\n                has_change = True\n        if not has_change:\n            break\n    for u, dest, cost in edge_list:\n        if d[u] + cost < d[dest]:\n            return []\n    return d\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bf_relax(v: int, edge_list: list[list[int]], src: int) -> list[float]:\n    d = [float('inf')] * v\n    d[src] = 0.0\n    for i in range(v - 1):\n        has_change = False\n        for u, dest, cost in edge_list:\n            if d[u] + cost < d[dest]:\n                d[dest] = d[u] + cost\n                has_change = True\n        if not has_change:\n            break\n    for u, dest, cost in edge_list:\n        if d[u] + cost < d[dest]:\n            return []\n    return d\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bellman_ford(v: int, edge_list: list[list[int]], src: int) -> list[float]:\n    # Single-source shortest path with negative weight edges\n    d = [float('inf')] * v\n    d[src] = 0.0\n    for i in range(v - 1):\n        has_change = False\n        for u, dest, cost in edge_list:\n            if d[u] + cost < d[dest]:\n                d[dest] = d[u] + cost\n                has_change = True\n        if not has_change:\n            break\n    for u, dest, cost in edge_list:\n        if d[u] + cost < d[dest]:\n            return []\n    return d\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def shortest_paths_bf(v: int, edge_list: list[list[int]], src: int) -> list[float]:\n    d = [float('inf')] * v\n    d[src] = 0.0\n    for i in range(v - 1):\n        has_change = False\n        for u, dest, cost in edge_list:\n            if d[u] + cost < d[dest]:\n                d[dest] = d[u] + cost\n                has_change = True\n        if not has_change:\n            break\n    for u, dest, cost in edge_list:\n        if d[u] + cost < d[dest]:\n            return []\n    return d\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def find_shortest_paths(v: int, edge_list: list[list[int]], src: int) -> list[float]:\n    # Single-source shortest path with negative weight edges\n    d = [float('inf')] * v\n    d[src] = 0.0\n    for i in range(v - 1):\n        has_change = False\n        for u, dest, cost in edge_list:\n            if d[u] + cost < d[dest]:\n                d[dest] = d[u] + cost\n                has_change = True\n        if not has_change:\n            break\n    for u, dest, cost in edge_list:\n        if d[u] + cost < d[dest]:\n            return []\n    return d\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bf_relax(v: int, edge_list: list[list[int]], src: int) -> list[float]:\n    d = [float('inf')] * v\n    d[src] = 0.0\n    for i in range(v - 1):\n        has_change = False\n        for u, dest, cost in edge_list:\n            if d[u] + cost < d[dest]:\n                d[dest] = d[u] + cost\n                has_change = True\n        if not has_change:\n            break\n    for u, dest, cost in edge_list:\n        if d[u] + cost < d[dest]:\n            return []\n    return d\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bellman_ford(v: int, edge_list: list[list[int]], src: int) -> list[float]:\n    # Single-source shortest path with negative weight edges\n    d = [float('inf')] * v\n    d[src] = 0.0\n    for i in range(v - 1):\n        has_change = False\n        for u, dest, cost in edge_list:\n            if d[u] + cost < d[dest]:\n                d[dest] = d[u] + cost\n                has_change = True\n        if not has_change:\n            break\n    for u, dest, cost in edge_list:\n        if d[u] + cost < d[dest]:\n            return []\n    return d\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def shortest_paths_bf(v: int, edge_list: list[list[int]], src: int) -> list[float]:\n    d = [float('inf')] * v\n    d[src] = 0.0\n    for i in range(v - 1):\n        has_change = False\n        for u, dest, cost in edge_list:\n            if d[u] + cost < d[dest]:\n                d[dest] = d[u] + cost\n                has_change = True\n        if not has_change:\n            break\n    for u, dest, cost in edge_list:\n        if d[u] + cost < d[dest]:\n            return []\n    return d\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bf_relax(vertices, edges, source):\n    # Bellman-Ford tracking predecessor parent pointers\n    dist = [float('inf')] * vertices\n    parent = [-1] * vertices\n    dist[source] = 0\n    for step in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                parent[v] = u\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None, None\n    return dist, parent\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bellman_ford(vertices, edges, source):\n    dist = [float('inf')] * vertices\n    parent = [-1] * vertices\n    dist[source] = 0\n    for step in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                parent[v] = u\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None, None\n    return dist, parent\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def shortest_paths_bf(vertices, edges, source):\n    # Bellman-Ford tracking predecessor parent pointers\n    dist = [float('inf')] * vertices\n    parent = [-1] * vertices\n    dist[source] = 0\n    for step in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                parent[v] = u\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None, None\n    return dist, parent\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def find_shortest_paths(vertices, edges, source):\n    dist = [float('inf')] * vertices\n    parent = [-1] * vertices\n    dist[source] = 0\n    for step in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                parent[v] = u\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None, None\n    return dist, parent\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bf_relax(vertices, edges, source):\n    # Bellman-Ford tracking predecessor parent pointers\n    dist = [float('inf')] * vertices\n    parent = [-1] * vertices\n    dist[source] = 0\n    for step in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                parent[v] = u\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None, None\n    return dist, parent\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def bellman_ford(vertices, edges, source):\n    dist = [float('inf')] * vertices\n    parent = [-1] * vertices\n    dist[source] = 0\n    for step in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                parent[v] = u\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None, None\n    return dist, parent\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def shortest_paths_bf(vertices, edges, source):\n    # Bellman-Ford tracking predecessor parent pointers\n    dist = [float('inf')] * vertices\n    parent = [-1] * vertices\n    dist[source] = 0\n    for step in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                parent[v] = u\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None, None\n    return dist, parent\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "def find_shortest_paths(vertices, edges, source):\n    dist = [float('inf')] * vertices\n    parent = [-1] * vertices\n    dist[source] = 0\n    for step in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n                parent[v] = u\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None, None\n    return dist, parent\n",
+    "label": "Bellman-Ford"
+  },
+  {
+    "code": "from collections import deque\n\ndef zero_one_bfs(graph, start, vertices):\n    # 0-1 BFS on weighted graph with weights in {0, 1}\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    queue = deque([start])\n    while queue:\n        u = queue.popleft()\n        for v, weight in graph.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                if weight == 0:\n                    queue.appendleft(v)\n                else:\n                    queue.append(v)\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef bfs_01(graph, start, vertices):\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    queue = deque([start])\n    while queue:\n        u = queue.popleft()\n        for v, weight in graph.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                if weight == 0:\n                    queue.appendleft(v)\n                else:\n                    queue.append(v)\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef shortest_path_01(graph, start, vertices):\n    # 0-1 BFS on weighted graph with weights in {0, 1}\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    queue = deque([start])\n    while queue:\n        u = queue.popleft()\n        for v, weight in graph.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                if weight == 0:\n                    queue.appendleft(v)\n                else:\n                    queue.append(v)\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef deque_01_bfs(graph, start, vertices):\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    queue = deque([start])\n    while queue:\n        u = queue.popleft()\n        for v, weight in graph.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                if weight == 0:\n                    queue.appendleft(v)\n                else:\n                    queue.append(v)\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef zero_one_bfs(graph, start, vertices):\n    # 0-1 BFS on weighted graph with weights in {0, 1}\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    queue = deque([start])\n    while queue:\n        u = queue.popleft()\n        for v, weight in graph.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                if weight == 0:\n                    queue.appendleft(v)\n                else:\n                    queue.append(v)\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef bfs_01(graph, start, vertices):\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    queue = deque([start])\n    while queue:\n        u = queue.popleft()\n        for v, weight in graph.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                if weight == 0:\n                    queue.appendleft(v)\n                else:\n                    queue.append(v)\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef shortest_path_01(graph, start, vertices):\n    # 0-1 BFS on weighted graph with weights in {0, 1}\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    queue = deque([start])\n    while queue:\n        u = queue.popleft()\n        for v, weight in graph.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                if weight == 0:\n                    queue.appendleft(v)\n                else:\n                    queue.append(v)\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef deque_01_bfs(graph, start, vertices):\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    queue = deque([start])\n    while queue:\n        u = queue.popleft()\n        for v, weight in graph.get(u, []):\n            if dist[u] + weight < dist[v]:\n                dist[v] = dist[u] + weight\n                if weight == 0:\n                    queue.appendleft(v)\n                else:\n                    queue.append(v)\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef bfs_01(grid, start_r, start_c):\n    # 0-1 BFS on grid with 0/1 transition costs\n    rows, cols = len(grid), len(grid[0])\n    dist = [[float('inf')] * cols for _ in range(rows)]\n    dist[start_r][start_c] = 0\n    dq = deque([(start_r, start_c)])\n    while dq:\n        r, c = dq.popleft()\n        for dr, dc, weight in [(0, 1, 0), (1, 0, 1), (0, -1, 0), (-1, 0, 1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols:\n                if dist[r][c] + weight < dist[nr][nc]:\n                    dist[nr][nc] = dist[r][c] + weight\n                    if weight == 0:\n                        dq.appendleft((nr, nc))\n                    else:\n                        dq.append((nr, nc))\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef shortest_path_01(grid, start_r, start_c):\n    rows, cols = len(grid), len(grid[0])\n    dist = [[float('inf')] * cols for _ in range(rows)]\n    dist[start_r][start_c] = 0\n    dq = deque([(start_r, start_c)])\n    while dq:\n        r, c = dq.popleft()\n        for dr, dc, weight in [(0, 1, 0), (1, 0, 1), (0, -1, 0), (-1, 0, 1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols:\n                if dist[r][c] + weight < dist[nr][nc]:\n                    dist[nr][nc] = dist[r][c] + weight\n                    if weight == 0:\n                        dq.appendleft((nr, nc))\n                    else:\n                        dq.append((nr, nc))\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef deque_01_bfs(grid, start_r, start_c):\n    # 0-1 BFS on grid with 0/1 transition costs\n    rows, cols = len(grid), len(grid[0])\n    dist = [[float('inf')] * cols for _ in range(rows)]\n    dist[start_r][start_c] = 0\n    dq = deque([(start_r, start_c)])\n    while dq:\n        r, c = dq.popleft()\n        for dr, dc, weight in [(0, 1, 0), (1, 0, 1), (0, -1, 0), (-1, 0, 1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols:\n                if dist[r][c] + weight < dist[nr][nc]:\n                    dist[nr][nc] = dist[r][c] + weight\n                    if weight == 0:\n                        dq.appendleft((nr, nc))\n                    else:\n                        dq.append((nr, nc))\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef zero_one_bfs(grid, start_r, start_c):\n    rows, cols = len(grid), len(grid[0])\n    dist = [[float('inf')] * cols for _ in range(rows)]\n    dist[start_r][start_c] = 0\n    dq = deque([(start_r, start_c)])\n    while dq:\n        r, c = dq.popleft()\n        for dr, dc, weight in [(0, 1, 0), (1, 0, 1), (0, -1, 0), (-1, 0, 1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols:\n                if dist[r][c] + weight < dist[nr][nc]:\n                    dist[nr][nc] = dist[r][c] + weight\n                    if weight == 0:\n                        dq.appendleft((nr, nc))\n                    else:\n                        dq.append((nr, nc))\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef bfs_01(grid, start_r, start_c):\n    # 0-1 BFS on grid with 0/1 transition costs\n    rows, cols = len(grid), len(grid[0])\n    dist = [[float('inf')] * cols for _ in range(rows)]\n    dist[start_r][start_c] = 0\n    dq = deque([(start_r, start_c)])\n    while dq:\n        r, c = dq.popleft()\n        for dr, dc, weight in [(0, 1, 0), (1, 0, 1), (0, -1, 0), (-1, 0, 1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols:\n                if dist[r][c] + weight < dist[nr][nc]:\n                    dist[nr][nc] = dist[r][c] + weight\n                    if weight == 0:\n                        dq.appendleft((nr, nc))\n                    else:\n                        dq.append((nr, nc))\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef shortest_path_01(grid, start_r, start_c):\n    rows, cols = len(grid), len(grid[0])\n    dist = [[float('inf')] * cols for _ in range(rows)]\n    dist[start_r][start_c] = 0\n    dq = deque([(start_r, start_c)])\n    while dq:\n        r, c = dq.popleft()\n        for dr, dc, weight in [(0, 1, 0), (1, 0, 1), (0, -1, 0), (-1, 0, 1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols:\n                if dist[r][c] + weight < dist[nr][nc]:\n                    dist[nr][nc] = dist[r][c] + weight\n                    if weight == 0:\n                        dq.appendleft((nr, nc))\n                    else:\n                        dq.append((nr, nc))\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef deque_01_bfs(grid, start_r, start_c):\n    # 0-1 BFS on grid with 0/1 transition costs\n    rows, cols = len(grid), len(grid[0])\n    dist = [[float('inf')] * cols for _ in range(rows)]\n    dist[start_r][start_c] = 0\n    dq = deque([(start_r, start_c)])\n    while dq:\n        r, c = dq.popleft()\n        for dr, dc, weight in [(0, 1, 0), (1, 0, 1), (0, -1, 0), (-1, 0, 1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols:\n                if dist[r][c] + weight < dist[nr][nc]:\n                    dist[nr][nc] = dist[r][c] + weight\n                    if weight == 0:\n                        dq.appendleft((nr, nc))\n                    else:\n                        dq.append((nr, nc))\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef zero_one_bfs(grid, start_r, start_c):\n    rows, cols = len(grid), len(grid[0])\n    dist = [[float('inf')] * cols for _ in range(rows)]\n    dist[start_r][start_c] = 0\n    dq = deque([(start_r, start_c)])\n    while dq:\n        r, c = dq.popleft()\n        for dr, dc, weight in [(0, 1, 0), (1, 0, 1), (0, -1, 0), (-1, 0, 1)]:\n            nr, nc = r + dr, c + dc\n            if 0 <= nr < rows and 0 <= nc < cols:\n                if dist[r][c] + weight < dist[nr][nc]:\n                    dist[nr][nc] = dist[r][c] + weight\n                    if weight == 0:\n                        dq.appendleft((nr, nc))\n                    else:\n                        dq.append((nr, nc))\n    return dist\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef shortest_path_01(n, adj, src):\n    # 0-1 BFS single source shortest path using deque front/back pushes\n    distance = {i: float('inf') for i in range(n)}\n    distance[src] = 0\n    frontier = deque([src])\n    while frontier:\n        curr = frontier.popleft()\n        for neighbor, cost in adj[curr]:\n            new_cost = distance[curr] + cost\n            if new_cost < distance[neighbor]:\n                distance[neighbor] = new_cost\n                if cost == 0:\n                    frontier.appendleft(neighbor)\n                else:\n                    frontier.append(neighbor)\n    return distance\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef deque_01_bfs(n, adj, src):\n    distance = {i: float('inf') for i in range(n)}\n    distance[src] = 0\n    frontier = deque([src])\n    while frontier:\n        curr = frontier.popleft()\n        for neighbor, cost in adj[curr]:\n            new_cost = distance[curr] + cost\n            if new_cost < distance[neighbor]:\n                distance[neighbor] = new_cost\n                if cost == 0:\n                    frontier.appendleft(neighbor)\n                else:\n                    frontier.append(neighbor)\n    return distance\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef zero_one_bfs(n, adj, src):\n    # 0-1 BFS single source shortest path using deque front/back pushes\n    distance = {i: float('inf') for i in range(n)}\n    distance[src] = 0\n    frontier = deque([src])\n    while frontier:\n        curr = frontier.popleft()\n        for neighbor, cost in adj[curr]:\n            new_cost = distance[curr] + cost\n            if new_cost < distance[neighbor]:\n                distance[neighbor] = new_cost\n                if cost == 0:\n                    frontier.appendleft(neighbor)\n                else:\n                    frontier.append(neighbor)\n    return distance\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef bfs_01(n, adj, src):\n    distance = {i: float('inf') for i in range(n)}\n    distance[src] = 0\n    frontier = deque([src])\n    while frontier:\n        curr = frontier.popleft()\n        for neighbor, cost in adj[curr]:\n            new_cost = distance[curr] + cost\n            if new_cost < distance[neighbor]:\n                distance[neighbor] = new_cost\n                if cost == 0:\n                    frontier.appendleft(neighbor)\n                else:\n                    frontier.append(neighbor)\n    return distance\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef shortest_path_01(n, adj, src):\n    # 0-1 BFS single source shortest path using deque front/back pushes\n    distance = {i: float('inf') for i in range(n)}\n    distance[src] = 0\n    frontier = deque([src])\n    while frontier:\n        curr = frontier.popleft()\n        for neighbor, cost in adj[curr]:\n            new_cost = distance[curr] + cost\n            if new_cost < distance[neighbor]:\n                distance[neighbor] = new_cost\n                if cost == 0:\n                    frontier.appendleft(neighbor)\n                else:\n                    frontier.append(neighbor)\n    return distance\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef deque_01_bfs(n, adj, src):\n    distance = {i: float('inf') for i in range(n)}\n    distance[src] = 0\n    frontier = deque([src])\n    while frontier:\n        curr = frontier.popleft()\n        for neighbor, cost in adj[curr]:\n            new_cost = distance[curr] + cost\n            if new_cost < distance[neighbor]:\n                distance[neighbor] = new_cost\n                if cost == 0:\n                    frontier.appendleft(neighbor)\n                else:\n                    frontier.append(neighbor)\n    return distance\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef zero_one_bfs(n, adj, src):\n    # 0-1 BFS single source shortest path using deque front/back pushes\n    distance = {i: float('inf') for i in range(n)}\n    distance[src] = 0\n    frontier = deque([src])\n    while frontier:\n        curr = frontier.popleft()\n        for neighbor, cost in adj[curr]:\n            new_cost = distance[curr] + cost\n            if new_cost < distance[neighbor]:\n                distance[neighbor] = new_cost\n                if cost == 0:\n                    frontier.appendleft(neighbor)\n                else:\n                    frontier.append(neighbor)\n    return distance\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef bfs_01(n, adj, src):\n    distance = {i: float('inf') for i in range(n)}\n    distance[src] = 0\n    frontier = deque([src])\n    while frontier:\n        curr = frontier.popleft()\n        for neighbor, cost in adj[curr]:\n            new_cost = distance[curr] + cost\n            if new_cost < distance[neighbor]:\n                distance[neighbor] = new_cost\n                if cost == 0:\n                    frontier.appendleft(neighbor)\n                else:\n                    frontier.append(neighbor)\n    return distance\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef deque_01_bfs(v_count: int, edges: list[tuple[int, int, int]], source_node: int) -> list[int]:\n    # 0-1 BFS shortest paths on directed graph\n    adj_list = [[] for _ in range(v_count)]\n    for u, v, w in edges:\n        adj_list[u].append((v, w))\n    distances = [10**9] * v_count\n    distances[source_node] = 0\n    q = deque([source_node])\n    while q:\n        u = q.popleft()\n        for v, w in adj_list[u]:\n            if distances[u] + w < distances[v]:\n                distances[v] = distances[u] + w\n                if w == 0:\n                    q.appendleft(v)\n                else:\n                    q.append(v)\n    return distances\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef zero_one_bfs(v_count: int, edges: list[tuple[int, int, int]], source_node: int) -> list[int]:\n    adj_list = [[] for _ in range(v_count)]\n    for u, v, w in edges:\n        adj_list[u].append((v, w))\n    distances = [10**9] * v_count\n    distances[source_node] = 0\n    q = deque([source_node])\n    while q:\n        u = q.popleft()\n        for v, w in adj_list[u]:\n            if distances[u] + w < distances[v]:\n                distances[v] = distances[u] + w\n                if w == 0:\n                    q.appendleft(v)\n                else:\n                    q.append(v)\n    return distances\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef bfs_01(v_count: int, edges: list[tuple[int, int, int]], source_node: int) -> list[int]:\n    # 0-1 BFS shortest paths on directed graph\n    adj_list = [[] for _ in range(v_count)]\n    for u, v, w in edges:\n        adj_list[u].append((v, w))\n    distances = [10**9] * v_count\n    distances[source_node] = 0\n    q = deque([source_node])\n    while q:\n        u = q.popleft()\n        for v, w in adj_list[u]:\n            if distances[u] + w < distances[v]:\n                distances[v] = distances[u] + w\n                if w == 0:\n                    q.appendleft(v)\n                else:\n                    q.append(v)\n    return distances\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef shortest_path_01(v_count: int, edges: list[tuple[int, int, int]], source_node: int) -> list[int]:\n    adj_list = [[] for _ in range(v_count)]\n    for u, v, w in edges:\n        adj_list[u].append((v, w))\n    distances = [10**9] * v_count\n    distances[source_node] = 0\n    q = deque([source_node])\n    while q:\n        u = q.popleft()\n        for v, w in adj_list[u]:\n            if distances[u] + w < distances[v]:\n                distances[v] = distances[u] + w\n                if w == 0:\n                    q.appendleft(v)\n                else:\n                    q.append(v)\n    return distances\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef deque_01_bfs(v_count: int, edges: list[tuple[int, int, int]], source_node: int) -> list[int]:\n    # 0-1 BFS shortest paths on directed graph\n    adj_list = [[] for _ in range(v_count)]\n    for u, v, w in edges:\n        adj_list[u].append((v, w))\n    distances = [10**9] * v_count\n    distances[source_node] = 0\n    q = deque([source_node])\n    while q:\n        u = q.popleft()\n        for v, w in adj_list[u]:\n            if distances[u] + w < distances[v]:\n                distances[v] = distances[u] + w\n                if w == 0:\n                    q.appendleft(v)\n                else:\n                    q.append(v)\n    return distances\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef zero_one_bfs(v_count: int, edges: list[tuple[int, int, int]], source_node: int) -> list[int]:\n    adj_list = [[] for _ in range(v_count)]\n    for u, v, w in edges:\n        adj_list[u].append((v, w))\n    distances = [10**9] * v_count\n    distances[source_node] = 0\n    q = deque([source_node])\n    while q:\n        u = q.popleft()\n        for v, w in adj_list[u]:\n            if distances[u] + w < distances[v]:\n                distances[v] = distances[u] + w\n                if w == 0:\n                    q.appendleft(v)\n                else:\n                    q.append(v)\n    return distances\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef bfs_01(v_count: int, edges: list[tuple[int, int, int]], source_node: int) -> list[int]:\n    # 0-1 BFS shortest paths on directed graph\n    adj_list = [[] for _ in range(v_count)]\n    for u, v, w in edges:\n        adj_list[u].append((v, w))\n    distances = [10**9] * v_count\n    distances[source_node] = 0\n    q = deque([source_node])\n    while q:\n        u = q.popleft()\n        for v, w in adj_list[u]:\n            if distances[u] + w < distances[v]:\n                distances[v] = distances[u] + w\n                if w == 0:\n                    q.appendleft(v)\n                else:\n                    q.append(v)\n    return distances\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "from collections import deque\n\ndef shortest_path_01(v_count: int, edges: list[tuple[int, int, int]], source_node: int) -> list[int]:\n    adj_list = [[] for _ in range(v_count)]\n    for u, v, w in edges:\n        adj_list[u].append((v, w))\n    distances = [10**9] * v_count\n    distances[source_node] = 0\n    q = deque([source_node])\n    while q:\n        u = q.popleft()\n        for v, w in adj_list[u]:\n            if distances[u] + w < distances[v]:\n                distances[v] = distances[u] + w\n                if w == 0:\n                    q.appendleft(v)\n                else:\n                    q.append(v)\n    return distances\n",
+    "label": "0-1 BFS"
+  },
+  {
+    "code": "def _bellman_ford_row(vertices, edges, src):\n    dist = [float('inf')] * vertices\n    dist[src] = 0\n    for _ in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n\ndef all_pairs_bellman(vertices, edges):\n    # All-Pairs Shortest Path (APSP) running Bellman-Ford for every source\n    matrix = []\n    for src in range(vertices):\n        row = _bellman_ford_row(vertices, edges, src)\n        matrix.append(row)\n    return matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_ford_row(vertices, edges, src):\n    dist = [float('inf')] * vertices\n    dist[src] = 0\n    for _ in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n\ndef apsp_solve(vertices, edges):\n    matrix = []\n    for src in range(vertices):\n        row = _bellman_ford_row(vertices, edges, src)\n        matrix.append(row)\n    return matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_ford_row(vertices, edges, src):\n    dist = [float('inf')] * vertices\n    dist[src] = 0\n    for _ in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n\ndef all_pairs_shortest_paths(vertices, edges):\n    # All-Pairs Shortest Path (APSP) running Bellman-Ford for every source\n    matrix = []\n    for src in range(vertices):\n        row = _bellman_ford_row(vertices, edges, src)\n        matrix.append(row)\n    return matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_ford_row(vertices, edges, src):\n    dist = [float('inf')] * vertices\n    dist[src] = 0\n    for _ in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n\ndef repeated_bellman(vertices, edges):\n    matrix = []\n    for src in range(vertices):\n        row = _bellman_ford_row(vertices, edges, src)\n        matrix.append(row)\n    return matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_ford_row(vertices, edges, src):\n    dist = [float('inf')] * vertices\n    dist[src] = 0\n    for _ in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n\ndef all_pairs_bellman(vertices, edges):\n    # All-Pairs Shortest Path (APSP) running Bellman-Ford for every source\n    matrix = []\n    for src in range(vertices):\n        row = _bellman_ford_row(vertices, edges, src)\n        matrix.append(row)\n    return matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_ford_row(vertices, edges, src):\n    dist = [float('inf')] * vertices\n    dist[src] = 0\n    for _ in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n\ndef apsp_solve(vertices, edges):\n    matrix = []\n    for src in range(vertices):\n        row = _bellman_ford_row(vertices, edges, src)\n        matrix.append(row)\n    return matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_ford_row(vertices, edges, src):\n    dist = [float('inf')] * vertices\n    dist[src] = 0\n    for _ in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n\ndef all_pairs_shortest_paths(vertices, edges):\n    # All-Pairs Shortest Path (APSP) running Bellman-Ford for every source\n    matrix = []\n    for src in range(vertices):\n        row = _bellman_ford_row(vertices, edges, src)\n        matrix.append(row)\n    return matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_ford_row(vertices, edges, src):\n    dist = [float('inf')] * vertices\n    dist[src] = 0\n    for _ in range(vertices - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return None\n    return dist\n\ndef repeated_bellman(vertices, edges):\n    matrix = []\n    for src in range(vertices):\n        row = _bellman_ford_row(vertices, edges, src)\n        matrix.append(row)\n    return matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def apsp_solve(num_nodes: int, edge_list: list[list[int]]) -> list[list[float]]:\n    # Compute all-pairs shortest paths via repeated single-source Bellman-Ford\n    all_pairs_matrix = []\n    for source in range(num_nodes):\n        dists = [float('inf')] * num_nodes\n        dists[source] = 0.0\n        for _ in range(num_nodes - 1):\n            updated = False\n            for u, v, w in edge_list:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n                    updated = True\n            if not updated:\n                break\n        all_pairs_matrix.append(dists)\n    return all_pairs_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def all_pairs_shortest_paths(num_nodes: int, edge_list: list[list[int]]) -> list[list[float]]:\n    all_pairs_matrix = []\n    for source in range(num_nodes):\n        dists = [float('inf')] * num_nodes\n        dists[source] = 0.0\n        for _ in range(num_nodes - 1):\n            updated = False\n            for u, v, w in edge_list:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n                    updated = True\n            if not updated:\n                break\n        all_pairs_matrix.append(dists)\n    return all_pairs_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def repeated_bellman(num_nodes: int, edge_list: list[list[int]]) -> list[list[float]]:\n    # Compute all-pairs shortest paths via repeated single-source Bellman-Ford\n    all_pairs_matrix = []\n    for source in range(num_nodes):\n        dists = [float('inf')] * num_nodes\n        dists[source] = 0.0\n        for _ in range(num_nodes - 1):\n            updated = False\n            for u, v, w in edge_list:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n                    updated = True\n            if not updated:\n                break\n        all_pairs_matrix.append(dists)\n    return all_pairs_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def all_pairs_bellman(num_nodes: int, edge_list: list[list[int]]) -> list[list[float]]:\n    all_pairs_matrix = []\n    for source in range(num_nodes):\n        dists = [float('inf')] * num_nodes\n        dists[source] = 0.0\n        for _ in range(num_nodes - 1):\n            updated = False\n            for u, v, w in edge_list:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n                    updated = True\n            if not updated:\n                break\n        all_pairs_matrix.append(dists)\n    return all_pairs_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def apsp_solve(num_nodes: int, edge_list: list[list[int]]) -> list[list[float]]:\n    # Compute all-pairs shortest paths via repeated single-source Bellman-Ford\n    all_pairs_matrix = []\n    for source in range(num_nodes):\n        dists = [float('inf')] * num_nodes\n        dists[source] = 0.0\n        for _ in range(num_nodes - 1):\n            updated = False\n            for u, v, w in edge_list:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n                    updated = True\n            if not updated:\n                break\n        all_pairs_matrix.append(dists)\n    return all_pairs_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def all_pairs_shortest_paths(num_nodes: int, edge_list: list[list[int]]) -> list[list[float]]:\n    all_pairs_matrix = []\n    for source in range(num_nodes):\n        dists = [float('inf')] * num_nodes\n        dists[source] = 0.0\n        for _ in range(num_nodes - 1):\n            updated = False\n            for u, v, w in edge_list:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n                    updated = True\n            if not updated:\n                break\n        all_pairs_matrix.append(dists)\n    return all_pairs_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def repeated_bellman(num_nodes: int, edge_list: list[list[int]]) -> list[list[float]]:\n    # Compute all-pairs shortest paths via repeated single-source Bellman-Ford\n    all_pairs_matrix = []\n    for source in range(num_nodes):\n        dists = [float('inf')] * num_nodes\n        dists[source] = 0.0\n        for _ in range(num_nodes - 1):\n            updated = False\n            for u, v, w in edge_list:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n                    updated = True\n            if not updated:\n                break\n        all_pairs_matrix.append(dists)\n    return all_pairs_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def all_pairs_bellman(num_nodes: int, edge_list: list[list[int]]) -> list[list[float]]:\n    all_pairs_matrix = []\n    for source in range(num_nodes):\n        dists = [float('inf')] * num_nodes\n        dists[source] = 0.0\n        for _ in range(num_nodes - 1):\n            updated = False\n            for u, v, w in edge_list:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n                    updated = True\n            if not updated:\n                break\n        all_pairs_matrix.append(dists)\n    return all_pairs_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _sssp_bellman(v_count, adj, start_v):\n    d = [float('inf')] * v_count\n    d[start_v] = 0\n    for _ in range(v_count - 1):\n        for u in range(v_count):\n            for v, weight in adj.get(u, []):\n                if d[u] + weight < d[v]:\n                    d[v] = d[u] + weight\n    return d\n\ndef all_pairs_shortest_paths(v_count, adj):\n    # Build complete VxV shortest path distance matrix\n    dist_matrix = []\n    for u in range(v_count):\n        row = _sssp_bellman(v_count, adj, u)\n        dist_matrix.append(row)\n    return dist_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _sssp_bellman(v_count, adj, start_v):\n    d = [float('inf')] * v_count\n    d[start_v] = 0\n    for _ in range(v_count - 1):\n        for u in range(v_count):\n            for v, weight in adj.get(u, []):\n                if d[u] + weight < d[v]:\n                    d[v] = d[u] + weight\n    return d\n\ndef repeated_bellman(v_count, adj):\n    dist_matrix = []\n    for u in range(v_count):\n        row = _sssp_bellman(v_count, adj, u)\n        dist_matrix.append(row)\n    return dist_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _sssp_bellman(v_count, adj, start_v):\n    d = [float('inf')] * v_count\n    d[start_v] = 0\n    for _ in range(v_count - 1):\n        for u in range(v_count):\n            for v, weight in adj.get(u, []):\n                if d[u] + weight < d[v]:\n                    d[v] = d[u] + weight\n    return d\n\ndef all_pairs_bellman(v_count, adj):\n    # Build complete VxV shortest path distance matrix\n    dist_matrix = []\n    for u in range(v_count):\n        row = _sssp_bellman(v_count, adj, u)\n        dist_matrix.append(row)\n    return dist_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _sssp_bellman(v_count, adj, start_v):\n    d = [float('inf')] * v_count\n    d[start_v] = 0\n    for _ in range(v_count - 1):\n        for u in range(v_count):\n            for v, weight in adj.get(u, []):\n                if d[u] + weight < d[v]:\n                    d[v] = d[u] + weight\n    return d\n\ndef apsp_solve(v_count, adj):\n    dist_matrix = []\n    for u in range(v_count):\n        row = _sssp_bellman(v_count, adj, u)\n        dist_matrix.append(row)\n    return dist_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _sssp_bellman(v_count, adj, start_v):\n    d = [float('inf')] * v_count\n    d[start_v] = 0\n    for _ in range(v_count - 1):\n        for u in range(v_count):\n            for v, weight in adj.get(u, []):\n                if d[u] + weight < d[v]:\n                    d[v] = d[u] + weight\n    return d\n\ndef all_pairs_shortest_paths(v_count, adj):\n    # Build complete VxV shortest path distance matrix\n    dist_matrix = []\n    for u in range(v_count):\n        row = _sssp_bellman(v_count, adj, u)\n        dist_matrix.append(row)\n    return dist_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _sssp_bellman(v_count, adj, start_v):\n    d = [float('inf')] * v_count\n    d[start_v] = 0\n    for _ in range(v_count - 1):\n        for u in range(v_count):\n            for v, weight in adj.get(u, []):\n                if d[u] + weight < d[v]:\n                    d[v] = d[u] + weight\n    return d\n\ndef repeated_bellman(v_count, adj):\n    dist_matrix = []\n    for u in range(v_count):\n        row = _sssp_bellman(v_count, adj, u)\n        dist_matrix.append(row)\n    return dist_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _sssp_bellman(v_count, adj, start_v):\n    d = [float('inf')] * v_count\n    d[start_v] = 0\n    for _ in range(v_count - 1):\n        for u in range(v_count):\n            for v, weight in adj.get(u, []):\n                if d[u] + weight < d[v]:\n                    d[v] = d[u] + weight\n    return d\n\ndef all_pairs_bellman(v_count, adj):\n    # Build complete VxV shortest path distance matrix\n    dist_matrix = []\n    for u in range(v_count):\n        row = _sssp_bellman(v_count, adj, u)\n        dist_matrix.append(row)\n    return dist_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _sssp_bellman(v_count, adj, start_v):\n    d = [float('inf')] * v_count\n    d[start_v] = 0\n    for _ in range(v_count - 1):\n        for u in range(v_count):\n            for v, weight in adj.get(u, []):\n                if d[u] + weight < d[v]:\n                    d[v] = d[u] + weight\n    return d\n\ndef apsp_solve(v_count, adj):\n    dist_matrix = []\n    for u in range(v_count):\n        row = _sssp_bellman(v_count, adj, u)\n        dist_matrix.append(row)\n    return dist_matrix\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_pass(n, edges, s):\n    dist = [float('inf')] * n\n    dist[s] = 0\n    for _ in range(n - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return []\n    return dist\n\ndef repeated_bellman(n, edges):\n    # APSP with repeated Bellman-Ford and negative cycle validation\n    res = []\n    for i in range(n):\n        r = _bellman_pass(n, edges, i)\n        if not r:\n            return None\n        res.append(r)\n    return res\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_pass(n, edges, s):\n    dist = [float('inf')] * n\n    dist[s] = 0\n    for _ in range(n - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return []\n    return dist\n\ndef all_pairs_bellman(n, edges):\n    res = []\n    for i in range(n):\n        r = _bellman_pass(n, edges, i)\n        if not r:\n            return None\n        res.append(r)\n    return res\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_pass(n, edges, s):\n    dist = [float('inf')] * n\n    dist[s] = 0\n    for _ in range(n - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return []\n    return dist\n\ndef apsp_solve(n, edges):\n    # APSP with repeated Bellman-Ford and negative cycle validation\n    res = []\n    for i in range(n):\n        r = _bellman_pass(n, edges, i)\n        if not r:\n            return None\n        res.append(r)\n    return res\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_pass(n, edges, s):\n    dist = [float('inf')] * n\n    dist[s] = 0\n    for _ in range(n - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return []\n    return dist\n\ndef all_pairs_shortest_paths(n, edges):\n    res = []\n    for i in range(n):\n        r = _bellman_pass(n, edges, i)\n        if not r:\n            return None\n        res.append(r)\n    return res\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_pass(n, edges, s):\n    dist = [float('inf')] * n\n    dist[s] = 0\n    for _ in range(n - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return []\n    return dist\n\ndef repeated_bellman(n, edges):\n    # APSP with repeated Bellman-Ford and negative cycle validation\n    res = []\n    for i in range(n):\n        r = _bellman_pass(n, edges, i)\n        if not r:\n            return None\n        res.append(r)\n    return res\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_pass(n, edges, s):\n    dist = [float('inf')] * n\n    dist[s] = 0\n    for _ in range(n - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return []\n    return dist\n\ndef all_pairs_bellman(n, edges):\n    res = []\n    for i in range(n):\n        r = _bellman_pass(n, edges, i)\n        if not r:\n            return None\n        res.append(r)\n    return res\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_pass(n, edges, s):\n    dist = [float('inf')] * n\n    dist[s] = 0\n    for _ in range(n - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return []\n    return dist\n\ndef apsp_solve(n, edges):\n    # APSP with repeated Bellman-Ford and negative cycle validation\n    res = []\n    for i in range(n):\n        r = _bellman_pass(n, edges, i)\n        if not r:\n            return None\n        res.append(r)\n    return res\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def _bellman_pass(n, edges, s):\n    dist = [float('inf')] * n\n    dist[s] = 0\n    for _ in range(n - 1):\n        for u, v, w in edges:\n            if dist[u] != float('inf') and dist[u] + w < dist[v]:\n                dist[v] = dist[u] + w\n    for u, v, w in edges:\n        if dist[u] != float('inf') and dist[u] + w < dist[v]:\n            return []\n    return dist\n\ndef all_pairs_shortest_paths(n, edges):\n    res = []\n    for i in range(n):\n        r = _bellman_pass(n, edges, i)\n        if not r:\n            return None\n        res.append(r)\n    return res\n",
+    "label": "All-Pairs Shortest Path (repeated Bellman-Ford)"
+  },
+  {
+    "code": "def dag_shortest_path(graph, start, vertices):\n    # DAG Single-Source Shortest Path using DFS topological sort\n    visited = set()\n    topo_order = []\n    def dfs(u):\n        visited.add(u)\n        for v, _ in graph.get(u, []):\n            if v not in visited:\n                dfs(v)\n        topo_order.append(u)\n    for node in range(vertices):\n        if node not in visited:\n            dfs(node)\n    topo_order.reverse()\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo_order:\n        if dist[u] != float('inf'):\n            for v, weight in graph.get(u, []):\n                if dist[u] + weight < dist[v]:\n                    dist[v] = dist[u] + weight\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def dag_sssp(graph, start, vertices):\n    visited = set()\n    topo_order = []\n    def dfs(u):\n        visited.add(u)\n        for v, _ in graph.get(u, []):\n            if v not in visited:\n                dfs(v)\n        topo_order.append(u)\n    for node in range(vertices):\n        if node not in visited:\n            dfs(node)\n    topo_order.reverse()\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo_order:\n        if dist[u] != float('inf'):\n            for v, weight in graph.get(u, []):\n                if dist[u] + weight < dist[v]:\n                    dist[v] = dist[u] + weight\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def linear_shortest_path(graph, start, vertices):\n    # DAG Single-Source Shortest Path using DFS topological sort\n    visited = set()\n    topo_order = []\n    def dfs(u):\n        visited.add(u)\n        for v, _ in graph.get(u, []):\n            if v not in visited:\n                dfs(v)\n        topo_order.append(u)\n    for node in range(vertices):\n        if node not in visited:\n            dfs(node)\n    topo_order.reverse()\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo_order:\n        if dist[u] != float('inf'):\n            for v, weight in graph.get(u, []):\n                if dist[u] + weight < dist[v]:\n                    dist[v] = dist[u] + weight\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def topo_dag_sp(graph, start, vertices):\n    visited = set()\n    topo_order = []\n    def dfs(u):\n        visited.add(u)\n        for v, _ in graph.get(u, []):\n            if v not in visited:\n                dfs(v)\n        topo_order.append(u)\n    for node in range(vertices):\n        if node not in visited:\n            dfs(node)\n    topo_order.reverse()\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo_order:\n        if dist[u] != float('inf'):\n            for v, weight in graph.get(u, []):\n                if dist[u] + weight < dist[v]:\n                    dist[v] = dist[u] + weight\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def dag_shortest_path(graph, start, vertices):\n    # DAG Single-Source Shortest Path using DFS topological sort\n    visited = set()\n    topo_order = []\n    def dfs(u):\n        visited.add(u)\n        for v, _ in graph.get(u, []):\n            if v not in visited:\n                dfs(v)\n        topo_order.append(u)\n    for node in range(vertices):\n        if node not in visited:\n            dfs(node)\n    topo_order.reverse()\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo_order:\n        if dist[u] != float('inf'):\n            for v, weight in graph.get(u, []):\n                if dist[u] + weight < dist[v]:\n                    dist[v] = dist[u] + weight\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def dag_sssp(graph, start, vertices):\n    visited = set()\n    topo_order = []\n    def dfs(u):\n        visited.add(u)\n        for v, _ in graph.get(u, []):\n            if v not in visited:\n                dfs(v)\n        topo_order.append(u)\n    for node in range(vertices):\n        if node not in visited:\n            dfs(node)\n    topo_order.reverse()\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo_order:\n        if dist[u] != float('inf'):\n            for v, weight in graph.get(u, []):\n                if dist[u] + weight < dist[v]:\n                    dist[v] = dist[u] + weight\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def linear_shortest_path(graph, start, vertices):\n    # DAG Single-Source Shortest Path using DFS topological sort\n    visited = set()\n    topo_order = []\n    def dfs(u):\n        visited.add(u)\n        for v, _ in graph.get(u, []):\n            if v not in visited:\n                dfs(v)\n        topo_order.append(u)\n    for node in range(vertices):\n        if node not in visited:\n            dfs(node)\n    topo_order.reverse()\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo_order:\n        if dist[u] != float('inf'):\n            for v, weight in graph.get(u, []):\n                if dist[u] + weight < dist[v]:\n                    dist[v] = dist[u] + weight\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def topo_dag_sp(graph, start, vertices):\n    visited = set()\n    topo_order = []\n    def dfs(u):\n        visited.add(u)\n        for v, _ in graph.get(u, []):\n            if v not in visited:\n                dfs(v)\n        topo_order.append(u)\n    for node in range(vertices):\n        if node not in visited:\n            dfs(node)\n    topo_order.reverse()\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo_order:\n        if dist[u] != float('inf'):\n            for v, weight in graph.get(u, []):\n                if dist[u] + weight < dist[v]:\n                    dist[v] = dist[u] + weight\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "from collections import deque\n\ndef dag_sssp(vertices, edges, start):\n    # DAG Shortest Path using Kahn's topological sort and edge relaxation\n    in_degree = [0] * vertices\n    adj = [[] for _ in range(vertices)]\n    for u, v, w in edges:\n        adj[u].append((v, w))\n        in_degree[v] += 1\n    queue = deque([i for i in range(vertices) if in_degree[i] == 0])\n    topo = []\n    while queue:\n        u = queue.popleft()\n        topo.append(u)\n        for v, _ in adj[u]:\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    if len(topo) < vertices:\n        return None  # Cycle detected\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo:\n        if dist[u] != float('inf'):\n            for v, w in adj[u]:\n                if dist[u] + w < dist[v]:\n                    dist[v] = dist[u] + w\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "from collections import deque\n\ndef linear_shortest_path(vertices, edges, start):\n    in_degree = [0] * vertices\n    adj = [[] for _ in range(vertices)]\n    for u, v, w in edges:\n        adj[u].append((v, w))\n        in_degree[v] += 1\n    queue = deque([i for i in range(vertices) if in_degree[i] == 0])\n    topo = []\n    while queue:\n        u = queue.popleft()\n        topo.append(u)\n        for v, _ in adj[u]:\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    if len(topo) < vertices:\n        return None  # Cycle detected\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo:\n        if dist[u] != float('inf'):\n            for v, w in adj[u]:\n                if dist[u] + w < dist[v]:\n                    dist[v] = dist[u] + w\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "from collections import deque\n\ndef topo_dag_sp(vertices, edges, start):\n    # DAG Shortest Path using Kahn's topological sort and edge relaxation\n    in_degree = [0] * vertices\n    adj = [[] for _ in range(vertices)]\n    for u, v, w in edges:\n        adj[u].append((v, w))\n        in_degree[v] += 1\n    queue = deque([i for i in range(vertices) if in_degree[i] == 0])\n    topo = []\n    while queue:\n        u = queue.popleft()\n        topo.append(u)\n        for v, _ in adj[u]:\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    if len(topo) < vertices:\n        return None  # Cycle detected\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo:\n        if dist[u] != float('inf'):\n            for v, w in adj[u]:\n                if dist[u] + w < dist[v]:\n                    dist[v] = dist[u] + w\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "from collections import deque\n\ndef dag_shortest_path(vertices, edges, start):\n    in_degree = [0] * vertices\n    adj = [[] for _ in range(vertices)]\n    for u, v, w in edges:\n        adj[u].append((v, w))\n        in_degree[v] += 1\n    queue = deque([i for i in range(vertices) if in_degree[i] == 0])\n    topo = []\n    while queue:\n        u = queue.popleft()\n        topo.append(u)\n        for v, _ in adj[u]:\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    if len(topo) < vertices:\n        return None  # Cycle detected\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo:\n        if dist[u] != float('inf'):\n            for v, w in adj[u]:\n                if dist[u] + w < dist[v]:\n                    dist[v] = dist[u] + w\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "from collections import deque\n\ndef dag_sssp(vertices, edges, start):\n    # DAG Shortest Path using Kahn's topological sort and edge relaxation\n    in_degree = [0] * vertices\n    adj = [[] for _ in range(vertices)]\n    for u, v, w in edges:\n        adj[u].append((v, w))\n        in_degree[v] += 1\n    queue = deque([i for i in range(vertices) if in_degree[i] == 0])\n    topo = []\n    while queue:\n        u = queue.popleft()\n        topo.append(u)\n        for v, _ in adj[u]:\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    if len(topo) < vertices:\n        return None  # Cycle detected\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo:\n        if dist[u] != float('inf'):\n            for v, w in adj[u]:\n                if dist[u] + w < dist[v]:\n                    dist[v] = dist[u] + w\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "from collections import deque\n\ndef linear_shortest_path(vertices, edges, start):\n    in_degree = [0] * vertices\n    adj = [[] for _ in range(vertices)]\n    for u, v, w in edges:\n        adj[u].append((v, w))\n        in_degree[v] += 1\n    queue = deque([i for i in range(vertices) if in_degree[i] == 0])\n    topo = []\n    while queue:\n        u = queue.popleft()\n        topo.append(u)\n        for v, _ in adj[u]:\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    if len(topo) < vertices:\n        return None  # Cycle detected\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo:\n        if dist[u] != float('inf'):\n            for v, w in adj[u]:\n                if dist[u] + w < dist[v]:\n                    dist[v] = dist[u] + w\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "from collections import deque\n\ndef topo_dag_sp(vertices, edges, start):\n    # DAG Shortest Path using Kahn's topological sort and edge relaxation\n    in_degree = [0] * vertices\n    adj = [[] for _ in range(vertices)]\n    for u, v, w in edges:\n        adj[u].append((v, w))\n        in_degree[v] += 1\n    queue = deque([i for i in range(vertices) if in_degree[i] == 0])\n    topo = []\n    while queue:\n        u = queue.popleft()\n        topo.append(u)\n        for v, _ in adj[u]:\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    if len(topo) < vertices:\n        return None  # Cycle detected\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo:\n        if dist[u] != float('inf'):\n            for v, w in adj[u]:\n                if dist[u] + w < dist[v]:\n                    dist[v] = dist[u] + w\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "from collections import deque\n\ndef dag_shortest_path(vertices, edges, start):\n    in_degree = [0] * vertices\n    adj = [[] for _ in range(vertices)]\n    for u, v, w in edges:\n        adj[u].append((v, w))\n        in_degree[v] += 1\n    queue = deque([i for i in range(vertices) if in_degree[i] == 0])\n    topo = []\n    while queue:\n        u = queue.popleft()\n        topo.append(u)\n        for v, _ in adj[u]:\n            in_degree[v] -= 1\n            if in_degree[v] == 0:\n                queue.append(v)\n    if len(topo) < vertices:\n        return None  # Cycle detected\n    dist = [float('inf')] * vertices\n    dist[start] = 0\n    for u in topo:\n        if dist[u] != float('inf'):\n            for v, w in adj[u]:\n                if dist[u] + w < dist[v]:\n                    dist[v] = dist[u] + w\n    return dist\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def linear_shortest_path(n: int, adj_list: list[list[tuple[int, int]]], src: int) -> list[int]:\n    # Single-source shortest path in a Directed Acyclic Graph\n    visited = [False] * n\n    linear_order = []\n    def explore(curr):\n        visited[curr] = True\n        for nxt, _ in adj_list[curr]:\n            if not visited[nxt]:\n                explore(nxt)\n        linear_order.append(curr)\n    for i in range(n):\n        if not visited[i]:\n            explore(i)\n    linear_order.reverse()\n    shortest = [10**9] * n\n    shortest[src] = 0\n    for u in linear_order:\n        if shortest[u] < 10**9:\n            for v, cost in adj_list[u]:\n                if shortest[u] + cost < shortest[v]:\n                    shortest[v] = shortest[u] + cost\n    return shortest\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def topo_dag_sp(n: int, adj_list: list[list[tuple[int, int]]], src: int) -> list[int]:\n    visited = [False] * n\n    linear_order = []\n    def explore(curr):\n        visited[curr] = True\n        for nxt, _ in adj_list[curr]:\n            if not visited[nxt]:\n                explore(nxt)\n        linear_order.append(curr)\n    for i in range(n):\n        if not visited[i]:\n            explore(i)\n    linear_order.reverse()\n    shortest = [10**9] * n\n    shortest[src] = 0\n    for u in linear_order:\n        if shortest[u] < 10**9:\n            for v, cost in adj_list[u]:\n                if shortest[u] + cost < shortest[v]:\n                    shortest[v] = shortest[u] + cost\n    return shortest\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def dag_shortest_path(n: int, adj_list: list[list[tuple[int, int]]], src: int) -> list[int]:\n    # Single-source shortest path in a Directed Acyclic Graph\n    visited = [False] * n\n    linear_order = []\n    def explore(curr):\n        visited[curr] = True\n        for nxt, _ in adj_list[curr]:\n            if not visited[nxt]:\n                explore(nxt)\n        linear_order.append(curr)\n    for i in range(n):\n        if not visited[i]:\n            explore(i)\n    linear_order.reverse()\n    shortest = [10**9] * n\n    shortest[src] = 0\n    for u in linear_order:\n        if shortest[u] < 10**9:\n            for v, cost in adj_list[u]:\n                if shortest[u] + cost < shortest[v]:\n                    shortest[v] = shortest[u] + cost\n    return shortest\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def dag_sssp(n: int, adj_list: list[list[tuple[int, int]]], src: int) -> list[int]:\n    visited = [False] * n\n    linear_order = []\n    def explore(curr):\n        visited[curr] = True\n        for nxt, _ in adj_list[curr]:\n            if not visited[nxt]:\n                explore(nxt)\n        linear_order.append(curr)\n    for i in range(n):\n        if not visited[i]:\n            explore(i)\n    linear_order.reverse()\n    shortest = [10**9] * n\n    shortest[src] = 0\n    for u in linear_order:\n        if shortest[u] < 10**9:\n            for v, cost in adj_list[u]:\n                if shortest[u] + cost < shortest[v]:\n                    shortest[v] = shortest[u] + cost\n    return shortest\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def linear_shortest_path(n: int, adj_list: list[list[tuple[int, int]]], src: int) -> list[int]:\n    # Single-source shortest path in a Directed Acyclic Graph\n    visited = [False] * n\n    linear_order = []\n    def explore(curr):\n        visited[curr] = True\n        for nxt, _ in adj_list[curr]:\n            if not visited[nxt]:\n                explore(nxt)\n        linear_order.append(curr)\n    for i in range(n):\n        if not visited[i]:\n            explore(i)\n    linear_order.reverse()\n    shortest = [10**9] * n\n    shortest[src] = 0\n    for u in linear_order:\n        if shortest[u] < 10**9:\n            for v, cost in adj_list[u]:\n                if shortest[u] + cost < shortest[v]:\n                    shortest[v] = shortest[u] + cost\n    return shortest\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def topo_dag_sp(n: int, adj_list: list[list[tuple[int, int]]], src: int) -> list[int]:\n    visited = [False] * n\n    linear_order = []\n    def explore(curr):\n        visited[curr] = True\n        for nxt, _ in adj_list[curr]:\n            if not visited[nxt]:\n                explore(nxt)\n        linear_order.append(curr)\n    for i in range(n):\n        if not visited[i]:\n            explore(i)\n    linear_order.reverse()\n    shortest = [10**9] * n\n    shortest[src] = 0\n    for u in linear_order:\n        if shortest[u] < 10**9:\n            for v, cost in adj_list[u]:\n                if shortest[u] + cost < shortest[v]:\n                    shortest[v] = shortest[u] + cost\n    return shortest\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def dag_shortest_path(n: int, adj_list: list[list[tuple[int, int]]], src: int) -> list[int]:\n    # Single-source shortest path in a Directed Acyclic Graph\n    visited = [False] * n\n    linear_order = []\n    def explore(curr):\n        visited[curr] = True\n        for nxt, _ in adj_list[curr]:\n            if not visited[nxt]:\n                explore(nxt)\n        linear_order.append(curr)\n    for i in range(n):\n        if not visited[i]:\n            explore(i)\n    linear_order.reverse()\n    shortest = [10**9] * n\n    shortest[src] = 0\n    for u in linear_order:\n        if shortest[u] < 10**9:\n            for v, cost in adj_list[u]:\n                if shortest[u] + cost < shortest[v]:\n                    shortest[v] = shortest[u] + cost\n    return shortest\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def dag_sssp(n: int, adj_list: list[list[tuple[int, int]]], src: int) -> list[int]:\n    visited = [False] * n\n    linear_order = []\n    def explore(curr):\n        visited[curr] = True\n        for nxt, _ in adj_list[curr]:\n            if not visited[nxt]:\n                explore(nxt)\n        linear_order.append(curr)\n    for i in range(n):\n        if not visited[i]:\n            explore(i)\n    linear_order.reverse()\n    shortest = [10**9] * n\n    shortest[src] = 0\n    for u in linear_order:\n        if shortest[u] < 10**9:\n            for v, cost in adj_list[u]:\n                if shortest[u] + cost < shortest[v]:\n                    shortest[v] = shortest[u] + cost\n    return shortest\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def topo_dag_sp(v_num, edges_weighted, source_vertex):\n    # DAG Shortest Path relaxing along topological stack order\n    in_deg = [0] * v_num\n    graph = {i: [] for i in range(v_num)}\n    for u, v, wt in edges_weighted:\n        graph[u].append((v, wt))\n        in_deg[v] += 1\n    q = [i for i in range(v_num) if in_deg[i] == 0]\n    topological_sequence = []\n    while q:\n        curr = q.pop(0)\n        topological_sequence.append(curr)\n        for nbr, _ in graph[curr]:\n            in_deg[nbr] -= 1\n            if in_deg[nbr] == 0:\n                q.append(nbr)\n    dists = [float('inf')] * v_num\n    dists[source_vertex] = 0\n    for u in topological_sequence:\n        if dists[u] != float('inf'):\n            for v, w in graph[u]:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n    return dists\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def dag_shortest_path(v_num, edges_weighted, source_vertex):\n    in_deg = [0] * v_num\n    graph = {i: [] for i in range(v_num)}\n    for u, v, wt in edges_weighted:\n        graph[u].append((v, wt))\n        in_deg[v] += 1\n    q = [i for i in range(v_num) if in_deg[i] == 0]\n    topological_sequence = []\n    while q:\n        curr = q.pop(0)\n        topological_sequence.append(curr)\n        for nbr, _ in graph[curr]:\n            in_deg[nbr] -= 1\n            if in_deg[nbr] == 0:\n                q.append(nbr)\n    dists = [float('inf')] * v_num\n    dists[source_vertex] = 0\n    for u in topological_sequence:\n        if dists[u] != float('inf'):\n            for v, w in graph[u]:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n    return dists\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def dag_sssp(v_num, edges_weighted, source_vertex):\n    # DAG Shortest Path relaxing along topological stack order\n    in_deg = [0] * v_num\n    graph = {i: [] for i in range(v_num)}\n    for u, v, wt in edges_weighted:\n        graph[u].append((v, wt))\n        in_deg[v] += 1\n    q = [i for i in range(v_num) if in_deg[i] == 0]\n    topological_sequence = []\n    while q:\n        curr = q.pop(0)\n        topological_sequence.append(curr)\n        for nbr, _ in graph[curr]:\n            in_deg[nbr] -= 1\n            if in_deg[nbr] == 0:\n                q.append(nbr)\n    dists = [float('inf')] * v_num\n    dists[source_vertex] = 0\n    for u in topological_sequence:\n        if dists[u] != float('inf'):\n            for v, w in graph[u]:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n    return dists\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def linear_shortest_path(v_num, edges_weighted, source_vertex):\n    in_deg = [0] * v_num\n    graph = {i: [] for i in range(v_num)}\n    for u, v, wt in edges_weighted:\n        graph[u].append((v, wt))\n        in_deg[v] += 1\n    q = [i for i in range(v_num) if in_deg[i] == 0]\n    topological_sequence = []\n    while q:\n        curr = q.pop(0)\n        topological_sequence.append(curr)\n        for nbr, _ in graph[curr]:\n            in_deg[nbr] -= 1\n            if in_deg[nbr] == 0:\n                q.append(nbr)\n    dists = [float('inf')] * v_num\n    dists[source_vertex] = 0\n    for u in topological_sequence:\n        if dists[u] != float('inf'):\n            for v, w in graph[u]:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n    return dists\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def topo_dag_sp(v_num, edges_weighted, source_vertex):\n    # DAG Shortest Path relaxing along topological stack order\n    in_deg = [0] * v_num\n    graph = {i: [] for i in range(v_num)}\n    for u, v, wt in edges_weighted:\n        graph[u].append((v, wt))\n        in_deg[v] += 1\n    q = [i for i in range(v_num) if in_deg[i] == 0]\n    topological_sequence = []\n    while q:\n        curr = q.pop(0)\n        topological_sequence.append(curr)\n        for nbr, _ in graph[curr]:\n            in_deg[nbr] -= 1\n            if in_deg[nbr] == 0:\n                q.append(nbr)\n    dists = [float('inf')] * v_num\n    dists[source_vertex] = 0\n    for u in topological_sequence:\n        if dists[u] != float('inf'):\n            for v, w in graph[u]:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n    return dists\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def dag_shortest_path(v_num, edges_weighted, source_vertex):\n    in_deg = [0] * v_num\n    graph = {i: [] for i in range(v_num)}\n    for u, v, wt in edges_weighted:\n        graph[u].append((v, wt))\n        in_deg[v] += 1\n    q = [i for i in range(v_num) if in_deg[i] == 0]\n    topological_sequence = []\n    while q:\n        curr = q.pop(0)\n        topological_sequence.append(curr)\n        for nbr, _ in graph[curr]:\n            in_deg[nbr] -= 1\n            if in_deg[nbr] == 0:\n                q.append(nbr)\n    dists = [float('inf')] * v_num\n    dists[source_vertex] = 0\n    for u in topological_sequence:\n        if dists[u] != float('inf'):\n            for v, w in graph[u]:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n    return dists\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def dag_sssp(v_num, edges_weighted, source_vertex):\n    # DAG Shortest Path relaxing along topological stack order\n    in_deg = [0] * v_num\n    graph = {i: [] for i in range(v_num)}\n    for u, v, wt in edges_weighted:\n        graph[u].append((v, wt))\n        in_deg[v] += 1\n    q = [i for i in range(v_num) if in_deg[i] == 0]\n    topological_sequence = []\n    while q:\n        curr = q.pop(0)\n        topological_sequence.append(curr)\n        for nbr, _ in graph[curr]:\n            in_deg[nbr] -= 1\n            if in_deg[nbr] == 0:\n                q.append(nbr)\n    dists = [float('inf')] * v_num\n    dists[source_vertex] = 0\n    for u in topological_sequence:\n        if dists[u] != float('inf'):\n            for v, w in graph[u]:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n    return dists\n",
+    "label": "DAG Shortest Path"
+  },
+  {
+    "code": "def linear_shortest_path(v_num, edges_weighted, source_vertex):\n    in_deg = [0] * v_num\n    graph = {i: [] for i in range(v_num)}\n    for u, v, wt in edges_weighted:\n        graph[u].append((v, wt))\n        in_deg[v] += 1\n    q = [i for i in range(v_num) if in_deg[i] == 0]\n    topological_sequence = []\n    while q:\n        curr = q.pop(0)\n        topological_sequence.append(curr)\n        for nbr, _ in graph[curr]:\n            in_deg[nbr] -= 1\n            if in_deg[nbr] == 0:\n                q.append(nbr)\n    dists = [float('inf')] * v_num\n    dists[source_vertex] = 0\n    for u in topological_sequence:\n        if dists[u] != float('inf'):\n            for v, w in graph[u]:\n                if dists[u] + w < dists[v]:\n                    dists[v] = dists[u] + w\n    return dists\n",
+    "label": "DAG Shortest Path"
   },
   {
     "code": "def sort_array(arr):\n    # bubble sort - repeated adjacent swaps, early exit if sorted\n    n = len(arr)\n    for i in range(n):\n        swapped = False\n        for j in range(0, n - i - 1):\n            if arr[j] > arr[j + 1]:\n                arr[j], arr[j + 1] = arr[j + 1], arr[j]\n                swapped = True\n        if not swapped:\n            break\n    return arr\n",

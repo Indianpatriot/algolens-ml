@@ -40,6 +40,10 @@ import templates_monotonic_stack
 import templates_linked_list
 import templates_topological_sort
 import templates_greedy
+import templates_bellman_ford
+import templates_zero_one_bfs
+import templates_apsp
+import templates_dag_shortest_path
 
 # Flat-label categories: one label per whole templates list.
 # Sorting is deliberately excluded here - handled separately below.
@@ -56,6 +60,10 @@ CATEGORIES = {
     "Linked List Operations": (templates_linked_list.TEMPLATES, "linked_list"),
     "Topological Sort": (templates_topological_sort.TEMPLATES, "topological_sort"),
     "Greedy / Interval Scheduling": (templates_greedy.TEMPLATES, "greedy"),
+    "Bellman-Ford": (templates_bellman_ford.TEMPLATES, "bellman_ford"),
+    "0-1 BFS": (templates_zero_one_bfs.TEMPLATES, "zero_one_bfs"),
+    "All-Pairs Shortest Path (repeated Bellman-Ford)": (templates_apsp.TEMPLATES, "apsp"),
+    "DAG Shortest Path": (templates_dag_shortest_path.TEMPLATES, "dag_shortest_path"),
 }
 
 SORTING_FUNC_KEY = "sorting"

@@ -109,9 +109,35 @@ def __FUNC__(n: int, prerequisites: list[list[int]]) -> list[int]:
     return res[::-1]
 '''
 
+T5_TOPO_DFS_CYCLE_PATH_SET = '''
+def __FUNC__(graph):
+    # DFS topological sort with cycle detection using path set
+    visited = set()
+    path = set()
+    result = []
+    def dfs(node):
+        visited.add(node)
+        path.add(node)
+        for neighbor in graph.get(node, []):
+            if neighbor in path:
+                return False
+            if neighbor not in visited:
+                if not dfs(neighbor):
+                    return False
+        path.remove(node)
+        result.append(node)
+        return True
+    for node in graph:
+        if node not in visited:
+            if not dfs(node):
+                return []
+    return result[::-1]
+'''
+
 TEMPLATES = [
     T1_TOPO_DFS_RECURSIVE_3COLOR,
     T2_TOPO_KAHNS_INDEGREE,
     T3_TOPO_DFS_NESTED_HELPER,
     T4_TOPO_DFS_EXPLICIT_STACK,
+    T5_TOPO_DFS_CYCLE_PATH_SET,
 ]

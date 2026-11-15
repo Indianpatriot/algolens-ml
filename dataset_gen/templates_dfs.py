@@ -72,4 +72,57 @@ def __FUNC__(__ARR__, __START__):
     return __VISITED__
 '''
 
-TEMPLATES = [T1_GRAPH_RECURSIVE, T2_GRAPH_ITERATIVE_STACK, T3_TREE_PREORDER, T4_GRID_FLOODFILL]
+T5_GRAPH_ITERATIVE_REVERSED = '''
+def __FUNC__(graph, start):
+    # Iterative DFS with reversed neighbor loop maintaining order
+    visited = set()
+    stack = [start]
+    while stack:
+        node = stack.pop()
+        if node not in visited:
+            visited.add(node)
+            print(node)
+            for neighbor in reversed(graph.get(node, [])):
+                if neighbor not in visited:
+                    stack.append(neighbor)
+'''
+
+T6_GRAPH_ITERATIVE_EXTEND = '''
+def __FUNC__(graph, start):
+    # Iterative DFS using stack.extend for adjacency neighbors
+    visited = set()
+    stack = [start]
+    order = []
+    while stack:
+        node = stack.pop()
+        if node not in visited:
+            visited.add(node)
+            order.append(node)
+            stack.extend(graph.get(node, []))
+    return order
+'''
+
+T7_GRAPH_RECURSIVE_EXPLORE = '''
+def __FUNC__(graph):
+    # Recursive DFS using nested explore helper function
+    visited = []
+    def explore(node):
+        visited.append(node)
+        for neighbor in graph.get(node, []):
+            if neighbor not in visited:
+                explore(neighbor)
+    for v in graph:
+        if v not in visited:
+            explore(v)
+    return visited
+'''
+
+TEMPLATES = [
+    T1_GRAPH_RECURSIVE,
+    T2_GRAPH_ITERATIVE_STACK,
+    T3_TREE_PREORDER,
+    T4_GRID_FLOODFILL,
+    T5_GRAPH_ITERATIVE_REVERSED,
+    T6_GRAPH_ITERATIVE_EXTEND,
+    T7_GRAPH_RECURSIVE_EXPLORE,
+]

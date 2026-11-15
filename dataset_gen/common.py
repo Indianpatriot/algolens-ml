@@ -58,6 +58,10 @@ FUNC_NAME_POOLS = {
     "linked_list": ["insert_node", "modify_list", "process_list", "update_list"],
     "topological_sort": ["topological_sort", "topo_sort", "find_order", "schedule_tasks"],
     "greedy": ["interval_scheduling", "schedule_intervals", "erase_overlap", "merge_intervals"],
+    "bellman_ford": ["bellman_ford", "shortest_paths_bf", "find_shortest_paths", "bf_relax"],
+    "zero_one_bfs": ["zero_one_bfs", "bfs_01", "shortest_path_01", "deque_01_bfs"],
+    "apsp": ["all_pairs_bellman", "apsp_solve", "all_pairs_shortest_paths", "repeated_bellman"],
+    "dag_shortest_path": ["dag_shortest_path", "dag_sssp", "linear_shortest_path", "topo_dag_sp"],
 }
 
 

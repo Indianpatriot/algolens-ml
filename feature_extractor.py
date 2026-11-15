@@ -108,6 +108,18 @@ FEATURE_NAMES = [
     "has_string_slicing_subscript",
     "has_earlier_dp_dependency",
     "has_word_break_pattern",
+    # Graph family discriminative features
+    "has_reversed_neighbor_traversal",
+    "has_stack_extend_neighbors",
+    "has_deque_appendleft",
+    "has_bellman_ford_edges_loop",
+    "has_negative_cycle_check",
+    "has_apsp_nested_sources",
+    "has_dag_relaxation_loop",
+    "has_cycle_path_set",
+    "has_zero_one_weights",
+    "has_topological_sort_kahn",
+    "has_topological_sort_dfs",
 ]
 
 _BITWISE_OPS = (ast.BitXor, ast.BitAnd, ast.BitOr, ast.LShift, ast.RShift)
@@ -238,11 +250,25 @@ class _StructuralVisitor(ast.NodeVisitor):
         self.has_earlier_dp_dependency = False
         self.has_word_break_pattern = False
 
+        # Graph family structural features
+        self.has_reversed_neighbor_traversal = False
+        self.has_stack_extend_neighbors = False
+        self.has_deque_appendleft = False
+        self.has_bellman_ford_edges_loop = False
+        self.has_negative_cycle_check = False
+        self.has_apsp_nested_sources = False
+        self.has_dag_relaxation_loop = False
+        self.has_cycle_path_set = False
+        self.has_zero_one_weights = False
+        self.has_topological_sort_kahn = False
+        self.has_topological_sort_dfs = False
+
         self._union_find_scanned = False
 
     # ================= Module-level pre-scan =================
     def visit_Module(self, node):
         self._scan_bfs_structures(node)  # sets adjacency and queue structures first
+        self._scan_graph_family(node)
         self._scan_union_find(node)
         self._scan_topological_sort(node)
         self._scan_interval_scheduling_structures(node)
@@ -348,6 +374,135 @@ class _StructuralVisitor(ast.NodeVisitor):
             if isinstance(n, ast.Subscript) and isinstance(n.value, ast.Name):
                 if any(k in n.value.id.lower() for k in ("memo", "cache")):
                     self.has_memo_dict_access = True
+
+    def _scan_graph_family(self, tree):
+        """
+        Extracts structural features across the graph algorithm family:
+        - BFS vs DFS (iterative reversed, stack.extend, recursive explore)
+        - Dijkstra vs Prim (distance relaxation vs cut-set weight accumulation)
+        - Bellman-Ford (V-1 passes over edges, negative cycle check)
+        - 0-1 BFS (deque with appendleft on weight 0, append on 1)
+        - APSP (repeated Bellman-Ford / SSSP per source)
+        - Topological Sort (Kahn in-degree vs DFS post-order with path set cycle detection)
+        - DAG Shortest Path (topological order + edge relaxation)
+        """
+        has_reversed = False
+        has_extend = False
+        has_appendleft = False
+        has_weight_zero = False
+        has_v_minus_1 = False
+        has_edge_iteration = False
+        has_neg_cycle_check = False
+        has_apsp_sources = False
+        has_dag_relax = False
+        has_path_add = False
+        has_path_remove = False
+        has_indegree = False
+
+        for n in ast.walk(tree):
+            # 1. Check adjacency subscript access: graph[node], adj[u], etc.
+            if isinstance(n, ast.Subscript) and isinstance(n.value, ast.Name):
+                vname = n.value.id.lower()
+                if any(k in vname for k in ("graph", "adj", "edges", "matrix", "network")):
+                    self.uses_adjacency_structure = True
+
+            # 2. Check loops over neighbors
+            if isinstance(n, ast.For):
+                # for neighbor in reversed(graph[node]):
+                if isinstance(n.iter, ast.Call):
+                    callee = n.iter.func.id if isinstance(n.iter.func, ast.Name) else ""
+                    if callee == "reversed":
+                        has_reversed = True
+                        self.uses_adjacency_structure = True
+                        self.has_adjacency_iteration = True
+                elif isinstance(n.iter, ast.Subscript):
+                    if isinstance(n.iter.value, ast.Name):
+                        vname = n.iter.value.id.lower()
+                        if any(k in vname for k in ("graph", "adj", "edges", "network", "node")):
+                            self.uses_adjacency_structure = True
+                            self.has_adjacency_iteration = True
+                
+                # Check V-1 loop: for _ in range(vertices - 1)
+                if isinstance(n.iter, ast.Call) and isinstance(n.iter.func, ast.Name) and n.iter.func.id == "range":
+                    if n.iter.args and isinstance(n.iter.args[0], ast.BinOp) and isinstance(n.iter.args[0].op, ast.Sub):
+                        has_v_minus_1 = True
+                
+                # Check edge tuple iteration: for u, v, w in edges: or for u, v in edges:
+                if isinstance(n.target, ast.Tuple) and len(n.target.elts) in (2, 3):
+                    iter_name = getattr(n.iter, "id", "").lower()
+                    if any(k in iter_name for k in ("edges", "edge", "adj", "graph", "pairs", "prerequisites")):
+                        has_edge_iteration = True
+                        self.uses_adjacency_structure = True
+
+                # Check outer source iteration: for src in range(vertices) calling shortest path function
+                if isinstance(n.iter, ast.Call) and isinstance(n.iter.func, ast.Name) and n.iter.func.id == "range":
+                    for inner in ast.walk(n):
+                        if isinstance(inner, ast.Call):
+                            cname = inner.func.id if isinstance(inner.func, ast.Name) else ""
+                            if any(k in cname.lower() for k in ("bellman", "dijkstra", "sssp", "sp")):
+                                has_apsp_sources = True
+
+                # Check DAG relaxation along topological order: for u in topo_order:
+                if isinstance(n.iter, ast.Name):
+                    iname = n.iter.id.lower()
+                    if any(k in iname for k in ("topo", "linear", "order", "stack")):
+                        for inner in ast.walk(n):
+                            if isinstance(inner, ast.Compare):
+                                cstr = ast.unparse(inner).lower() if hasattr(ast, "unparse") else ""
+                                if "+" in cstr and "<" in cstr and "dist" in cstr:
+                                    has_dag_relax = True
+
+            # 3. Check calls: appendleft, extend, path.add/remove
+            if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute):
+                attr = n.func.attr
+                vname = getattr(n.func.value, "id", "").lower()
+                if attr == "appendleft":
+                    has_appendleft = True
+                    self.uses_queue = True
+                elif attr == "extend" and any(k in vname for k in ("stack", "stk", "order")):
+                    has_extend = True
+                    self.uses_stack = True
+                    self.uses_adjacency_structure = True
+                elif any(k in vname for k in ("path", "visiting", "cycle")):
+                    if attr == "add":
+                        has_path_add = True
+                    elif attr == "remove":
+                        has_path_remove = True
+
+            # 4. Check comparisons for weight == 0
+            if isinstance(n, ast.Compare):
+                if isinstance(n.left, ast.Name) and n.left.id.lower() in ("weight", "w", "wt", "cost"):
+                    for op, comp in zip(n.ops, n.comparators):
+                        if isinstance(op, ast.Eq) and isinstance(comp, ast.Constant) and comp.value == 0:
+                            has_weight_zero = True
+
+            # 5. Check in-degree tracking
+            if isinstance(n, ast.Name) and "indegree" in n.id.lower().replace("_", ""):
+                has_indegree = True
+
+            # 6. Check negative cycle detection
+            if isinstance(n, ast.If):
+                cstr = ast.unparse(n.test).lower() if hasattr(ast, "unparse") else ""
+                if "+" in cstr and "<" in cstr and ("dist" in cstr or "d[" in cstr):
+                    for stmt in n.body:
+                        if isinstance(stmt, ast.Return) and (stmt.value is None or (isinstance(stmt.value, ast.Constant) and stmt.value.value in (None, False))):
+                            has_neg_cycle_check = True
+
+        self.has_reversed_neighbor_traversal = has_reversed
+        self.has_stack_extend_neighbors = has_extend
+        self.has_deque_appendleft = has_appendleft
+        self.has_zero_one_weights = has_weight_zero
+        self.has_bellman_ford_edges_loop = bool(has_v_minus_1 and (has_edge_iteration or self.has_dist_relaxation))
+        self.has_negative_cycle_check = has_neg_cycle_check
+        self.has_apsp_nested_sources = has_apsp_sources
+        self.has_dag_relaxation_loop = has_dag_relax
+        self.has_cycle_path_set = bool(has_path_add and has_path_remove)
+        self.has_topological_sort_kahn = bool(has_indegree and (self.uses_queue or self.has_queue_while_loop))
+        self.has_topological_sort_dfs = bool((self.has_cycle_path_set or self.has_three_color_cycle_detection or self.has_reversed_stack_return) and not has_dag_relax)
+
+        # Disambiguate path.add/path.remove cycle detection from Permutations backtracking:
+        if self.has_cycle_path_set and (self.uses_adjacency_structure or self.has_adjacency_iteration):
+            self.has_backtracking_undo_pattern = False
 
     def _scan_bucket_sort_structures(self, tree):
         """
@@ -1626,6 +1781,18 @@ def extract_features(code: str) -> Dict[str, float]:
         "has_string_slicing_subscript": float(visitor.has_string_slicing_subscript),
         "has_earlier_dp_dependency": float(visitor.has_earlier_dp_dependency),
         "has_word_break_pattern": float(visitor.has_word_break_pattern),
+        # Graph family discriminative features
+        "has_reversed_neighbor_traversal": float(visitor.has_reversed_neighbor_traversal),
+        "has_stack_extend_neighbors": float(visitor.has_stack_extend_neighbors),
+        "has_deque_appendleft": float(visitor.has_deque_appendleft),
+        "has_bellman_ford_edges_loop": float(visitor.has_bellman_ford_edges_loop),
+        "has_negative_cycle_check": float(visitor.has_negative_cycle_check),
+        "has_apsp_nested_sources": float(visitor.has_apsp_nested_sources),
+        "has_dag_relaxation_loop": float(visitor.has_dag_relaxation_loop),
+        "has_cycle_path_set": float(visitor.has_cycle_path_set),
+        "has_zero_one_weights": float(visitor.has_zero_one_weights),
+        "has_topological_sort_kahn": float(visitor.has_topological_sort_kahn),
+        "has_topological_sort_dfs": float(visitor.has_topological_sort_dfs),
     }
     return features
 
