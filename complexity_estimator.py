@@ -845,6 +845,38 @@ CANONICAL_ALGORITHM_COMPLEXITY = {
         ),
         "confidence": "high",
     },
+    "Coin Change": {
+        "time": "O(amount * len(coins))",
+        "space": "O(amount)",
+        "reasoning": (
+            "1D dynamic programming table of size amount + 1. For each coin denomination, iterates through amounts up to target amount to compute dp[x] = min(dp[x], dp[x - coin] + 1) in O(amount * len(coins)) time. Auxiliary space is O(amount) for the 1D DP array."
+        ),
+        "confidence": "high",
+    },
+    "Coin Change (Number of Ways)": {
+        "time": "O(amount * len(coins))",
+        "space": "O(amount)",
+        "reasoning": (
+            "1D dynamic programming table of size amount + 1. Outer loop over coin denominations and inner loop over amounts computes combinations via dp[x] += dp[x - coin] in O(amount * len(coins)) time without treating different coin orderings as separate combinations. Auxiliary space is O(amount) for the 1D DP array."
+        ),
+        "confidence": "high",
+    },
+    "0/1 Knapsack": {
+        "time": "O(n * W)",
+        "space": "O(n * W)",
+        "reasoning": (
+            "2D dynamic programming table of size (n + 1) × (W + 1) holding optimal values for (item, capacity) subproblems. Outer loop over n items and inner loop over capacity W evaluates the 0/1 inclusion-exclusion transition max(values[i-1] + dp[i-1][w-weights[i-1]], dp[i-1][w]) in O(n * W) time and auxiliary space."
+        ),
+        "confidence": "high",
+    },
+    "Knapsack": {
+        "time": "O(n * W)",
+        "space": "O(n * W)",
+        "reasoning": (
+            "2D dynamic programming table of size (n + 1) × (W + 1) holding optimal values for (item, capacity) subproblems. Outer loop over n items and inner loop over capacity W evaluates the 0/1 inclusion-exclusion transition max(values[i-1] + dp[i-1][w-weights[i-1]], dp[i-1][w]) in O(n * W) time and auxiliary space."
+        ),
+        "confidence": "high",
+    },
     "Level Order Traversal": {
         "time": "O(n)",
         "space": "O(w) <= O(n) (where w is max tree width)",
@@ -961,6 +993,29 @@ def estimate_complexity_from_features(
                     f"Generates all {k}! = {num_sols} permutations for input [{formatted_items}]: "
                     f"tree has {num_sols} valid leaves, each taking O(n) = O({k}) work to copy into results. "
                     f"Auxiliary space is O(n) = O({k}) for current state and recursion call stack."
+                )
+
+            if (algorithm and "coin" in algorithm.lower()) and params and "coins" in params and "amount" in params:
+                coins_val = params["coins"]
+                amt_val = params["amount"]
+                k_coins = len(coins_val) if isinstance(coins_val, list) else 3
+                ops = int(amt_val) * k_coins
+                is_ways = "ways" in algorithm.lower()
+                op_desc = "combinations via dp[x] += dp[x - coin]" if is_ways else "minimum coins via dp[x] = min(dp[x], dp[x - coin] + 1)"
+                reasoning_val = (
+                    f"Computes {op_desc} for target amount {amt_val} using coins {coins_val}: "
+                    f"1D DP array of size {amt_val + 1} filled across {k_coins} coin iterations in "
+                    f"O(amount * len(coins)) = O({amt_val} * {k_coins}) = O({ops}) total operations. "
+                    f"Auxiliary space is O(amount) = O({amt_val}) for the 1D table."
+                )
+
+            if (algorithm and "knapsack" in algorithm.lower()) and params and "capacity" in params:
+                cap_val = params["capacity"]
+                n_items = len(params.get("weights", [])) or 4
+                reasoning_val = (
+                    f"2D dynamic programming table of size ({n_items + 1}) × ({cap_val} + 1) holding optimal values "
+                    f"for {n_items} items and capacity {cap_val}. Evaluates 0/1 inclusion-exclusion choice in "
+                    f"O(n * W) = O({n_items} * {cap_val}) time and auxiliary space."
                 )
 
             return ComplexityEstimate(

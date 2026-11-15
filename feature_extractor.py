@@ -99,6 +99,12 @@ FEATURE_NAMES = [
     "has_topo_dfs_postorder",
     "has_three_color_cycle_detection",
     "has_reversed_stack_return",
+    # Dynamic Programming discriminative features (Coin Change vs 0/1 Knapsack)
+    "has_coin_change_min_pattern",
+    "has_coin_change_ways_pattern",
+    "has_knapsack_01_pattern",
+    "has_1d_dp_table",
+    "has_2d_dp_table",
     # Greedy / Interval Scheduling discriminative features
     "has_interval_scheduling_pattern",
     "has_interval_sort_key",
@@ -239,6 +245,13 @@ class _StructuralVisitor(ast.NodeVisitor):
         self.has_three_color_cycle_detection = False
         self.has_reversed_stack_return = False
 
+        # Dynamic Programming structural features
+        self.has_coin_change_min_pattern = False
+        self.has_coin_change_ways_pattern = False
+        self.has_knapsack_01_pattern = False
+        self.has_1d_dp_table = False
+        self.has_2d_dp_table = False
+
         # Greedy / Interval Scheduling structural features
         self.has_interval_scheduling_pattern = False
         self.has_interval_sort_key = False
@@ -273,6 +286,7 @@ class _StructuralVisitor(ast.NodeVisitor):
         self._scan_union_find(node)
         self._scan_topological_sort(node)
         self._scan_interval_scheduling_structures(node)
+        self._scan_dp_structures(node)
         self._scan_word_break_structures(node)
         self._scan_counting_sort_structures(node)
         self._scan_linked_list_operation(node)
@@ -945,8 +959,10 @@ class _StructuralVisitor(ast.NodeVisitor):
         for n in ast.walk(tree):
             # 1. Element-indexed frequency increment: count[x] += 1 or count[arr[i]] += 1
             if isinstance(n, ast.AugAssign) and isinstance(n.target, ast.Subscript) and isinstance(n.op, ast.Add):
+                arr_name = getattr(n.target.value, "id", "").lower()
+                if arr_name in ("dp", "table", "memo", "ways"):
+                    continue
                 if isinstance(n.value, ast.Constant) and n.value.value == 1:
-                    arr_name = getattr(n.target.value, "id", "").lower()
                     if any(k in arr_name for k in ("count", "cnt", "freq", "frequency", "bucket", "c")):
                         self.has_element_indexed_count = True
                     if isinstance(n.target.slice, (ast.Name, ast.Subscript)):
@@ -954,14 +970,93 @@ class _StructuralVisitor(ast.NodeVisitor):
 
             # 2. Count reconstruction or prefix sum: count[i] += count[i-1] or output[count[x]-1] = x
             if isinstance(n, ast.AugAssign) and isinstance(n.target, ast.Subscript) and isinstance(n.value, ast.Subscript):
-                if getattr(n.target.value, "id", "") == getattr(n.value.value, "id", ""):
-                    self.has_count_sort_rebuild = True
+                arr_name = getattr(n.target.value, "id", "").lower()
+                # Exclude DP tables like dp[x] += dp[x - coin]
+                if arr_name not in ("dp", "table", "memo", "ways"):
+                    if getattr(n.target.value, "id", "") == getattr(n.value.value, "id", ""):
+                        if isinstance(n.value.slice, ast.BinOp) and isinstance(n.value.slice.op, ast.Sub):
+                            if isinstance(n.value.slice.right, ast.Constant) and n.value.slice.right.value == 1:
+                                self.has_count_sort_rebuild = True
+                        elif any(k in arr_name for k in ("count", "cnt", "freq", "frequency")):
+                            self.has_count_sort_rebuild = True
             if isinstance(n, ast.Assign):
                 for t in n.targets:
                     if isinstance(t, ast.Subscript) and isinstance(t.slice, (ast.BinOp, ast.Subscript)):
                         arr_name = getattr(t.value, "id", "").lower()
                         if any(k in arr_name for k in ("output", "res", "ans", "sorted", "b")):
                             self.has_count_sort_rebuild = True
+
+    def _scan_dp_structures(self, tree):
+        """
+        Extracts Dynamic Programming signals distinguishing Coin Change from 0/1 Knapsack:
+        - has_coin_change_min_pattern: 1D DP table, min(dp[x], dp[x - coin] + 1)
+        - has_coin_change_ways_pattern: 1D DP table, dp[x] += dp[x - coin]
+        - has_knapsack_01_pattern: 2D DP table, max(values[...] + dp[i-1][w-weights[...]], dp[i-1][w])
+        - has_1d_dp_table: 1D list allocation [val] * size
+        - has_2d_dp_table: 2D listcomp [[val] * cols for _ in range(rows)] or dp[i][j]
+        """
+        for n in ast.walk(tree):
+            # 2D table allocation: [[0] * (capacity + 1) for _ in range(n + 1)]
+            if isinstance(n, ast.ListComp):
+                for elt in ast.walk(n.elt):
+                    if isinstance(elt, ast.BinOp) and isinstance(elt.op, ast.Mult):
+                        self.has_2d_dp_table = True
+            # 1D table allocation: [float('inf')] * (amount + 1) or [0] * (amount + 1)
+            if isinstance(n, ast.BinOp) and isinstance(n.op, ast.Mult):
+                if isinstance(n.left, ast.List) and len(n.left.elts) == 1:
+                    self.has_1d_dp_table = True
+
+            # 2D table indexing: dp[i][w]
+            if isinstance(n, ast.Subscript) and isinstance(n.value, ast.Subscript):
+                self.has_2d_dp_table = True
+
+            # Coin Change (Min Coins): dp[x] = min(dp[x], dp[x - coin] + 1)
+            # or dp[i] = min(dp[i], dp[i - c] + 1)
+            if isinstance(n, ast.Call):
+                func_id = getattr(n.func, "id", "").lower()
+                if func_id in ("min", "minimum"):
+                    has_subscript_arg = False
+                    has_add_one = False
+                    for arg in n.args:
+                        if isinstance(arg, ast.Subscript):
+                            has_subscript_arg = True
+                        if isinstance(arg, ast.BinOp) and isinstance(arg.op, ast.Add):
+                            if isinstance(arg.right, ast.Constant) and arg.right.value == 1:
+                                has_add_one = True
+                            elif isinstance(arg.left, ast.Subscript):
+                                has_add_one = True
+                    if has_subscript_arg and has_add_one:
+                        self.has_coin_change_min_pattern = True
+
+            # Coin Change (Number of Ways): dp[x] += dp[x - coin]
+            if isinstance(n, ast.AugAssign) and isinstance(n.target, ast.Subscript) and isinstance(n.op, ast.Add):
+                if isinstance(n.value, ast.Subscript):
+                    if isinstance(n.value.slice, ast.BinOp) and isinstance(n.value.slice.op, ast.Sub):
+                        # Ensure not indexing 2D
+                        if not isinstance(n.target.value, ast.Subscript) and not isinstance(n.value.value, ast.Subscript):
+                            self.has_coin_change_ways_pattern = True
+
+            # 0/1 Knapsack: dp[i][w] = max(values[i - 1] + dp[i - 1][w - weights[i - 1]], dp[i - 1][w])
+            if isinstance(n, ast.Call):
+                func_id = getattr(n.func, "id", "").lower()
+                if func_id in ("max", "maximum"):
+                    has_2d_subscript = False
+                    has_weight_subtraction = False
+                    has_val_addition = False
+                    for arg in n.args:
+                        if isinstance(arg, ast.BinOp) and isinstance(arg.op, ast.Add):
+                            has_val_addition = True
+                        for sub in ast.walk(arg):
+                            if isinstance(sub, ast.Subscript) and isinstance(sub.value, ast.Subscript):
+                                has_2d_subscript = True
+                                if isinstance(sub.slice, ast.BinOp) and isinstance(sub.slice.op, ast.Sub):
+                                    # Knapsack subtracts weights[i-1] or wt (not a constant 1 like LCS dp[i][j-1])
+                                    if not (isinstance(sub.slice.right, ast.Constant) and sub.slice.right.value == 1):
+                                        has_weight_subtraction = True
+                                    elif isinstance(sub.slice.right, ast.Subscript):
+                                        has_weight_subtraction = True
+                    if has_2d_subscript and (has_weight_subtraction or (has_val_addition and has_2d_subscript)):
+                        self.has_knapsack_01_pattern = True
 
     def _scan_word_break_structures(self, tree):
         """
@@ -1776,6 +1871,12 @@ def extract_features(code: str) -> Dict[str, float]:
         "has_interval_scheduling_pattern": float(visitor.has_interval_scheduling_pattern),
         "has_interval_sort_key": float(visitor.has_interval_sort_key),
         "has_interval_compatibility_check": float(visitor.has_interval_compatibility_check),
+        # Dynamic Programming discriminative features
+        "has_coin_change_min_pattern": float(visitor.has_coin_change_min_pattern),
+        "has_coin_change_ways_pattern": float(visitor.has_coin_change_ways_pattern),
+        "has_knapsack_01_pattern": float(visitor.has_knapsack_01_pattern),
+        "has_1d_dp_table": float(visitor.has_1d_dp_table),
+        "has_2d_dp_table": float(visitor.has_2d_dp_table),
         # Word Break vs Counting Sort discriminative features
         "has_element_indexed_count": float(visitor.has_element_indexed_count),
         "has_count_sort_rebuild": float(visitor.has_count_sort_rebuild),
@@ -1877,6 +1978,31 @@ def extract_top_level_parameters(code: str) -> Dict[str, Any]:
                     for kw in node.keywords:
                         if kw.arg in ("nums", "arr") and isinstance(kw.value, ast.List):
                             params["nums"] = _parse_ast_list(kw.value)
+                elif any(k in func_name for k in ("coin_change", "coinchange", "mincoins", "min_coins", "change")):
+                    # Could be (coins, amount) or (amount, coins)
+                    for arg in node.args:
+                        if isinstance(arg, ast.List):
+                            params["coins"] = _parse_ast_list(arg)
+                        elif isinstance(arg, (ast.Constant, ast.Num)):
+                            val = arg.value if isinstance(arg, ast.Constant) else arg.n
+                            if isinstance(val, (int, float)):
+                                params["amount"] = int(val)
+                    for kw in node.keywords:
+                        if kw.arg in ("coins", "arr") and isinstance(kw.value, ast.List):
+                            params["coins"] = _parse_ast_list(kw.value)
+                        elif kw.arg in ("amount", "target") and isinstance(kw.value, (ast.Constant, ast.Num)):
+                            val = kw.value.value if isinstance(kw.value, ast.Constant) else kw.value.n
+                            params["amount"] = int(val)
+                elif any(k in func_name for k in ("knapsack", "knap_sack")):
+                    for arg in node.args:
+                        if isinstance(arg, (ast.Constant, ast.Num)):
+                            val = arg.value if isinstance(arg, ast.Constant) else arg.n
+                            params["capacity"] = int(val)
+                        elif isinstance(arg, ast.List):
+                            if "weights" not in params:
+                                params["weights"] = _parse_ast_list(arg)
+                            else:
+                                params["values"] = _parse_ast_list(arg)
 
     # Regex fallbacks (for comments like `# permute([9,8,7])` or syntax errors)
     if "n" not in params:
@@ -1895,6 +2021,38 @@ def extract_top_level_parameters(code: str) -> Dict[str, Any]:
             m_arr = re.search(r"(?:^|\n)\s*(?:nums|arr|items|candidates)\s*=\s*\[([^\]]+)\]", code, re.IGNORECASE)
             if m_arr:
                 params["nums"] = _parse_raw_list_str(m_arr.group(1))
+
+    # Coin Change parameters regex fallback
+    if "coins" not in params:
+        m_coins = re.search(r"(?:coins|coin|denominations)\s*=\s*\[([^\]]+)\]", code, re.IGNORECASE)
+        if m_coins:
+            params["coins"] = _parse_raw_list_str(m_coins.group(1))
+        else:
+            m_cc_call = re.search(r"(?:#|\/\/)?\s*(?:coin_?change|coinchange|mincoins)\s*\(\s*\[([^\]]+)\]\s*,\s*(\d+)\s*\)", code, re.IGNORECASE)
+            if m_cc_call:
+                params["coins"] = _parse_raw_list_str(m_cc_call.group(1))
+                params["amount"] = int(m_cc_call.group(2))
+            else:
+                m_ch_call = re.search(r"(?:#|\/\/)?\s*(?:change)\s*\(\s*(\d+)\s*,\s*\[([^\]]+)\]\s*\)", code, re.IGNORECASE)
+                if m_ch_call:
+                    params["amount"] = int(m_ch_call.group(1))
+                    params["coins"] = _parse_raw_list_str(m_ch_call.group(2))
+
+    if "amount" not in params:
+        m_amt = re.search(r"(?:^|\n)\s*(?:amount|target)\s*=\s*(\d+)", code, re.IGNORECASE)
+        if m_amt:
+            params["amount"] = int(m_amt.group(1))
+
+    # Knapsack parameters regex fallback
+    if "capacity" not in params:
+        m_cap = re.search(r"(?:^|\n)\s*(?:capacity|W|cap)\s*=\s*(\d+)", code, re.IGNORECASE)
+        if m_cap:
+            params["capacity"] = int(m_cap.group(1))
+        m_knap = re.search(r"(?:#|\/\/)?\s*knapsack\s*\(\s*\[([^\]]+)\]\s*,\s*\[([^\]]+)\]\s*,\s*(\d+)\s*\)", code, re.IGNORECASE)
+        if m_knap:
+            params["weights"] = _parse_raw_list_str(m_knap.group(1))
+            params["values"] = _parse_raw_list_str(m_knap.group(2))
+            params["capacity"] = int(m_knap.group(3))
 
     return params
 

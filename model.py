@@ -143,6 +143,9 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
             or (features.get("has_frequency_array", 0) == 1.0 and ("count" in code_lower or "freq" in code_lower or "counting" in code_lower))
         )
         and features.get("has_word_break_pattern", 0) == 0.0
+        and features.get("has_coin_change_ways_pattern", 0) == 0.0
+        and features.get("has_coin_change_min_pattern", 0) == 0.0
+        and features.get("has_knapsack_01_pattern", 0) == 0.0
         and features.get("has_earlier_dp_dependency", 0) == 0.0
         and features.get("has_string_slicing_subscript", 0) == 0.0
         and features.get("has_radix_exp_scaling", 0) == 0.0
@@ -608,6 +611,38 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
         and not features.get("has_interval_scheduling_pattern", 0)
         and not features.get("has_interval_sort_key", 0)
     ):
+        # Fine-grained DP pattern identification
+        if features.get("has_coin_change_min_pattern", 0) == 1.0 or (("coin" in code_lower or "coinchange" in code_lower or "coin_change" in code_lower or "fewest" in code_lower) and features.get("has_1d_dp_table", 0) == 1.0 and "min" in code_lower):
+            return (
+                "Dynamic Programming (Coin Change)",
+                0.99,
+                "Detected 1D Dynamic Programming: Coin Change (Minimum Coins) with recurrence dp[x] = min(dp[x], dp[x - coin] + 1).",
+            )
+        if features.get("has_coin_change_ways_pattern", 0) == 1.0 or (bool(re.search(r'\b(?:change|ways|combinations)\b', code_lower)) and "coin" in code_lower and features.get("has_1d_dp_table", 0) == 1.0):
+            return (
+                "Dynamic Programming (Coin Change - Number of Ways)",
+                0.99,
+                "Detected 1D Dynamic Programming: Coin Change (Number of Ways) with recurrence dp[x] += dp[x - coin].",
+            )
+        if "subsequence" in code_lower or "lcs" in code_lower:
+            return (
+                "Dynamic Programming (LCS)",
+                0.99,
+                "Detected 2D Dynamic Programming: Longest Common Subsequence.",
+            )
+        if features.get("has_knapsack_01_pattern", 0) == 1.0 or ("knapsack" in code_lower and (features.get("has_2d_dp_table", 0) == 1.0 or features.get("has_2d_list_indexing", 0) == 1.0 or "val" in code_lower)):
+            return (
+                "Dynamic Programming (0/1 Knapsack)",
+                0.99,
+                "Detected 2D Dynamic Programming: 0/1 Knapsack with inclusion-exclusion recurrence.",
+            )
+        if "climb" in code_lower or "stairs" in code_lower:
+            return (
+                "Dynamic Programming (Climbing Stairs)",
+                0.99,
+                "Detected 1D Dynamic Programming: Climbing Stairs with Fibonacci-style counting recurrence.",
+            )
+
         return (
             "Dynamic Programming",
             0.99,
