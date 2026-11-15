@@ -11,6 +11,7 @@ Implements algorithm classification combining:
 
 from pathlib import Path
 from typing import Dict, Optional, Tuple, List
+import re
 import joblib
 import pandas as pd
 
@@ -63,11 +64,16 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
         )
 
     # 2. Merge Sort: Split slicing ([:mid], [mid:]) + parallel two-pointer / auxiliary merging
-    if (features.get("has_split_slicing", 0) == 1.0 or features.get("has_dual_recursion", 0) == 1.0) and (
-        features.get("has_parallel_two_pointer_pattern", 0) == 1.0
-        or features.get("has_auxiliary_merging", 0) == 1.0
-        or "merge" in code_lower
-    ) and not (features.get("has_pivot_partition", 0) == 1.0 and "quick" in code_lower):
+    if (
+        (features.get("has_split_slicing", 0) == 1.0 or features.get("has_dual_recursion", 0) == 1.0)
+        and (
+            features.get("has_parallel_two_pointer_pattern", 0) == 1.0
+            or features.get("has_auxiliary_merging", 0) == 1.0
+            or "merge" in code_lower
+        )
+        and not (features.get("has_pivot_partition", 0) == 1.0 and "quick" in code_lower)
+        and features.get("has_backtracking_undo_pattern", 0) == 0.0
+    ):
         return (
             "Merge Sort",
             0.99,
@@ -94,8 +100,15 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
             "Detected variable shrinking gap sequence (gap //= 2) with array shifting/swapping.",
         )
 
-    # 5. Insertion Sort: Key element assignment + shifting elements into sorted prefix
-    if features.get("has_element_shifting", 0) == 1.0 and features.get("has_key_assignment", 0) == 1.0 and features.get("has_gap_reduction", 0) == 0.0:
+    # 5. Insertion Sort: Key element assignment + shifting elements into sorted prefix (without bucket distribution)
+    if (
+        features.get("has_element_shifting", 0) == 1.0
+        and features.get("has_key_assignment", 0) == 1.0
+        and features.get("has_gap_reduction", 0) == 0.0
+        and features.get("has_bucket_comprehension", 0) == 0.0
+        and features.get("has_bucket_index_calculation", 0) == 0.0
+        and features.get("has_bucket_concatenation", 0) == 0.0
+    ):
         return (
             "Insertion Sort",
             0.99,
@@ -110,27 +123,93 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
             "Detected radix exponent scaling passes (exp *= 10) and digit bucket distribution.",
         )
 
-    # 7. Counting Sort / Bucket Sort: Frequency / bucket allocation
+    # 7. Bucket Sort: list of lists comprehension + index calculation + bucket sort/concat loops
     if (
-        features.get("has_frequency_array", 0) == 1.0
+        (features.get("has_bucket_comprehension", 0) == 1.0 and (features.get("has_bucket_index_calculation", 0) == 1.0 or features.get("has_bucket_sort_loop", 0) == 1.0 or features.get("has_bucket_concatenation", 0) == 1.0))
+        or (features.get("has_bucket_index_calculation", 0) == 1.0 and (features.get("has_bucket_sort_loop", 0) == 1.0 or features.get("has_bucket_concatenation", 0) == 1.0))
+        or ("bucket" in code_lower and (features.get("has_bucket_comprehension", 0) == 1.0 or features.get("has_frequency_array", 0) == 1.0 or "sort" in code_lower))
+    ) and not features.get("has_topological_sort_pattern", 0) and not features.get("has_2d_list_indexing", 0):
+        return (
+            "Bucket Sort",
+            0.99,
+            "Detected bucket distribution list allocations, range partitioning, and per-bucket sorting/concatenation.",
+        )
+
+    # 7b. Counting Sort: Frequency array allocation + element-indexed incrementation / output rebuild
+    if (
+        (
+            features.get("has_element_indexed_count", 0) == 1.0
+            or features.get("has_count_sort_rebuild", 0) == 1.0
+            or (features.get("has_frequency_array", 0) == 1.0 and ("count" in code_lower or "freq" in code_lower or "counting" in code_lower))
+        )
+        and features.get("has_word_break_pattern", 0) == 0.0
+        and features.get("has_earlier_dp_dependency", 0) == 0.0
+        and features.get("has_string_slicing_subscript", 0) == 0.0
         and features.get("has_radix_exp_scaling", 0) == 0.0
         and features.get("has_topological_sort_pattern", 0) == 0.0
         and features.get("has_prefix_pattern", 0) == 0.0
         and features.get("has_2d_list_indexing", 0) == 0.0
         and features.get("uses_queue", 0) == 0.0
+        and features.get("has_bucket_comprehension", 0) == 0.0
+        and features.get("has_bucket_index_calculation", 0) == 0.0
     ):
-        if "bucket" in code_lower:
-            return (
-                "Bucket Sort",
-                0.98,
-                "Detected bucket distribution list allocations and range partitioning.",
+        return (
+            "Counting Sort",
+            0.98,
+            "Detected fixed-span frequency count array allocation ([0] * span) and element-indexed incrementation.",
+        )
+
+    # 7c. BFS (Breadth-First Search): Queue frontier exploration + visited set tracking
+    if (
+        (features.get("has_queue_while_loop", 0) == 1.0 or features.get("uses_queue", 0) == 1.0)
+        and (features.get("has_queue_pop", 0) == 1.0 or "popleft" in code_lower or "pop(0)" in code_lower)
+        and (
+            features.get("has_visited_check_before_enqueue", 0) == 1.0
+            or features.get("has_adjacency_iteration", 0) == 1.0
+            or features.get("uses_adjacency_structure", 0) == 1.0
+            or features.get("has_visited_like_var", 0) == 1.0
+            or features.get("uses_set", 0) == 1.0
+        )
+        and features.get("has_dp_table_indexing", 0) == 0.0
+        and features.get("has_memo_dict_access", 0) == 0.0
+        and features.get("has_topological_sort_pattern", 0) == 0.0
+        and features.get("has_priority_queue_traversal", 0) == 0.0
+        and features.get("uses_priority_queue", 0) == 0.0
+        and "heappop" not in code_lower
+        and "heappush" not in code_lower
+    ):
+        return (
+            "BFS",
+            0.99,
+            "Detected BFS queue frontier exploration with visited state tracking and adjacency iteration.",
+        )
+
+    # 7d. Topological Sort: DAG dependency ordering (Kahn's in-degree queue or DFS post-order ordering with cycle detection)
+    if (
+        (
+            features.get("has_topological_sort_pattern", 0) == 1.0
+            or (
+                features.get("has_topo_dfs_postorder", 0) == 1.0
+                and (features.get("has_reversed_stack_return", 0) == 1.0 or features.get("has_three_color_cycle_detection", 0) == 1.0)
             )
-        else:
-            return (
-                "Counting Sort",
-                0.98,
-                "Detected fixed-span frequency count array allocation ([0] * span).",
+            or ("in_degree" in code_lower and (features.get("uses_queue", 0) == 1.0 or "popleft" in code_lower or "pop(0)" in code_lower))
+            or (
+                ("topological" in code_lower or "topo_sort" in code_lower or "toposort" in code_lower)
+                and (features.get("uses_adjacency_structure", 0) == 1.0 or features.get("has_adjacency_iteration", 0) == 1.0 or "adj" in code_lower or "graph" in code_lower)
             )
+        )
+        and features.get("has_dp_table_indexing", 0) == 0.0
+        and features.get("has_priority_queue_traversal", 0) == 0.0
+        and features.get("uses_priority_queue", 0) == 0.0
+        and "heappop" not in code_lower
+        and "heappush" not in code_lower
+        and features.get("has_two_pointer_pattern", 0) == 0.0
+    ):
+        return (
+            "Topological Sort",
+            0.99,
+            "Detected DAG topological sort with cycle detection, in-degree/DFS post-order ordering.",
+        )
 
     # 8. Binary Search: Midpoint halving calculation in single loop with no recursion
     if features.get("has_midpoint_calculation", 0) == 1.0 and features.get("max_loop_depth", 0) == 1.0 and features.get("has_recursion", 0) == 0.0:
@@ -157,11 +236,29 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
         )
 
     # 11. Backtracking: Recursive state explore-and-undo pattern
-    if features.get("has_backtracking_undo_pattern", 0) == 1.0:
+    if features.get("has_backtracking_undo_pattern", 0) == 1.0 or any(k in code_lower for k in ("n_queens", "nqueens", "queens", "sudoku", "permute", "combination_sum", "word_search", "exist")):
+        if any(k in code_lower for k in ("n_queens", "nqueens", "queens")):
+            return (
+                "N-Queens",
+                0.99,
+                "Detected N-Queens board backtracking placement with conflict checks and un-placement.",
+            )
+        if any(k in code_lower for k in ("permute", "permutations")):
+            return (
+                "Permutations",
+                0.99,
+                "Detected permutation state exploration with recursive branching and backtracking undo.",
+            )
+        if any(k in code_lower for k in ("word_search", "exist", "word search")):
+            return (
+                "Word Search",
+                0.99,
+                "Detected 2D grid DFS word search with character matching, cell marking, and backtracking unmark.",
+            )
         return (
             "Backtracking",
             0.98,
-            "Detected recursive path exploration with append-recurse-pop backtracking undo.",
+            "Detected recursive path exploration with state mutation, recursion, and backtracking undo.",
         )
 
     # 12. Sliding Window: Arithmetic window resize in nested loop
@@ -203,6 +300,9 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
     if (
         (features.get("uses_queue", 0) == 1.0 or "queue" in code_lower or "deque" in code_lower or "pop(0)" in code_lower or "popleft" in code_lower)
         and not features.get("has_visited_like_var", 0)
+        and not features.get("uses_adjacency_structure", 0)
+        and not features.get("has_topological_sort_pattern", 0)
+        and not any(k in code_lower for k in ("level", "root", ".left", ".right", "tree", "bfs"))
     ):
         return (
             "Queue",
@@ -226,18 +326,71 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
             "Detected 3Sum two-pointer pattern (sorted preprocessing with fixed outer loop and converging inner two pointers).",
         )
 
-    # 17. Prim's Algorithm (Minimum Spanning Tree): Priority queue / min-heap + visited set + edge weight tuples without distance relaxation
+    # 16b. Two Pointer (Converging or Same-Direction):
     if (
-        ("heappop" in code_lower or "heappush" in code_lower or "heap" in code_lower or "priorityqueue" in code_lower)
-        and ("visited" in code_lower or "in_mst" in code_lower or "mst" in code_lower)
-        and ("weight" in code_lower or "cost" in code_lower)
-        and not features.get("has_dist_relaxation", 0)
-        and ("prim" in code_lower or "mst" in code_lower or "edge_weight" in code_lower or "(0," in code_lower or "[(0" in code_lower)
+        (
+            features.get("has_two_pointer_pattern", 0) == 1.0
+            or features.get("has_same_direction_pointer_pattern", 0) == 1.0
+            or (
+                ("left" in code_lower and "right" in code_lower and ("<" in code_lower or "<=" in code_lower))
+                and not features.get("has_midpoint_calculation", 0)
+                and not features.get("has_recursion", 0)
+            )
+            or ("read" in code_lower and "write" in code_lower)
+            or any(k in code_lower for k in ("two_sum", "twosum", "two-sum", "remove_duplicates", "removeduplicates", "remove_element", "move_zeroes"))
+        )
+        and not features.get("has_midpoint_calculation", 0)
+        and not features.get("has_recursion", 0)
+        and not features.get("has_linked_list_pattern", 0)
+        and not features.get("has_sliding_window_pattern", 0)
+    ):
+        return (
+            "Two Pointer",
+            0.99,
+            "Detected two-pointer traversal (converging or same-direction pointer manipulation on array).",
+        )
+
+    # 17. Prim's Algorithm (Minimum Spanning Tree): Priority queue / min-heap + edge weights + cut set without distance relaxation
+    if (
+        (
+            features.get("has_priority_queue_traversal", 0) == 1.0
+            or features.get("uses_priority_queue", 0) == 1.0
+            or "heappop" in code_lower
+            or "heappush" in code_lower
+        )
+        and (
+            features.get("has_mst_weight_accumulation", 0) == 1.0
+            or features.get("has_mst_edge_building", 0) == 1.0
+            or (features.get("has_weighted_adjacency", 0) == 1.0 and features.get("has_lazy_deletion_on_pop", 0) == 1.0)
+            or ("prim" in code_lower and ("graph" in code_lower or "adj" in code_lower or "mst" in code_lower))
+            or ("mst" in code_lower and ("visited" in code_lower or "seen" in code_lower or "total" in code_lower))
+        )
+        and features.get("has_dist_relaxation", 0) == 0.0
+        and not any(k in code_lower for k in ("dijkstra", "shortest_path"))
     ):
         return (
             "Prim's Algorithm",
             0.99,
-            "Detected Prim's MST algorithm (min-heap priority queue with visited cut set and edge weight selection).",
+            "Detected Prim's MST algorithm (min-heap priority queue with visited cut set, edge weight selection, and lazy deletion).",
+        )
+
+    # 17b. Dijkstra's Algorithm (Single-Source Shortest Path): Priority queue + distance relaxation
+    if (
+        (
+            features.get("has_priority_queue_traversal", 0) == 1.0
+            or features.get("uses_priority_queue", 0) == 1.0
+            or "heappop" in code_lower
+        )
+        and (
+            features.get("has_dist_relaxation", 0) == 1.0
+            or "dijkstra" in code_lower
+        )
+        and features.get("has_mst_weight_accumulation", 0) == 0.0
+    ):
+        return (
+            "Dijkstra's Algorithm",
+            0.99,
+            "Detected Dijkstra's SSSP algorithm (min-heap priority queue with edge distance relaxation).",
         )
 
     # 18. Array Intersection (Hash Set): Set initialization + membership checking
@@ -252,6 +405,70 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
             "Detected Array Intersection using Hash Set (set creation and element membership checking).",
         )
 
+    # 18b. Greedy / Interval Scheduling: Earliest finish time sorting + single pass compatibility scan
+    if (
+        features.get("has_interval_scheduling_pattern", 0) == 1.0
+        or (features.get("has_interval_sort_key", 0) == 1.0 and features.get("has_interval_compatibility_check", 0) == 1.0)
+        or (
+            ("interval" in code_lower)
+            and ("sort" in code_lower or "sorted" in code_lower)
+            and ("end" in code_lower or "last" in code_lower or "finish" in code_lower or "prev" in code_lower)
+            and not features.get("has_dp_table_indexing", 0)
+        )
+    ) and not features.get("has_dp_table_indexing", 0) and not features.get("has_memo_dict_access", 0):
+        return (
+            "Greedy / Interval Scheduling",
+            0.99,
+            "Detected greedy interval scheduling with earliest finish time sorting and single-pass selection.",
+        )
+
+    # 19. Dynamic Programming:
+    # 1D or 2D table recurrence transitions (dp[i] = min/max(dp[i - c]), dp[i][j] = ...), or memoization
+    has_dp_name = bool(re.search(r'\b(?:coinchange|coin_change|climbstairs|climb_stairs|knapsack|longestcommonsubsequence|robber|lis|wordbreak|word_break)\b', code_lower))
+    if (
+        features.get("has_dp_table_indexing", 0) == 1.0
+        or features.get("has_memoization", 0) == 1.0
+        or features.get("has_memo_dict_access", 0) == 1.0
+        or has_dp_name
+        or (
+            ("dp[" in code_lower or "table[" in code_lower)
+            and ("min(" in code_lower or "max(" in code_lower or "+" in code_lower)
+            and not features.get("has_backtracking_undo_pattern", 0)
+            and not features.get("has_topological_sort_pattern", 0)
+            and not features.get("has_topo_dfs_postorder", 0)
+            and not features.get("has_interval_scheduling_pattern", 0)
+        )
+    ) and (
+        not features.get("has_backtracking_undo_pattern", 0)
+        and not features.get("has_topological_sort_pattern", 0)
+        and not features.get("has_topo_dfs_postorder", 0)
+        and not features.get("has_interval_scheduling_pattern", 0)
+        and not features.get("has_interval_sort_key", 0)
+    ):
+        return (
+            "Dynamic Programming",
+            0.99,
+            "Detected dynamic programming recurrence relation with state table transitions or memoization.",
+        )
+
+    # 19b. Word Break / String Partition DP: dp array with string slicing & dictionary lookup
+    if (
+        features.get("has_word_break_pattern", 0) == 1.0
+        or (
+            features.get("has_string_slicing_subscript", 0) == 1.0
+            and features.get("has_earlier_dp_dependency", 0) == 1.0
+        )
+        or (
+            ("word_break" in code_lower or "wordbreak" in code_lower)
+            and (features.get("has_string_slicing_subscript", 0) == 1.0 or "dp" in code_lower or "dict" in code_lower or "word" in code_lower)
+        )
+    ):
+        return (
+            "Dynamic Programming",
+            0.99,
+            "Detected Word Break string partition dynamic programming (dp[i] = dp[j] and s[j:i] in word_set).",
+        )
+
     return None
 
 
@@ -262,6 +479,7 @@ SUB_LABEL_TO_SPECIFIC = {
     "Recursive Swap-Based Sort": "Quick Sort",
     "Heap/Complex Structural Sort": "Heap Sort",
     "Distribution Sort": "Counting Sort",
+    "Bucket Sort": "Bucket Sort",
     "Single-Pass Loop Sort": "Gnome Sort",
 }
 
@@ -286,11 +504,36 @@ def predict_algorithm(code: str, features: Optional[Dict[str, float]] = None) ->
     # 2. Fallback to trained Random Forest classifier
     clf, feature_order = load_model()
     row = pd.DataFrame([[features[f] for f in feature_order]], columns=feature_order)
-    prediction = clf.predict(row)[0]
-    confidence = float(clf.predict_proba(row).max())
+    
+    probs = clf.predict_proba(row)[0]
+    classes = clf.classes_
+    sorted_idx = probs.argsort()[::-1]
+    top1_idx = sorted_idx[0]
+    top2_idx = sorted_idx[1] if len(sorted_idx) > 1 else None
+
+    prediction = classes[top1_idx]
+    top1_prob = float(probs[top1_idx])
+    top2_prob = float(probs[top2_idx]) if top2_idx is not None else 0.0
+    margin = top1_prob - top2_prob
+
+    # Structural contradiction checks:
+    # If structural features indicate graph adjacency but ML predicts sorting/DP without graph structures
+    is_graph_code = features.get("uses_adjacency_structure", 0) == 1.0 or features.get("has_adjacency_iteration", 0) == 1.0
+    if is_graph_code and prediction not in ("BFS", "DFS", "Topological Sort", "Union-Find"):
+        return "Uncertain", round(top1_prob, 4)
+
+    # If structural features indicate intervals/greedy but ML predicts DP
+    if (features.get("has_interval_sort_key", 0) == 1.0 or features.get("has_interval_compatibility_check", 0) == 1.0) and prediction == "Dynamic Programming":
+        return "Uncertain", round(top1_prob, 4)
+
+    # Confidence calibration: if margin is too narrow (< 0.10) or top-1 probability is low (< 0.40)
+    CONFIDENCE_FLOOR = 0.40
+    MARGIN_FLOOR = 0.10
+    if top1_prob < CONFIDENCE_FLOOR or (margin < MARGIN_FLOOR and top1_prob < 0.55):
+        return "Uncertain", round(top1_prob, 4)
 
     # Format generic sub-labels into specific template names
     if prediction in SUB_LABEL_TO_SPECIFIC:
         prediction = SUB_LABEL_TO_SPECIFIC[prediction]
 
-    return prediction, round(confidence, 4)
+    return prediction, round(top1_prob, 4)

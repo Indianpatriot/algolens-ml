@@ -38,6 +38,8 @@ import templates_sorting
 import templates_union_find
 import templates_monotonic_stack
 import templates_linked_list
+import templates_topological_sort
+import templates_greedy
 
 # Flat-label categories: one label per whole templates list.
 # Sorting is deliberately excluded here - handled separately below.
@@ -52,6 +54,8 @@ CATEGORIES = {
     "Union-Find": (templates_union_find.TEMPLATES, "union_find"),
     "Monotonic Stack": (templates_monotonic_stack.TEMPLATES, "monotonic_stack"),
     "Linked List Operations": (templates_linked_list.TEMPLATES, "linked_list"),
+    "Topological Sort": (templates_topological_sort.TEMPLATES, "topological_sort"),
+    "Greedy / Interval Scheduling": (templates_greedy.TEMPLATES, "greedy"),
 }
 
 SORTING_FUNC_KEY = "sorting"

@@ -56,6 +56,8 @@ FUNC_NAME_POOLS = {
     "union_find": ["solve", "process_edges", "count_components", "union_find_solve"],
     "monotonic_stack": ["solve_stack", "next_greater", "stack_solve", "process"],
     "linked_list": ["insert_node", "modify_list", "process_list", "update_list"],
+    "topological_sort": ["topological_sort", "topo_sort", "find_order", "schedule_tasks"],
+    "greedy": ["interval_scheduling", "schedule_intervals", "erase_overlap", "merge_intervals"],
 }
 
 

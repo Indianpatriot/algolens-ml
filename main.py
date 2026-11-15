@@ -40,7 +40,12 @@ app = FastAPI(title="AlgoLens Analysis API")
 # shipping - "*" is fine for local development only.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://algo-lens-viz.vercel.app", "http://localhost:5173"],
+    allow_origins=[
+        "https://algo-lens-viz.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:8080",
+        "http://127.0.0.1:8080",
+    ],
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -95,7 +100,9 @@ def analyze(payload: AnalyzeRequest):
         raise HTTPException(status_code=400, detail=f"Feature extraction failed: {e}")
 
     prediction, confidence = predict_algorithm(code, features)
-    complexity = estimate_complexity_from_features(features)
+    complexity = estimate_complexity_from_features(
+        features, algorithm=prediction, class_confidence=confidence
+    )
 
     return AnalyzeResponse(
         algorithm=prediction,

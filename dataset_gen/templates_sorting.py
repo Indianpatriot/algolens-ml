@@ -241,6 +241,75 @@ def __FUNC__(__ARR__):
     return __RESULT__
 '''
 
+T11B_BUCKET_SORT_SCALED = '''
+def __FUNC__(__ARR__):
+    # bucket sort for integers with min/max range scaling
+    if not __ARR__:
+        return __ARR__
+    __MINV__ = min(__ARR__)
+    __MAXV__ = max(__ARR__)
+    __SPAN__ = max(1, __MAXV__ - __MINV__ + 1)
+    __K__ = max(1, len(__ARR__))
+    __BUCKETS__ = [[] for _ in range(__K__)]
+    for __X__ in __ARR__:
+        __IDX__ = int((__X__ - __MINV__) * __K__ / __SPAN__)
+        if __IDX__ >= __K__:
+            __IDX__ = __K__ - 1
+        __BUCKETS__[__IDX__].append(__X__)
+    for __B__ in __BUCKETS__:
+        __B__.sort()
+    __RESULT__ = []
+    for __B__ in __BUCKETS__:
+        __RESULT__.extend(__B__)
+    return __RESULT__
+'''
+
+T11C_BUCKET_SORT_INSERTION = '''
+def __FUNC__(__ARR__):
+    # bucket sort using insertion sort on each individual bucket
+    __N__ = len(__ARR__)
+    if __N__ <= 1:
+        return __ARR__
+    __SLOTS__ = [[] for _ in range(__N__)]
+    for __NUM__ in __ARR__:
+        __IDX__ = int(__NUM__ * __N__)
+        if __IDX__ >= __N__:
+            __IDX__ = __N__ - 1
+        __SLOTS__[__IDX__].append(__NUM__)
+    for __SLOT__ in __SLOTS__:
+        for __I__ in range(1, len(__SLOT__)):
+            __KEY__ = __SLOT__[__I__]
+            __J__ = __I__ - 1
+            while __J__ >= 0 and __SLOT__[__J__] > __KEY__:
+                __SLOT__[__J__ + 1] = __SLOT__[__J__]
+                __J__ -= 1
+            __SLOT__[__J__ + 1] = __KEY__
+    __RESULT__ = []
+    for __SLOT__ in __SLOTS__:
+        __RESULT__.extend(__SLOT__)
+    return __RESULT__
+'''
+
+T11D_BUCKET_SORT_GENERIC_NAMES = '''
+def __FUNC__(data):
+    # bucket sort with generic variable names
+    n = len(data)
+    if n == 0:
+        return data
+    bins = [[] for _ in range(n)]
+    for item in data:
+        slot = int(item * n)
+        if slot >= n:
+            slot = n - 1
+        bins[slot].append(item)
+    for b in bins:
+        b.sort()
+    out = []
+    for b in bins:
+        out.extend(b)
+    return out
+'''
+
 T12_TREE_SORT = '''
 class TreeNode:
     def __init__(self, val):
@@ -548,7 +617,9 @@ def __FUNC__(__ARR__):
 TEMPLATES = [
     T1_BUBBLE_SORT, T2_INSERTION_SORT, T3_SELECTION_SORT, T4_SHELL_SORT,
     T5_MERGE_SORT, T6_QUICK_SORT, T7_HEAP_SORT, T8_TIMSORT,
-    T9_COUNTING_SORT, T10_RADIX_SORT, T11_BUCKET_SORT, T12_TREE_SORT,
+    T9_COUNTING_SORT, T10_RADIX_SORT,
+    T11_BUCKET_SORT, T11B_BUCKET_SORT_SCALED, T11C_BUCKET_SORT_INSERTION, T11D_BUCKET_SORT_GENERIC_NAMES,
+    T12_TREE_SORT,
     T13_CYCLE_SORT, T14_PIGEONHOLE_SORT, T15_BITONIC_SORT, T16_GNOME_SORT,
     T17_COMB_SORT, T18_PANCAKE_SORT, T19_INTROSORT, T20_SMOOTHSORT,
     T21_BOGO_SORT,
@@ -557,7 +628,9 @@ TEMPLATES = [
 TEMPLATE_NAMES = [
     "Bubble Sort", "Insertion Sort", "Selection Sort", "Shell Sort",
     "Merge Sort", "Quick Sort", "Heap Sort", "Timsort",
-    "Counting Sort", "Radix Sort", "Bucket Sort", "Tree Sort",
+    "Counting Sort", "Radix Sort",
+    "Bucket Sort", "Bucket Sort (Scaled)", "Bucket Sort (Insertion)", "Bucket Sort (Generic)",
+    "Tree Sort",
     "Cycle Sort", "Pigeonhole Sort", "Bitonic Sort", "Gnome Sort",
     "Comb Sort", "Pancake Sort", "Introsort", "Smoothsort",
     "Bogo Sort",
@@ -576,7 +649,10 @@ SUB_LABELS = [
     "Heap/Complex Structural Sort",      # Timsort
     "Distribution Sort",                 # Counting Sort
     "Distribution Sort",                 # Radix Sort
-    "Distribution Sort",                 # Bucket Sort
+    "Bucket Sort",                       # Bucket Sort (Float)
+    "Bucket Sort",                       # Bucket Sort (Scaled)
+    "Bucket Sort",                       # Bucket Sort (Insertion)
+    "Bucket Sort",                       # Bucket Sort (Generic)
     "Recursive Non-Swap Sort",           # Tree Sort
     "In-Place Nested-Loop Swap Sort",   # Cycle Sort
     "Distribution Sort",                 # Pigeonhole Sort

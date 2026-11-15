@@ -75,6 +75,39 @@ FEATURE_NAMES = [
     "has_target_comparison",
     "has_directional_pointer_adjustment",
     "has_single_path_search",
+    # BFS discriminative features
+    "has_queue_while_loop",
+    "has_queue_pop",
+    "has_visited_check_before_enqueue",
+    "has_adjacency_iteration",
+    "has_dp_table_indexing",
+    "has_memo_dict_access",
+    # Bucket Sort structural features
+    "has_bucket_comprehension",
+    "has_bucket_index_calculation",
+    "has_bucket_sort_loop",
+    "has_bucket_concatenation",
+    # Prim / Dijkstra / MST discriminative features
+    "has_priority_queue_traversal",
+    "has_weighted_adjacency",
+    "has_mst_weight_accumulation",
+    "has_mst_edge_building",
+    "has_lazy_deletion_on_pop",
+    "has_dist_relaxation",
+    # Topological Sort discriminative features
+    "has_topo_dfs_postorder",
+    "has_three_color_cycle_detection",
+    "has_reversed_stack_return",
+    # Greedy / Interval Scheduling discriminative features
+    "has_interval_scheduling_pattern",
+    "has_interval_sort_key",
+    "has_interval_compatibility_check",
+    # Word Break vs Counting Sort discriminative features
+    "has_element_indexed_count",
+    "has_count_sort_rebuild",
+    "has_string_slicing_subscript",
+    "has_earlier_dp_dependency",
+    "has_word_break_pattern",
 ]
 
 _BITWISE_OPS = (ast.BitXor, ast.BitAnd, ast.BitOr, ast.LShift, ast.RShift)
@@ -166,16 +199,314 @@ class _StructuralVisitor(ast.NodeVisitor):
         self.has_directional_pointer_adjustment = False
         self.has_single_path_search = False
 
+        # BFS discriminative features
+        self.has_queue_while_loop = False
+        self.has_queue_pop = False
+        self.has_visited_check_before_enqueue = False
+        self.has_adjacency_iteration = False
+        self.has_dp_table_indexing = False
+        self.has_memo_dict_access = False
+
+        # Prim / Dijkstra / MST structural signals
+        self.has_priority_queue_traversal = False
+        self.has_weighted_adjacency = False
+        self.has_mst_weight_accumulation = False
+        self.has_mst_edge_building = False
+        self.has_lazy_deletion_on_pop = False
+        self.has_dist_relaxation = False
+
+        # Bucket Sort structural features
+        self.has_bucket_comprehension = False
+        self.has_bucket_index_calculation = False
+        self.has_bucket_sort_loop = False
+        self.has_bucket_concatenation = False
+
+        # Topological Sort structural features
+        self.has_topo_dfs_postorder = False
+        self.has_three_color_cycle_detection = False
+        self.has_reversed_stack_return = False
+
+        # Greedy / Interval Scheduling structural features
+        self.has_interval_scheduling_pattern = False
+        self.has_interval_sort_key = False
+        self.has_interval_compatibility_check = False
+
+        # Word Break vs Counting Sort structural features
+        self.has_element_indexed_count = False
+        self.has_count_sort_rebuild = False
+        self.has_string_slicing_subscript = False
+        self.has_earlier_dp_dependency = False
+        self.has_word_break_pattern = False
+
         self._union_find_scanned = False
 
     # ================= Module-level pre-scan =================
     def visit_Module(self, node):
+        self._scan_bfs_structures(node)  # sets adjacency and queue structures first
         self._scan_union_find(node)
         self._scan_topological_sort(node)
+        self._scan_interval_scheduling_structures(node)
+        self._scan_word_break_structures(node)
+        self._scan_counting_sort_structures(node)
         self._scan_linked_list_operation(node)
         self._scan_sorting_structures(node)
         self._scan_binary_search_structure(node)  # must run before loop visitors
+        self._scan_bucket_sort_structures(node)
+        self._scan_prim_mst_structures(node)
         self.generic_visit(node)
+
+    def _scan_bfs_structures(self, tree):
+        """
+        Extracts unambiguous BFS queue and graph frontier signals:
+        - while loop over a queue/deque
+        - pop(0) or popleft()
+        - visited set membership check before enqueueing
+        - adjacency iteration (graph[node] or adj[u])
+        - absence/presence of 2D DP table indexing (dp[i][j]) and memo dict access
+        """
+        for n in ast.walk(tree):
+            if isinstance(n, ast.FunctionDef):
+                for a in n.args.args:
+                    aname = a.arg.lower()
+                    if any(k in aname for k in ("graph", "adj", "edges", "neighbors", "neighbours")):
+                        self.uses_adjacency_structure = True
+
+            if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute):
+                if n.func.attr == "popleft":
+                    self.has_queue_pop = True
+                    self.uses_queue = True
+                elif n.func.attr == "pop" and n.args and isinstance(n.args[0], ast.Constant) and n.args[0].value == 0:
+                    self.has_queue_pop = True
+                    self.uses_queue = True
+
+            if isinstance(n, ast.While):
+                has_pop = any(
+                    isinstance(c, ast.Call) and isinstance(c.func, ast.Attribute) and (
+                        c.func.attr == "popleft" or
+                        (c.func.attr == "pop" and c.args and isinstance(c.args[0], ast.Constant) and c.args[0].value == 0)
+                    )
+                    for c in ast.walk(n)
+                )
+                if has_pop:
+                    self.has_queue_while_loop = True
+                    self.uses_queue = True
+                elif isinstance(n.test, ast.Name) and any(k in n.test.id.lower() for k in ("queue", "q", "frontier")):
+                    # Do not classify as BFS queue if this while loop actually operates on a min-heap / heappop
+                    has_heappop = any(
+                        isinstance(c, ast.Call) and (
+                            (isinstance(c.func, ast.Name) and c.func.id == "heappop") or
+                            (isinstance(c.func, ast.Attribute) and c.func.attr == "heappop")
+                        )
+                        for c in ast.walk(n)
+                    )
+                    if not has_heappop:
+                        self.has_queue_while_loop = True
+                        self.uses_queue = True
+
+            if isinstance(n, ast.For):
+                if isinstance(n.iter, ast.Subscript):
+                    if isinstance(n.iter.value, ast.Name):
+                        vname = n.iter.value.id.lower()
+                        if any(k in vname for k in ("graph", "adj", "edges", "network", "node")):
+                            self.has_adjacency_iteration = True
+                            self.uses_adjacency_structure = True
+                        elif self.uses_adjacency_structure:
+                            self.has_adjacency_iteration = True
+                elif isinstance(n.iter, ast.Call) and isinstance(n.iter.func, ast.Attribute):
+                    if n.iter.func.attr in ("get", "neighbors", "items", "values"):
+                        if isinstance(n.iter.func.value, ast.Name) and any(k in n.iter.func.value.id.lower() for k in ("graph", "adj", "edges", "network")):
+                            self.has_adjacency_iteration = True
+                            self.uses_adjacency_structure = True
+
+            if isinstance(n, ast.If):
+                is_visited_check = False
+                if isinstance(n.test, ast.Compare):
+                    for op in n.test.ops:
+                        if isinstance(op, ast.NotIn):
+                            is_visited_check = True
+                elif isinstance(n.test, ast.UnaryOp) and isinstance(n.test.op, ast.Not):
+                    is_visited_check = True
+
+                if is_visited_check:
+                    has_enqueue = any(
+                        isinstance(c, ast.Call) and isinstance(c.func, ast.Attribute) and c.func.attr in ("append", "appendleft", "extend")
+                        for c in ast.walk(n)
+                    )
+                    if has_enqueue:
+                        self.has_visited_check_before_enqueue = True
+                        self.has_visited_like_var = True
+
+            if isinstance(n, ast.Subscript):
+                if isinstance(n.value, ast.Subscript):
+                    base = n.value.value
+                    if isinstance(base, ast.Name) and any(k in base.id.lower() for k in ("dp", "table", "opt", "memo")):
+                        self.has_dp_table_indexing = True
+                elif isinstance(n.value, ast.Name) and any(k in n.value.id.lower() for k in ("dp", "table", "opt")):
+                    if isinstance(n.slice, ast.BinOp) and isinstance(n.slice.op, (ast.Sub, ast.Add)):
+                        self.has_dp_table_indexing = True
+
+            if isinstance(n, ast.Subscript) and isinstance(n.value, ast.Name):
+                if any(k in n.value.id.lower() for k in ("memo", "cache")):
+                    self.has_memo_dict_access = True
+
+    def _scan_bucket_sort_structures(self, tree):
+        """
+        Extracts structural Bucket Sort signals:
+        - List of lists created via comprehension sized n ([[] for _ in range(n)])
+        - Index computed from value (multiplication/division of element, int() cast) used to append into bucket
+        - Second loop sorting each bucket
+        - Final concatenation loop extending buckets into result
+        """
+        computed_index_names = set()
+        bucket_collection_names = set()
+
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Assign) and isinstance(n.value, ast.ListComp):
+                if isinstance(n.value.elt, ast.List) and len(n.value.elt.elts) == 0:
+                    for gen in n.value.generators:
+                        if isinstance(gen.iter, ast.Call) and isinstance(gen.iter.func, ast.Name) and gen.iter.func.id == "range":
+                            is_graph_adj = any(
+                                isinstance(t, ast.Name) and any(k in t.id.lower() for k in ("adj", "graph", "edge", "matrix", "network"))
+                                for t in n.targets
+                            )
+                            if not is_graph_adj:
+                                self.has_bucket_comprehension = True
+                                for t in n.targets:
+                                    if isinstance(t, ast.Name):
+                                        bucket_collection_names.add(t.id)
+
+            if isinstance(n, ast.Assign):
+                is_index_calc = False
+                if isinstance(n.value, ast.Call) and isinstance(n.value.func, ast.Name) and n.value.func.id == "int":
+                    if any(isinstance(a, (ast.BinOp, ast.Call)) for a in n.value.args):
+                        is_index_calc = True
+                elif isinstance(n.value, ast.BinOp) and isinstance(n.value.op, (ast.Mult, ast.FloorDiv, ast.Div)):
+                    is_index_calc = True
+                if is_index_calc:
+                    for t in n.targets:
+                        if isinstance(t, ast.Name):
+                            computed_index_names.add(t.id)
+
+            if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "append":
+                if isinstance(n.func.value, ast.Subscript):
+                    sl = n.func.value.slice
+                    sl_is_computed = (isinstance(sl, ast.Name) and sl.id in computed_index_names) or isinstance(sl, (ast.Call, ast.BinOp))
+                    if sl_is_computed:
+                        self.has_bucket_index_calculation = True
+                    elif isinstance(n.func.value.value, ast.Name) and n.func.value.value.id in bucket_collection_names:
+                        # Append to a recognized bucket collection
+                        self.has_bucket_index_calculation = True
+
+            if isinstance(n, ast.For) and isinstance(n.target, ast.Name):
+                tname = n.target.id
+                has_sort = any(
+                    isinstance(c, ast.Call) and (
+                        (isinstance(c.func, ast.Attribute) and c.func.attr in ("sort", "insertion_sort") and isinstance(c.func.value, ast.Name) and c.func.value.id == tname) or
+                        (isinstance(c.func, ast.Name) and "sort" in c.func.id.lower() and c.args and isinstance(c.args[0], ast.Name) and c.args[0].id == tname)
+                    )
+                    for c in ast.walk(n)
+                )
+                if has_sort:
+                    self.has_bucket_sort_loop = True
+                    self.uses_sorted_or_sort_call = True
+
+            if isinstance(n, ast.For) and isinstance(n.target, ast.Name):
+                tname = n.target.id
+                has_concat = any(
+                    (isinstance(c, ast.Call) and isinstance(c.func, ast.Attribute) and c.func.attr == "extend" and c.args and isinstance(c.args[0], ast.Name) and c.args[0].id == tname) or
+                    (isinstance(c, ast.AugAssign) and isinstance(c.op, ast.Add) and isinstance(c.value, ast.Name) and c.value.id == tname) or
+                    (isinstance(c, ast.For) and isinstance(c.iter, ast.Name) and c.iter.id == tname and any(isinstance(inner, ast.Call) and isinstance(inner.func, ast.Attribute) and inner.func.attr == "append" for inner in ast.walk(c)))
+                    for c in ast.walk(n)
+                )
+                if has_concat:
+                    self.has_bucket_concatenation = True
+
+    def _scan_prim_mst_structures(self, tree):
+        """
+        Extracts structural Prim's MST / Dijkstra / Priority Queue traversal signals:
+        - has_priority_queue_traversal: While loop popping from min-heap (heappop)
+        - has_weighted_adjacency: Iteration over graph with weight unpacking ((v, w) or (w, v))
+        - has_mst_weight_accumulation: Scalar accumulation into total_weight / cost / mst_weight
+        - has_mst_edge_building: Appending edge tuples to MST edge list (mst.append((u, v)))
+        - has_lazy_deletion_on_pop: Skipping already-visited vertices immediately after pop (if v in visited: continue)
+        - has_dist_relaxation: Checking or assigning relaxation (dist[v] > d + w, dist[v] = d + w)
+        """
+        for n in ast.walk(tree):
+            # 1. Priority queue traversal in while loop & 5. Lazy deletion on pop
+            if isinstance(n, ast.While):
+                has_heappop = any(
+                    isinstance(c, ast.Call) and (
+                        (isinstance(c.func, ast.Name) and c.func.id == "heappop") or
+                        (isinstance(c.func, ast.Attribute) and (
+                            c.func.attr == "heappop"
+                            or (c.func.attr == "get" and any(k in getattr(c.func.value, "id", "").lower() for k in ("pq", "heap", "priority")))
+                        ))
+                    )
+                    for c in ast.walk(n)
+                )
+                if has_heappop:
+                    self.has_priority_queue_traversal = True
+                    self.uses_priority_queue = True
+
+                for sub in ast.walk(n):
+                    if isinstance(sub, ast.If):
+                        is_in_check = (
+                            isinstance(sub.test, ast.Compare)
+                            and any(isinstance(op, ast.In) for op in sub.test.ops)
+                        )
+                        has_continue = any(isinstance(s, ast.Continue) for s in sub.body)
+                        if is_in_check and has_continue:
+                            self.has_lazy_deletion_on_pop = True
+
+            # 2. Weighted adjacency iteration
+            if isinstance(n, ast.For) and isinstance(n.target, (ast.Tuple, ast.List)):
+                if len(n.target.elts) in (2, 3):
+                    iter_is_adj = False
+                    if isinstance(n.iter, ast.Subscript) and isinstance(n.iter.value, ast.Name):
+                        if any(k in n.iter.value.id.lower() for k in ("graph", "adj", "edges", "network", "g", "node")):
+                            iter_is_adj = True
+                    elif isinstance(n.iter, ast.Call) and isinstance(n.iter.func, ast.Attribute):
+                        if n.iter.func.attr in ("get", "neighbors", "items", "values"):
+                            iter_is_adj = True
+                    elif self.uses_adjacency_structure:
+                        iter_is_adj = True
+                    if iter_is_adj:
+                        self.has_weighted_adjacency = True
+
+            # 3. MST weight accumulation
+            if isinstance(n, ast.AugAssign) and isinstance(n.op, ast.Add):
+                if isinstance(n.target, ast.Name):
+                    tname = n.target.id.lower()
+                    if any(k in tname for k in ("weight", "cost", "total", "mst", "ans", "res", "sum")):
+                        self.has_mst_weight_accumulation = True
+
+            # 4. MST edge building
+            if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "append":
+                if n.args and isinstance(n.args[0], (ast.Tuple, ast.List)) and len(n.args[0].elts) in (2, 3):
+                    if isinstance(n.func.value, ast.Name):
+                        lname = n.func.value.id.lower()
+                        if any(k in lname for k in ("mst", "tree", "edge", "res", "result")):
+                            self.has_mst_edge_building = True
+
+            # 6. Distance relaxation (Dijkstra)
+            if isinstance(n, ast.Compare):
+                is_dist_comp = any(
+                    isinstance(item, ast.Subscript) and isinstance(item.value, ast.Name) and any(k in item.value.id.lower() for k in ("dist", "distance", "dists"))
+                    for item in [n.left] + n.comparators
+                )
+                has_add = any(
+                    isinstance(item, ast.BinOp) and isinstance(item.op, ast.Add)
+                    for item in ast.walk(n)
+                )
+                if is_dist_comp and has_add:
+                    self.has_dist_relaxation = True
+
+            if isinstance(n, ast.Assign):
+                for target in n.targets:
+                    if isinstance(target, ast.Subscript) and isinstance(target.value, ast.Name):
+                        if any(k in target.value.id.lower() for k in ("dist", "distance", "dists")):
+                            if isinstance(n.value, ast.BinOp) and isinstance(n.value.op, ast.Add):
+                                self.has_dist_relaxation = True
 
     def _scan_binary_search_structure(self, tree):
         """
@@ -363,22 +694,155 @@ class _StructuralVisitor(ast.NodeVisitor):
     def _scan_topological_sort(self, tree):
         """
         Topological sort detection.
-        SECONDARY heuristic: an 'indegree'-like variable combined with
-        queue usage (collections.deque) is the standard Kahn's algorithm
-        signature.
+        Covers both Kahn's algorithm (in-degree array + zero-in-degree queue)
+        and DFS post-order ordering with cycle detection (3-color/in-stack states).
         """
+        # 1. Kahn's Algorithm
         has_indegree_var = any(
             isinstance(n, ast.Name) and "indegree" in n.id.lower().replace("_", "")
             for n in ast.walk(tree)
         )
-        has_deque_call = any(
-            isinstance(n, ast.Call)
-            and isinstance(n.func, ast.Name)
-            and n.func.id == "deque"
+        has_queue_usage = any(
+            (isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "deque") or
+            (isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and (
+                n.func.attr == "popleft" or (n.func.attr == "pop" and n.args and isinstance(n.args[0], ast.Constant) and n.args[0].value == 0)
+            ))
             for n in ast.walk(tree)
         )
-        if has_indegree_var and has_deque_call:
+        if has_indegree_var and (has_queue_usage or self.uses_queue or self.has_queue_while_loop):
             self.has_topological_sort_pattern = True
+
+        # 2. 3-Color / Cycle detection (0: unvisited, 1: visiting/in_stack, 2: visited)
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Assign):
+                for target in n.targets:
+                    if isinstance(target, ast.Subscript) and isinstance(target.value, ast.Name):
+                        if any(k in target.value.id.lower() for k in ("visited", "seen", "state", "color", "mark")):
+                            if isinstance(n.value, ast.Constant) and n.value.value in (1, 2, "visiting", "visited", "gray", "black"):
+                                self.has_three_color_cycle_detection = True
+            elif isinstance(n, ast.Compare):
+                # e.g., if visited[neighbor] == 1: return True
+                if isinstance(n.left, ast.Subscript) and isinstance(n.left.value, ast.Name):
+                    if any(k in n.left.value.id.lower() for k in ("visited", "seen", "state", "color")):
+                        for comp in n.comparators:
+                            if isinstance(comp, ast.Constant) and comp.value in (1, 2, "visiting", "visited", "gray", "black"):
+                                self.has_three_color_cycle_detection = True
+
+        # 3. Post-order stack append
+        # Appending node to a stack or order list after traversing neighbors
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr in ("append", "push"):
+                if isinstance(n.func.value, ast.Name):
+                    name = n.func.value.id.lower()
+                    if any(k in name for k in ("stack", "topo_order", "topo")):
+                        self.has_topo_dfs_postorder = True
+                    elif (self.uses_adjacency_structure or self.has_adjacency_iteration) and any(k in name for k in ("order", "res", "ans", "seq")):
+                        self.has_topo_dfs_postorder = True
+
+        # 4. Reversed stack return: return stack[::-1] or reversed(stack)
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Return) and n.value:
+                if isinstance(n.value, ast.Subscript):
+                    sl = n.value.slice
+                    if isinstance(sl, ast.Slice) and isinstance(sl.step, ast.UnaryOp) and isinstance(sl.step.op, ast.USub):
+                        if isinstance(sl.step.operand, ast.Constant) and sl.step.operand.value == 1:
+                            self.has_reversed_stack_return = True
+                elif isinstance(n.value, ast.Call):
+                    callee = n.value.func.id if isinstance(n.value.func, ast.Name) else ""
+                    if callee == "reversed":
+                        self.has_reversed_stack_return = True
+
+        # If DFS post-order append + reversed stack return (or 3-color cycle detection) are present with adjacency:
+        if self.has_topo_dfs_postorder and (self.has_reversed_stack_return or self.has_three_color_cycle_detection):
+            self.has_topological_sort_pattern = True
+
+    def _scan_interval_scheduling_structures(self, tree):
+        """
+        Extracts greedy interval scheduling signals:
+        - sort by end/start time (key=lambda x: x[1] or x[0])
+        - single-pass compatibility check: start >= last_end or start > prev_end
+        - updating last_end = end and keeping/counting intervals
+        - no 2D DP table, no memo dict
+        """
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Call):
+                for kw in n.keywords:
+                    if kw.arg == "key" and isinstance(kw.value, ast.Lambda):
+                        if isinstance(kw.value.body, ast.Subscript) and isinstance(kw.value.body.slice, ast.Constant):
+                            if kw.value.body.slice.value in (0, 1):
+                                self.has_interval_sort_key = True
+
+            if isinstance(n, ast.Compare):
+                for op in n.ops:
+                    if isinstance(op, (ast.GtE, ast.Gt, ast.LtE, ast.Lt)):
+                        self.has_interval_compatibility_check = True
+
+        if self.has_interval_sort_key and self.has_interval_compatibility_check:
+            self.has_interval_scheduling_pattern = True
+
+    def _scan_counting_sort_structures(self, tree):
+        """
+        Extracts genuine Counting Sort signals:
+        - has_element_indexed_count: count array indexed by element value and incremented (count[x] += 1 or count[arr[i]] += 1)
+        - has_count_sort_rebuild: output reconstruction loop from count frequencies or prefix-sums
+        """
+        for n in ast.walk(tree):
+            # 1. Element-indexed frequency increment: count[x] += 1 or count[arr[i]] += 1
+            if isinstance(n, ast.AugAssign) and isinstance(n.target, ast.Subscript) and isinstance(n.op, ast.Add):
+                if isinstance(n.value, ast.Constant) and n.value.value == 1:
+                    arr_name = getattr(n.target.value, "id", "").lower()
+                    if any(k in arr_name for k in ("count", "cnt", "freq", "frequency", "bucket", "c")):
+                        self.has_element_indexed_count = True
+                    if isinstance(n.target.slice, (ast.Name, ast.Subscript)):
+                        self.has_element_indexed_count = True
+
+            # 2. Count reconstruction or prefix sum: count[i] += count[i-1] or output[count[x]-1] = x
+            if isinstance(n, ast.AugAssign) and isinstance(n.target, ast.Subscript) and isinstance(n.value, ast.Subscript):
+                if getattr(n.target.value, "id", "") == getattr(n.value.value, "id", ""):
+                    self.has_count_sort_rebuild = True
+            if isinstance(n, ast.Assign):
+                for t in n.targets:
+                    if isinstance(t, ast.Subscript) and isinstance(t.slice, (ast.BinOp, ast.Subscript)):
+                        arr_name = getattr(t.value, "id", "").lower()
+                        if any(k in arr_name for k in ("output", "res", "ans", "sorted", "b")):
+                            self.has_count_sort_rebuild = True
+
+    def _scan_word_break_structures(self, tree):
+        """
+        Extracts Word Break / string partition DP signals:
+        - has_string_slicing_subscript: string slicing s[j:i] or s[:i]
+        - has_earlier_dp_dependency: dp[j] read inside inner loop j < i where dp[i] is updated
+        - has_word_break_pattern: dp earlier dependency + string slice membership in dictionary/set
+        """
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Subscript) and isinstance(n.slice, ast.Slice):
+                self.has_string_slicing_subscript = True
+
+        for n in ast.walk(tree):
+            if isinstance(n, (ast.For, ast.While)):
+                for inner in ast.walk(n):
+                    if isinstance(inner, (ast.For, ast.While)):
+                        for cond in ast.walk(inner):
+                            if isinstance(cond, ast.Compare):
+                                is_in_word = any(
+                                    any(w in getattr(c, "id", "").lower() for w in ("word", "dict", "words", "set", "vocab"))
+                                    for c in cond.comparators if isinstance(c, ast.Name)
+                                ) or any(
+                                    isinstance(op, ast.In) for op in cond.ops
+                                )
+                                has_slice_left = isinstance(cond.left, ast.Subscript) and isinstance(cond.left.slice, ast.Slice)
+                                if is_in_word and has_slice_left:
+                                    self.has_word_break_pattern = True
+
+                            if isinstance(cond, ast.BoolOp) and isinstance(cond.op, ast.And):
+                                for val in cond.values:
+                                    if isinstance(val, ast.Subscript) and isinstance(val.slice, ast.Name):
+                                        tname = getattr(val.value, "id", "").lower()
+                                        if any(k in tname for k in ("dp", "memo", "table", "valid", "can")):
+                                            self.has_earlier_dp_dependency = True
+
+        if self.has_earlier_dp_dependency and (self.has_string_slicing_subscript or self.has_word_break_pattern):
+            self.has_word_break_pattern = True
 
     # ================= Imports =================
     def visit_Import(self, node):
@@ -444,7 +908,13 @@ class _StructuralVisitor(ast.NodeVisitor):
             self.uses_sorted_or_sort_call = True
 
         # Sliced recursive call check (e.g. merge sort: func(arr[:mid]), func(arr[mid:]))
-        if any(isinstance(arg, ast.Subscript) and isinstance(arg.slice, ast.Slice) for arg in node.args):
+        # Note: full shallow copy arr[:] has neither lower nor upper bound, so it is not a split slice
+        if any(
+            isinstance(arg, ast.Subscript)
+            and isinstance(arg.slice, ast.Slice)
+            and (arg.slice.lower is not None or arg.slice.upper is not None)
+            for arg in node.args
+        ):
             self.has_split_slicing = True
 
         self.generic_visit(node)
@@ -601,18 +1071,29 @@ class _StructuralVisitor(ast.NodeVisitor):
         add_methods = ("append", "add")
         remove_methods = ("pop", "remove")
         add_idx, add_var, recurse_idx = None, None, None
+        assign_idx, assign_target = None, None
+
+        current_fn = self.current_function_stack[-1] if self.current_function_stack else None
 
         for idx, stmt in enumerate(body):
-            call = stmt.value if isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Call) else None
+            # Check if this statement triggers recursion
+            has_recurse = False
+            if current_fn:
+                for sub in ast.walk(stmt):
+                    if isinstance(sub, ast.Call):
+                        if (isinstance(sub.func, ast.Name) and sub.func.id == current_fn) or \
+                           (isinstance(sub.func, ast.Attribute) and sub.func.attr == current_fn):
+                            has_recurse = True
+                            break
+            if has_recurse:
+                recurse_idx = idx
 
+            # Method-based undo: path.append(...) ... recurse ... path.pop()
+            call = stmt.value if isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Call) else None
             if call is not None:
                 if isinstance(call.func, ast.Attribute) and call.func.attr in add_methods:
                     if isinstance(call.func.value, ast.Name):
                         add_idx, add_var = idx, call.func.value.id
-
-                elif isinstance(call.func, ast.Name) and self.current_function_stack:
-                    if call.func.id == self.current_function_stack[-1]:
-                        recurse_idx = idx
 
                 elif isinstance(call.func, ast.Attribute) and call.func.attr in remove_methods:
                     if (
@@ -623,6 +1104,17 @@ class _StructuralVisitor(ast.NodeVisitor):
                         and add_idx < recurse_idx < idx
                     ):
                         self.has_backtracking_undo_pattern = True
+
+            # Subscript / variable assignment undo:
+            # board[r][c] = 'Q' ... recurse ... board[r][c] = '.'
+            if isinstance(stmt, ast.Assign):
+                for target in stmt.targets:
+                    if isinstance(target, (ast.Subscript, ast.Name)):
+                        target_repr = ast.dump(target)
+                        if assign_idx is None:
+                            assign_idx, assign_target = idx, target_repr
+                        elif assign_idx is not None and recurse_idx is not None and assign_idx < recurse_idx <= idx:
+                            self.has_backtracking_undo_pattern = True
 
             # Recurse into nested blocks (if/for/while bodies) since the
             # append -> recurse -> pop sequence is very commonly wrapped
@@ -802,21 +1294,23 @@ class _StructuralVisitor(ast.NodeVisitor):
         """Pattern: count = [0] * span, count = [0] * 10, holes = [[] for _ in range(...)]"""
         if isinstance(node.value, ast.BinOp) and isinstance(node.value.op, ast.Mult):
             target_name = node.targets[0].id.lower() if len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) else ""
+            if any(k in target_name for k in ("dp", "memo", "table", "visited", "seen", "valid", "can")):
+                return
             mult_val = node.value.right if isinstance(node.value.left, ast.List) else (node.value.left if isinstance(node.value.right, ast.List) else None)
             is_zero_list = False
-            if isinstance(node.value.left, ast.List) and len(node.value.left.elts) == 1 and isinstance(node.value.left.elts[0], ast.Constant) and node.value.left.elts[0].value == 0:
+            if isinstance(node.value.left, ast.List) and len(node.value.left.elts) == 1 and isinstance(node.value.left.elts[0], ast.Constant) and type(node.value.left.elts[0].value) is int and node.value.left.elts[0].value == 0:
                 is_zero_list = True
-            elif isinstance(node.value.right, ast.List) and len(node.value.right.elts) == 1 and isinstance(node.value.right.elts[0], ast.Constant) and node.value.right.elts[0].value == 0:
+            elif isinstance(node.value.right, ast.List) and len(node.value.right.elts) == 1 and isinstance(node.value.right.elts[0], ast.Constant) and type(node.value.right.elts[0].value) is int and node.value.right.elts[0].value == 0:
                 is_zero_list = True
 
             if is_zero_list:
-                if any(k in target_name for k in ("count", "freq", "bucket", "hole", "radix", "span")):
+                if any(k in target_name for k in ("count", "cnt", "freq", "bucket", "hole", "radix", "span")):
                     self.has_frequency_array = True
                 elif isinstance(mult_val, ast.Constant) and mult_val.value in (10, 256, 128, 16):
                     self.has_frequency_array = True
                 elif isinstance(mult_val, ast.Name) and any(k in mult_val.id.lower() for k in ("span", "range", "max", "k")):
                     self.has_frequency_array = True
-                elif isinstance(mult_val, ast.BinOp):
+                elif isinstance(mult_val, ast.BinOp) and any(k in target_name for k in ("count", "cnt", "freq", "bucket")):
                     self.has_frequency_array = True
         elif isinstance(node.value, ast.ListComp):
             if isinstance(node.value.elt, ast.List) and len(node.value.elt.elts) == 0:
@@ -953,18 +1447,18 @@ class _StructuralVisitor(ast.NodeVisitor):
         self.generic_visit(node)
 
     def _check_heap_child_math(self, node):
-        """Detects child math: 2*i + 1, 2*i + 2, 2*idx + 1, etc."""
+        """Detects child math: 2*i + 1, 2*i + 2, 2*idx + 1, (i << 1) + 1, etc."""
         if isinstance(node.op, ast.Add):
             left, right = node.left, node.right
             if isinstance(right, ast.Constant) and right.value in (1, 2):
-                if isinstance(left, ast.BinOp) and isinstance(left.op, ast.Mult):
-                    if (isinstance(left.left, ast.Constant) and left.left.value == 2) or \
-                       (isinstance(left.right, ast.Constant) and left.right.value == 2):
+                if isinstance(left, ast.BinOp) and isinstance(left.op, (ast.Mult, ast.LShift)):
+                    if (isinstance(left.left, ast.Constant) and left.left.value in (1, 2)) or \
+                       (isinstance(left.right, ast.Constant) and left.right.value in (1, 2)):
                         self.has_heap_child_math = True
             elif isinstance(left, ast.Constant) and left.value in (1, 2):
-                if isinstance(right, ast.BinOp) and isinstance(right.op, ast.Mult):
-                    if (isinstance(right.left, ast.Constant) and right.left.value == 2) or \
-                       (isinstance(right.right, ast.Constant) and right.right.value == 2):
+                if isinstance(right, ast.BinOp) and isinstance(right.op, (ast.Mult, ast.LShift)):
+                    if (isinstance(right.left, ast.Constant) and right.left.value in (1, 2)) or \
+                       (isinstance(right.right, ast.Constant) and right.right.value in (1, 2)):
                         self.has_heap_child_math = True
 
     def _check_midpoint_calc(self, node):
@@ -1099,6 +1593,39 @@ def extract_features(code: str) -> Dict[str, float]:
         "has_target_comparison": float(visitor.has_target_comparison),
         "has_directional_pointer_adjustment": float(visitor.has_directional_pointer_adjustment),
         "has_single_path_search": float(visitor.has_single_path_search),
+        # BFS discriminative features
+        "has_queue_while_loop": float(visitor.has_queue_while_loop),
+        "has_queue_pop": float(visitor.has_queue_pop),
+        "has_visited_check_before_enqueue": float(visitor.has_visited_check_before_enqueue),
+        "has_adjacency_iteration": float(visitor.has_adjacency_iteration),
+        "has_dp_table_indexing": float(visitor.has_dp_table_indexing),
+        "has_memo_dict_access": float(visitor.has_memo_dict_access),
+        # Bucket Sort structural features
+        "has_bucket_comprehension": float(visitor.has_bucket_comprehension),
+        "has_bucket_index_calculation": float(visitor.has_bucket_index_calculation),
+        "has_bucket_sort_loop": float(visitor.has_bucket_sort_loop),
+        "has_bucket_concatenation": float(visitor.has_bucket_concatenation),
+        # Prim / Dijkstra / MST discriminative features
+        "has_priority_queue_traversal": float(visitor.has_priority_queue_traversal),
+        "has_weighted_adjacency": float(visitor.has_weighted_adjacency),
+        "has_mst_weight_accumulation": float(visitor.has_mst_weight_accumulation),
+        "has_mst_edge_building": float(visitor.has_mst_edge_building),
+        "has_lazy_deletion_on_pop": float(visitor.has_lazy_deletion_on_pop),
+        "has_dist_relaxation": float(visitor.has_dist_relaxation),
+        # Topological Sort discriminative features
+        "has_topo_dfs_postorder": float(visitor.has_topo_dfs_postorder),
+        "has_three_color_cycle_detection": float(visitor.has_three_color_cycle_detection),
+        "has_reversed_stack_return": float(visitor.has_reversed_stack_return),
+        # Greedy / Interval Scheduling discriminative features
+        "has_interval_scheduling_pattern": float(visitor.has_interval_scheduling_pattern),
+        "has_interval_sort_key": float(visitor.has_interval_sort_key),
+        "has_interval_compatibility_check": float(visitor.has_interval_compatibility_check),
+        # Word Break vs Counting Sort discriminative features
+        "has_element_indexed_count": float(visitor.has_element_indexed_count),
+        "has_count_sort_rebuild": float(visitor.has_count_sort_rebuild),
+        "has_string_slicing_subscript": float(visitor.has_string_slicing_subscript),
+        "has_earlier_dp_dependency": float(visitor.has_earlier_dp_dependency),
+        "has_word_break_pattern": float(visitor.has_word_break_pattern),
     }
     return features
 
