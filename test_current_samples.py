@@ -292,3 +292,4 @@ samples = [
 for num, name, code in samples:
     pred, conf = predict_algorithm(code)
     print(f"Sample {num}: {name} -> Predicted: {pred} ({conf})")
+
