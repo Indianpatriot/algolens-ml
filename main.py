@@ -18,7 +18,7 @@ Then test with:
 """
 
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Any, Optional
 
 import joblib
 import pandas as pd
@@ -26,7 +26,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from feature_extractor import extract_features
+from feature_extractor import extract_features, extract_top_level_parameters
 from complexity_estimator import estimate_complexity_from_features
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -65,6 +65,8 @@ class AnalyzeResponse(BaseModel):
     confidence: float
     complexity: Dict[str, str]
     features: Dict[str, float]
+    detected_n_value: Optional[float] = None
+    extracted_params: Dict[str, Any] = {}
 
 
 @app.on_event("startup")
@@ -103,6 +105,7 @@ def analyze(payload: AnalyzeRequest):
     complexity = estimate_complexity_from_features(
         features, algorithm=prediction, class_confidence=confidence
     )
+    params = extract_top_level_parameters(code)
 
     return AnalyzeResponse(
         algorithm=prediction,
@@ -111,4 +114,6 @@ def analyze(payload: AnalyzeRequest):
         confidence=round(confidence, 4),
         complexity=complexity,
         features=features,
+        detected_n_value=features.get("detected_n_value"),
+        extracted_params=params,
     )

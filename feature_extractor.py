@@ -15,7 +15,8 @@ structural, and are documented as such below.
 """
 
 import ast
-from typing import Dict
+import re
+from typing import Dict, Any, Optional
 
 
 FEATURE_NAMES = [
@@ -1794,7 +1795,56 @@ def extract_features(code: str) -> Dict[str, float]:
         "has_topological_sort_kahn": float(visitor.has_topological_sort_kahn),
         "has_topological_sort_dfs": float(visitor.has_topological_sort_dfs),
     }
+
+    # Extract any top-level parameters (e.g. n = 8 for N-Queens)
+    params = extract_top_level_parameters(code)
+    if "n" in params:
+        features["detected_n_value"] = float(params["n"])
+
     return features
+
+
+def extract_top_level_parameters(code: str) -> Dict[str, Any]:
+    """
+    Extracts top-level variable assignments or algorithm call arguments from source code,
+    such as `n = 8` or `solve_n_queens(8)`.
+    """
+    params: Dict[str, Any] = {}
+    try:
+        tree = ast.parse(code)
+    except Exception:
+        # Fallback to regex if syntax error in incomplete code
+        m = re.search(r"(?:^|\n)\s*(?:board_size|boardSize|num_queens|queens|\bn\b|\bN\b)\s*=\s*(\d+)", code, re.IGNORECASE)
+        if m:
+            params["n"] = int(m.group(1))
+        m2 = re.search(r"(?:solve_?n_?queens|nqueens|n_queens|queens)\s*\(\s*(\d+)\s*\)", code, re.IGNORECASE)
+        if m2:
+            params["n"] = int(m2.group(1))
+        return params
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assign):
+            for target in node.targets:
+                if isinstance(target, ast.Name):
+                    var_name = target.id.lower()
+                    if isinstance(node.value, ast.Constant) and isinstance(node.value.value, (int, float)):
+                        params[var_name] = node.value.value
+                    elif isinstance(node.value, ast.Num):
+                        params[var_name] = node.value.n
+        elif isinstance(node, ast.Call):
+            func_name = ""
+            if isinstance(node.func, ast.Name):
+                func_name = node.func.id.lower()
+            elif isinstance(node.func, ast.Attribute):
+                func_name = node.func.attr.lower()
+
+            if any(k in func_name for k in ("queen", "nqueens", "n_queens")):
+                for arg in node.args:
+                    if isinstance(arg, ast.Constant) and isinstance(arg.value, (int, float)):
+                        params["n"] = int(arg.value)
+                    elif isinstance(arg, ast.Num):
+                        params["n"] = int(arg.n)
+    return params
 
 
 if __name__ == "__main__":

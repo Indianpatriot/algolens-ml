@@ -938,6 +938,18 @@ def estimate_complexity_from_features(
             time_val = canonical["time"]
             space_val = canonical["space"]
             reasoning_val = canonical.get("reasoning") or (estimate.reasoning if estimate else "")
+
+            if (algorithm == "N-Queens" or (algorithm and "queen" in algorithm.lower())) and features.get("detected_n_value"):
+                n_val = int(features["detected_n_value"])
+                sol_map = {1: 1, 2: 0, 3: 0, 4: 2, 5: 10, 6: 4, 7: 40, 8: 92}
+                sol_str = f" Total valid solutions: {sol_map[n_val]}." if n_val in sol_map else ""
+                reasoning_val = (
+                    f"Backtracking placement for n = {n_val} ({n_val}×{n_val} chessboard): "
+                    f"first queen has {n_val} choices, second has at most {n_val-1} choices, "
+                    f"bounded by O(n!) total recursive leaves with column/diagonal conflict pruning.{sol_str} "
+                    f"Auxiliary space is O(n) = O({n_val}) for board row/column state and recursion stack."
+                )
+
             return ComplexityEstimate(
                 time=time_val,
                 space=space_val,
