@@ -349,6 +349,31 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
             "Detected recursive depth-first search graph traversal with visited state tracking.",
         )
 
+    # 7o. Binary Tree Level Order Traversal: FIFO queue frontier + binary tree navigation (.left, .right, root)
+    if (
+        (features.get("has_tree_pattern", 0) == 1.0 or any(k in code_lower for k in (".left", ".right", "root", "treenode")))
+        and (features.get("has_queue_while_loop", 0) == 1.0 or features.get("uses_queue", 0) == 1.0 or any(k in code_lower for k in ("popleft", "deque", "pop(0)")))
+        and features.get("has_adjacency_iteration", 0) == 0.0
+        and features.get("uses_adjacency_structure", 0) == 0.0
+        and features.get("has_topological_sort_pattern", 0) == 0.0
+        and not any(k in code_lower for k in ("invert", "mirror"))
+    ):
+        return (
+            "Level Order Traversal",
+            0.99,
+            "Detected binary tree breadth-first level order traversal using a FIFO queue.",
+        )
+
+    # 7p. Invert Binary Tree: Tree recursion or stack/queue mirroring left and right children
+    if any(k in code_lower for k in ("invert_tree", "inverttree", "invert_binary_tree", "invertbinarytree")) or (
+        features.get("has_tree_pattern", 0) == 1.0 and any(k in code_lower for k in ("invert", "mirror"))
+    ):
+        return (
+            "Invert Binary Tree",
+            0.99,
+            "Detected binary tree inversion (mirroring left and right subtrees).",
+        )
+
     # 7n. BFS (Breadth-First Search): Queue frontier exploration + visited set tracking
     if (
         (features.get("has_queue_while_loop", 0) == 1.0 or features.get("uses_queue", 0) == 1.0 or "deque" in code_lower or "queue" in code_lower)

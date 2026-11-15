@@ -1018,6 +1018,18 @@ def estimate_complexity_from_features(
                     f"O(n * W) = O({n_items} * {cap_val}) time and auxiliary space."
                 )
 
+            if (algorithm == "Word Search" or (algorithm and "word search" in algorithm.lower())) and params and ("board" in params or "word" in params):
+                board_val = params.get("board", [])
+                r_val = len(board_val) if isinstance(board_val, list) and len(board_val) > 0 else 3
+                c_val = len(board_val[0]) if isinstance(board_val, list) and len(board_val) > 0 and isinstance(board_val[0], list) else 4
+                word_val = params.get("word", "ABCCED")
+                l_val = len(word_val) if isinstance(word_val, str) else 6
+                reasoning_val = (
+                    f"2D grid backtracking search on a {r_val}×{c_val} board for target word \"{word_val}\" (length {l_val}): "
+                    f"4 branching directions per letter → O(R * C * 4^L) = O({r_val} * {c_val} * 4^{l_val}) worst-case time with cell visited pruning. "
+                    f"Auxiliary space is O(L) = O({l_val}) for the recursion call stack depth."
+                )
+
             return ComplexityEstimate(
                 time=time_val,
                 space=space_val,

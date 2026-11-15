@@ -1897,12 +1897,17 @@ def extract_features(code: str) -> Dict[str, float]:
         "has_topological_sort_dfs": float(visitor.has_topological_sort_dfs),
     }
 
-    # Extract any top-level parameters (e.g. n = 8 for N-Queens, nums = [9, 8, 7] for Permutations)
+    # Extract any top-level parameters (e.g. n = 8 for N-Queens, nums = [9, 8, 7] for Permutations, board/word for Word Search)
     params = extract_top_level_parameters(code)
     if "n" in params:
         features["detected_n_value"] = float(params["n"])
     if "nums" in params:
         features["detected_nums_len"] = float(len(params["nums"]))
+    if "board" in params and isinstance(params["board"], list) and len(params["board"]) > 0:
+        features["detected_board_rows"] = float(len(params["board"]))
+        features["detected_board_cols"] = float(len(params["board"][0]) if isinstance(params["board"][0], list) else 0)
+    if "word" in params and isinstance(params["word"], str):
+        features["detected_word_len"] = float(len(params["word"]))
 
     return features
 
@@ -1921,6 +1926,8 @@ def _parse_ast_list(node: ast.List) -> List[Any]:
                 result.append(-elt.operand.value)
             elif isinstance(elt.operand, ast.Num):
                 result.append(-elt.operand.n)
+        elif isinstance(elt, ast.List):
+            result.append(_parse_ast_list(elt))
     return result
 
 
@@ -1956,8 +1963,14 @@ def extract_top_level_parameters(code: str) -> Dict[str, Any]:
                         elif isinstance(node.value, ast.List):
                             if var_name in ("nums", "arr", "items", "candidates", "elements"):
                                 params["nums"] = _parse_ast_list(node.value)
+                            elif var_name in ("board", "grid"):
+                                params["board"] = _parse_ast_list(node.value)
                             else:
                                 params[var_name] = _parse_ast_list(node.value)
+                        elif isinstance(node.value, (ast.Constant, ast.Str)):
+                            val = node.value.value if isinstance(node.value, ast.Constant) else node.value.s
+                            if isinstance(val, str) and var_name in ("word", "target_word", "targetword"):
+                                params["word"] = val
             elif isinstance(node, ast.Call):
                 func_name = ""
                 if isinstance(node.func, ast.Name):
@@ -2003,6 +2016,20 @@ def extract_top_level_parameters(code: str) -> Dict[str, Any]:
                                 params["weights"] = _parse_ast_list(arg)
                             else:
                                 params["values"] = _parse_ast_list(arg)
+                elif any(k in func_name for k in ("exist", "word_search", "wordsearch")):
+                    for arg in node.args:
+                        if isinstance(arg, ast.List):
+                            params["board"] = _parse_ast_list(arg)
+                        elif isinstance(arg, (ast.Constant, ast.Str)):
+                            val = arg.value if isinstance(arg, ast.Constant) else arg.s
+                            if isinstance(val, str):
+                                params["word"] = val
+                    for kw in node.keywords:
+                        if kw.arg in ("board", "grid") and isinstance(kw.value, ast.List):
+                            params["board"] = _parse_ast_list(kw.value)
+                        elif kw.arg in ("word", "target", "target_word") and isinstance(kw.value, (ast.Constant, ast.Str)):
+                            val = kw.value.value if isinstance(kw.value, ast.Constant) else kw.value.s
+                            params["word"] = str(val)
 
     # Regex fallbacks (for comments like `# permute([9,8,7])` or syntax errors)
     if "n" not in params:
@@ -2053,6 +2080,32 @@ def extract_top_level_parameters(code: str) -> Dict[str, Any]:
             params["weights"] = _parse_raw_list_str(m_knap.group(1))
             params["values"] = _parse_raw_list_str(m_knap.group(2))
             params["capacity"] = int(m_knap.group(3))
+
+    # Word Search regex fallback
+    if "board" not in params:
+        m_board = re.search(r"(?:board|grid)\s*=\s*(\[[\s\S]*?\]\s*\])", code, re.IGNORECASE)
+        if not m_board:
+            m_board = re.search(r"(?:exist|word_?search)\s*\(\s*(\[[\s\S]*?\]\s*\])", code, re.IGNORECASE)
+        if m_board:
+            raw_b = m_board.group(1)
+            rows = re.findall(r"\[([^\[\]]+)\]", raw_b)
+            if rows:
+                parsed_grid = []
+                for r in rows:
+                    cells = [c.strip().strip("'\"") for c in r.split(",") if c.strip()]
+                    if cells:
+                        parsed_grid.append(cells)
+                if parsed_grid:
+                    params["board"] = parsed_grid
+
+    if "word" not in params:
+        m_word = re.search(r"(?:word|target_word|targetWord)\s*=\s*['\"]([A-Za-z0-9_]+)['\"]", code, re.IGNORECASE)
+        if m_word:
+            params["word"] = m_word.group(1)
+        else:
+            m_call_w = re.search(r"(?:exist|word_?search)\s*\([\s\S]*?,\s*['\"]([A-Za-z0-9_]+)['\"]\s*\)", code, re.IGNORECASE)
+            if m_call_w:
+                params["word"] = m_call_w.group(1)
 
     return params
 
