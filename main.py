@@ -102,10 +102,10 @@ def analyze(payload: AnalyzeRequest):
         raise HTTPException(status_code=400, detail=f"Feature extraction failed: {e}")
 
     prediction, confidence = predict_algorithm(code, features)
-    complexity = estimate_complexity_from_features(
-        features, algorithm=prediction, class_confidence=confidence
-    )
     params = extract_top_level_parameters(code)
+    complexity = estimate_complexity_from_features(
+        features, algorithm=prediction, class_confidence=confidence, params=params
+    )
 
     return AnalyzeResponse(
         algorithm=prediction,

@@ -896,6 +896,7 @@ def estimate_complexity_from_features(
     features: dict,
     algorithm: str = None,
     class_confidence: float = None,
+    params: dict = None,
 ) -> Dict[str, str]:
     """
     Apply the rule list to an already-extracted feature dict.
@@ -950,6 +951,18 @@ def estimate_complexity_from_features(
                     f"Auxiliary space is O(n) = O({n_val}) for board row/column state and recursion stack."
                 )
 
+            if (algorithm == "Permutations" or (algorithm and "permutation" in algorithm.lower())) and params and "nums" in params:
+                nums_list = params["nums"]
+                k = len(nums_list)
+                import math
+                num_sols = math.factorial(k)
+                formatted_items = ", ".join(repr(x) if isinstance(x, str) else str(x) for x in nums_list)
+                reasoning_val = (
+                    f"Generates all {k}! = {num_sols} permutations for input [{formatted_items}]: "
+                    f"tree has {num_sols} valid leaves, each taking O(n) = O({k}) work to copy into results. "
+                    f"Auxiliary space is O(n) = O({k}) for current state and recursion call stack."
+                )
+
             return ComplexityEstimate(
                 time=time_val,
                 space=space_val,
@@ -964,8 +977,10 @@ def estimate_complexity(code: str, algorithm: str = None, class_confidence: floa
     """Parse `code`, extract features, and return a complexity estimate dict:
     {"time_complexity": ..., "space_complexity": ..., "reasoning": ..., "confidence": ...}
     """
+    from feature_extractor import extract_top_level_parameters
     features = extract_features(code)
-    return estimate_complexity_from_features(features, algorithm=algorithm, class_confidence=class_confidence)
+    params = extract_top_level_parameters(code)
+    return estimate_complexity_from_features(features, algorithm=algorithm, class_confidence=class_confidence, params=params)
 
 
 if __name__ == "__main__":

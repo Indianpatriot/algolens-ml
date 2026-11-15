@@ -16,7 +16,7 @@ structural, and are documented as such below.
 
 import ast
 import re
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 
 
 FEATURE_NAMES = [
@@ -1796,54 +1796,106 @@ def extract_features(code: str) -> Dict[str, float]:
         "has_topological_sort_dfs": float(visitor.has_topological_sort_dfs),
     }
 
-    # Extract any top-level parameters (e.g. n = 8 for N-Queens)
+    # Extract any top-level parameters (e.g. n = 8 for N-Queens, nums = [9, 8, 7] for Permutations)
     params = extract_top_level_parameters(code)
     if "n" in params:
         features["detected_n_value"] = float(params["n"])
+    if "nums" in params:
+        features["detected_nums_len"] = float(len(params["nums"]))
 
     return features
+
+
+def _parse_ast_list(node: ast.List) -> List[Any]:
+    result = []
+    for elt in node.elts:
+        if isinstance(elt, ast.Constant):
+            result.append(elt.value)
+        elif isinstance(elt, ast.Num):
+            result.append(elt.n)
+        elif isinstance(elt, ast.Str):
+            result.append(elt.s)
+        elif isinstance(elt, ast.UnaryOp) and isinstance(elt.op, ast.USub):
+            if isinstance(elt.operand, ast.Constant):
+                result.append(-elt.operand.value)
+            elif isinstance(elt.operand, ast.Num):
+                result.append(-elt.operand.n)
+    return result
+
+
+def _parse_raw_list_str(s: str) -> List[Any]:
+    parts = [p.strip().strip("'\"") for p in s.split(",") if p.strip()]
+    if parts and all(re.match(r"^-?\d+$", p) for p in parts):
+        return [int(p) for p in parts]
+    return parts
 
 
 def extract_top_level_parameters(code: str) -> Dict[str, Any]:
     """
     Extracts top-level variable assignments or algorithm call arguments from source code,
-    such as `n = 8` or `solve_n_queens(8)`.
+    such as `n = 8` or `solve_n_queens(8)` or `permute([9, 8, 7])`.
+    Supports commented invocations like `# permute([9,8,7])`.
     """
     params: Dict[str, Any] = {}
     try:
         tree = ast.parse(code)
     except Exception:
-        # Fallback to regex if syntax error in incomplete code
+        tree = None
+
+    if tree is not None:
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Assign):
+                for target in node.targets:
+                    if isinstance(target, ast.Name):
+                        var_name = target.id.lower()
+                        if isinstance(node.value, ast.Constant) and isinstance(node.value.value, (int, float)):
+                            params[var_name] = node.value.value
+                        elif isinstance(node.value, ast.Num):
+                            params[var_name] = node.value.n
+                        elif isinstance(node.value, ast.List):
+                            if var_name in ("nums", "arr", "items", "candidates", "elements"):
+                                params["nums"] = _parse_ast_list(node.value)
+                            else:
+                                params[var_name] = _parse_ast_list(node.value)
+            elif isinstance(node, ast.Call):
+                func_name = ""
+                if isinstance(node.func, ast.Name):
+                    func_name = node.func.id.lower()
+                elif isinstance(node.func, ast.Attribute):
+                    func_name = node.func.attr.lower()
+
+                if any(k in func_name for k in ("queen", "nqueens", "n_queens")):
+                    for arg in node.args:
+                        if isinstance(arg, ast.Constant) and isinstance(arg.value, (int, float)):
+                            params["n"] = int(arg.value)
+                        elif isinstance(arg, ast.Num):
+                            params["n"] = int(arg.n)
+                elif any(k in func_name for k in ("permute", "permutations")):
+                    for arg in node.args:
+                        if isinstance(arg, ast.List):
+                            params["nums"] = _parse_ast_list(arg)
+                    for kw in node.keywords:
+                        if kw.arg in ("nums", "arr") and isinstance(kw.value, ast.List):
+                            params["nums"] = _parse_ast_list(kw.value)
+
+    # Regex fallbacks (for comments like `# permute([9,8,7])` or syntax errors)
+    if "n" not in params:
         m = re.search(r"(?:^|\n)\s*(?:board_size|boardSize|num_queens|queens|\bn\b|\bN\b)\s*=\s*(\d+)", code, re.IGNORECASE)
         if m:
             params["n"] = int(m.group(1))
         m2 = re.search(r"(?:solve_?n_?queens|nqueens|n_queens|queens)\s*\(\s*(\d+)\s*\)", code, re.IGNORECASE)
         if m2:
             params["n"] = int(m2.group(1))
-        return params
 
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Assign):
-            for target in node.targets:
-                if isinstance(target, ast.Name):
-                    var_name = target.id.lower()
-                    if isinstance(node.value, ast.Constant) and isinstance(node.value.value, (int, float)):
-                        params[var_name] = node.value.value
-                    elif isinstance(node.value, ast.Num):
-                        params[var_name] = node.value.n
-        elif isinstance(node, ast.Call):
-            func_name = ""
-            if isinstance(node.func, ast.Name):
-                func_name = node.func.id.lower()
-            elif isinstance(node.func, ast.Attribute):
-                func_name = node.func.attr.lower()
+    if "nums" not in params:
+        m_perm = re.search(r"(?:permute|permutations)\s*\(\s*(?:nums\s*=\s*)?\[([^\]]+)\]", code, re.IGNORECASE)
+        if m_perm:
+            params["nums"] = _parse_raw_list_str(m_perm.group(1))
+        else:
+            m_arr = re.search(r"(?:^|\n)\s*(?:nums|arr|items|candidates)\s*=\s*\[([^\]]+)\]", code, re.IGNORECASE)
+            if m_arr:
+                params["nums"] = _parse_raw_list_str(m_arr.group(1))
 
-            if any(k in func_name for k in ("queen", "nqueens", "n_queens")):
-                for arg in node.args:
-                    if isinstance(arg, ast.Constant) and isinstance(arg.value, (int, float)):
-                        params["n"] = int(arg.value)
-                    elif isinstance(arg, ast.Num):
-                        params["n"] = int(arg.n)
     return params
 
 
