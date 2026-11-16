@@ -127,6 +127,10 @@ FEATURE_NAMES = [
     "has_zero_one_weights",
     "has_topological_sort_kahn",
     "has_topological_sort_dfs",
+    "has_dag_longest_path",
+    "has_prim_array_mst_pattern",
+    "has_prim_matrix_structure",
+    "has_prim_adjacency_list_structure",
 ]
 
 _BITWISE_OPS = (ast.BitXor, ast.BitAnd, ast.BitOr, ast.LShift, ast.RShift)
@@ -276,6 +280,10 @@ class _StructuralVisitor(ast.NodeVisitor):
         self.has_zero_one_weights = False
         self.has_topological_sort_kahn = False
         self.has_topological_sort_dfs = False
+        self.has_dag_longest_path = False
+        self.has_prim_array_mst_pattern = False
+        self.has_prim_matrix_structure = False
+        self.has_prim_adjacency_list_structure = False
 
         self._union_find_scanned = False
 
@@ -294,6 +302,7 @@ class _StructuralVisitor(ast.NodeVisitor):
         self._scan_binary_search_structure(node)  # must run before loop visitors
         self._scan_bucket_sort_structures(node)
         self._scan_prim_mst_structures(node)
+        self._scan_dag_longest_path(node)
         self.generic_visit(node)
 
     def _scan_bfs_structures(self, tree):
@@ -412,6 +421,7 @@ class _StructuralVisitor(ast.NodeVisitor):
         has_dag_relax = False
         has_path_add = False
         has_path_remove = False
+        has_path_membership = False
         has_indegree = False
 
         for n in ast.walk(tree):
@@ -479,9 +489,9 @@ class _StructuralVisitor(ast.NodeVisitor):
                     self.uses_stack = True
                     self.uses_adjacency_structure = True
                 elif any(k in vname for k in ("path", "visiting", "cycle")):
-                    if attr == "add":
+                    if attr in ("add", "append"):
                         has_path_add = True
-                    elif attr == "remove":
+                    elif attr in ("remove", "pop"):
                         has_path_remove = True
 
             # 4. Check comparisons for weight == 0
@@ -490,6 +500,14 @@ class _StructuralVisitor(ast.NodeVisitor):
                     for op, comp in zip(n.ops, n.comparators):
                         if isinstance(op, ast.Eq) and isinstance(comp, ast.Constant) and comp.value == 0:
                             has_weight_zero = True
+                if any(isinstance(op, (ast.In, ast.NotIn)) for op in n.ops):
+                    compared_names = {
+                        item.id.lower()
+                        for item in ast.walk(n)
+                        if isinstance(item, ast.Name)
+                    }
+                    if any(any(k in name for k in ("path", "visiting", "cycle")) for name in compared_names):
+                        has_path_membership = True
 
             # 5. Check in-degree tracking
             if isinstance(n, ast.Name) and "indegree" in n.id.lower().replace("_", ""):
@@ -511,9 +529,13 @@ class _StructuralVisitor(ast.NodeVisitor):
         self.has_negative_cycle_check = has_neg_cycle_check
         self.has_apsp_nested_sources = has_apsp_sources
         self.has_dag_relaxation_loop = has_dag_relax
-        self.has_cycle_path_set = bool(has_path_add and has_path_remove)
+        self.has_cycle_path_set = bool(has_path_add and has_path_remove and has_path_membership)
         self.has_topological_sort_kahn = bool(has_indegree and (self.uses_queue or self.has_queue_while_loop))
-        self.has_topological_sort_dfs = bool((self.has_cycle_path_set or self.has_three_color_cycle_detection or self.has_reversed_stack_return) and not has_dag_relax)
+        self.has_topological_sort_dfs = bool(
+            self.has_topo_dfs_postorder
+            and (self.has_cycle_path_set or self.has_three_color_cycle_detection or self.has_reversed_stack_return)
+            and not has_dag_relax
+        )
 
         # Disambiguate path.add/path.remove cycle detection from Permutations backtracking:
         if self.has_cycle_path_set and (self.uses_adjacency_structure or self.has_adjacency_iteration):
@@ -677,6 +699,195 @@ class _StructuralVisitor(ast.NodeVisitor):
                         if any(k in target.value.id.lower() for k in ("dist", "distance", "dists")):
                             if isinstance(n.value, ast.BinOp) and isinstance(n.value.op, ast.Add):
                                 self.has_dist_relaxation = True
+
+        def indexed_array_name(node):
+            while isinstance(node, ast.Subscript):
+                node = node.value
+            return node.id if isinstance(node, ast.Name) else None
+
+        def subscript_depth(node):
+            depth = 0
+            while isinstance(node, ast.Subscript):
+                depth += 1
+                node = node.value
+            return depth
+
+        key_arrays = set()
+        has_parent_update = False
+        has_visited_guard = False
+        has_matrix_access = False
+        has_adjacency_list_iteration = False
+
+        for node in ast.walk(tree):
+            if isinstance(node, ast.For) and isinstance(node.target, (ast.Tuple, ast.List)):
+                if len(node.target.elts) == 2 and isinstance(node.iter, ast.Subscript):
+                    has_adjacency_list_iteration = True
+
+            if isinstance(node, (ast.Assign, ast.AnnAssign)):
+                value = node.value
+                if value is not None and any(
+                    isinstance(item, ast.Subscript) and subscript_depth(item) >= 2
+                    for item in ast.walk(value)
+                ):
+                    has_matrix_access = True
+
+            if not isinstance(node, ast.If):
+                continue
+
+            test_compares = [item for item in ast.walk(node.test) if isinstance(item, ast.Compare)]
+            test_arrays = {
+                indexed_array_name(item)
+                for item in ast.walk(node.test)
+                if isinstance(item, ast.Subscript)
+            }
+            body_assignments = [
+                item
+                for statement in node.body
+                for item in ast.walk(statement)
+                if isinstance(item, (ast.Assign, ast.AnnAssign))
+            ]
+            assigned_arrays = {
+                indexed_array_name(target)
+                for assignment in body_assignments
+                for target in (
+                    assignment.targets if isinstance(assignment, ast.Assign) else [assignment.target]
+                )
+                if isinstance(target, ast.Subscript)
+            }
+            relaxed_arrays = test_arrays & assigned_arrays
+
+            if any(
+                isinstance(op, ast.Lt)
+                for compare in test_compares
+                for op in compare.ops
+            ):
+                key_arrays.update(name for name in relaxed_arrays if name)
+
+            test_names = {
+                item.id.lower()
+                for item in ast.walk(node.test)
+                if isinstance(item, ast.Name)
+            }
+            has_visited_guard = has_visited_guard or any(
+                name and any(marker in name.lower() for marker in ("visited", "seen", "marked"))
+                for name in test_arrays
+            ) or any(marker in name for name in test_names for marker in ("visited", "seen", "marked"))
+
+            for assignment in body_assignments:
+                targets = assignment.targets if isinstance(assignment, ast.Assign) else [assignment.target]
+                for target in targets:
+                    name = indexed_array_name(target) if isinstance(target, ast.Subscript) else None
+                    if name and any(marker in name.lower() for marker in ("parent", "predecessor")):
+                        has_parent_update = True
+
+        has_min_key_scan = False
+        for node in ast.walk(tree):
+            if not isinstance(node, (ast.For, ast.While)):
+                continue
+            loop_nodes = list(ast.walk(node))
+            loop_has_visited = any(
+                isinstance(item, ast.Name)
+                and any(marker in item.id.lower() for marker in ("visited", "seen", "marked"))
+                for item in loop_nodes
+            )
+            if not loop_has_visited:
+                continue
+            for compare in (item for item in loop_nodes if isinstance(item, ast.Compare)):
+                left_name = indexed_array_name(compare.left)
+                if (
+                    left_name in key_arrays
+                    and compare.ops
+                    and isinstance(compare.ops[0], ast.Lt)
+                ):
+                    has_min_key_scan = True
+                    break
+            if has_min_key_scan:
+                break
+
+        has_mst_output = self.has_mst_weight_accumulation or self.has_mst_edge_building
+        self.has_prim_matrix_structure = has_matrix_access
+        self.has_prim_adjacency_list_structure = has_adjacency_list_iteration
+        self.has_prim_array_mst_pattern = bool(
+            key_arrays
+            and has_min_key_scan
+            and has_parent_update
+            and has_visited_guard
+            and (has_matrix_access or has_adjacency_list_iteration)
+            and has_mst_output
+        )
+
+    def _scan_dag_longest_path(self, tree):
+        def is_negative_infinity(node):
+            return (
+                isinstance(node, ast.Call)
+                and isinstance(node.func, ast.Name)
+                and node.func.id == "float"
+                and len(node.args) == 1
+                and isinstance(node.args[0], ast.Constant)
+                and isinstance(node.args[0].value, str)
+                and node.args[0].value.lower() in {"-inf", "-infinity"}
+            )
+
+        def array_name(node):
+            return node.value.id if isinstance(node, ast.Subscript) and isinstance(node.value, ast.Name) else None
+
+        has_negative_infinity = any(
+            is_negative_infinity(node)
+            for node in ast.walk(tree)
+        )
+        has_max_relaxation = False
+        for node in ast.walk(tree):
+            if not isinstance(node, ast.Assign) or not isinstance(node.value, ast.Call):
+                continue
+            if not isinstance(node.value.func, ast.Name) or node.value.func.id != "max":
+                continue
+            target_arrays = {
+                array_name(target)
+                for target in node.targets
+                if isinstance(target, ast.Subscript)
+            }
+            if not target_arrays:
+                continue
+            same_distance_array = any(
+                isinstance(argument, ast.Subscript)
+                and array_name(argument) in target_arrays
+                for argument in node.value.args
+            )
+            additive_distance = any(
+                isinstance(item, ast.BinOp)
+                and isinstance(item.op, ast.Add)
+                and any(
+                    isinstance(part, ast.Subscript)
+                    and array_name(part) in target_arrays
+                    for part in ast.walk(item)
+                )
+                for argument in node.value.args
+                for item in ast.walk(argument)
+            )
+            if same_distance_array and additive_distance:
+                has_max_relaxation = True
+                break
+
+        has_order_iteration = any(
+            isinstance(node, ast.For)
+            and isinstance(node.iter, ast.Name)
+            and any(marker in node.iter.id.lower() for marker in ("order", "topo", "stack", "sequence"))
+            for node in ast.walk(tree)
+        )
+        has_weighted_edge_iteration = any(
+            isinstance(node, ast.For)
+            and isinstance(node.target, (ast.Tuple, ast.List))
+            and len(node.target.elts) == 2
+            and isinstance(node.iter, ast.Subscript)
+            for node in ast.walk(tree)
+        )
+
+        self.has_dag_longest_path = bool(
+            has_negative_infinity
+            and has_max_relaxation
+            and has_weighted_edge_iteration
+            and (has_order_iteration or self.has_topological_sort_pattern or self.has_topological_sort_dfs)
+        )
 
     def _scan_binary_search_structure(self, tree):
         """
@@ -846,19 +1057,30 @@ class _StructuralVisitor(ast.NodeVisitor):
 
     def _scan_union_find(self, tree):
         """
-        Union-Find / Disjoint Set detection.
-        SECONDARY heuristic: relies on function naming ('find'/'union')
-        and a 'parent' array/dict, which is near-universal convention
-        for this algorithm but not purely structural.
+        Detect disjoint-set operations without treating any parent array or
+        helper whose name starts with "find" as Union-Find.
         """
         fn_names = {n.name.lower() for n in ast.walk(tree) if isinstance(n, ast.FunctionDef)}
-        has_find = any("find" in name for name in fn_names)
-        has_union = any("union" in name for name in fn_names)
+        has_find = any(name in {"find", "find_root", "find_set", "find_parent"} for name in fn_names)
+        has_union = any(name in {"union", "union_sets", "union_set", "union_by_rank", "union_by_size"} for name in fn_names)
         has_parent_var = any(
-            isinstance(n, ast.Name) and "parent" in n.id.lower()
+            isinstance(n, ast.Name) and n.id.lower() in {"parent", "parents", "par"}
             for n in ast.walk(tree)
         )
-        if (has_find and has_union) or (has_parent_var and (has_find or has_union)):
+        has_path_compression = any(
+            isinstance(n, ast.Assign)
+            and any(
+                isinstance(target, ast.Subscript)
+                and isinstance(target.value, ast.Name)
+                and target.value.id.lower() in {"parent", "parents", "par"}
+                and isinstance(n.value, ast.Call)
+                and isinstance(n.value.func, ast.Name)
+                and n.value.func.id.lower() in {"find", "find_root", "find_set", "find_parent"}
+                for target in n.targets
+            )
+            for n in ast.walk(tree)
+        )
+        if has_find and has_parent_var and (has_union or has_path_compression):
             self.has_union_find_pattern = True
 
     def _scan_topological_sort(self, tree):
@@ -921,10 +1143,19 @@ class _StructuralVisitor(ast.NodeVisitor):
                     callee = n.value.func.id if isinstance(n.value.func, ast.Name) else ""
                     if callee == "reversed":
                         self.has_reversed_stack_return = True
+            elif isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute) and n.func.attr == "reverse":
+                self.has_reversed_stack_return = True
 
         # If DFS post-order append + reversed stack return (or 3-color cycle detection) are present with adjacency:
-        if self.has_topo_dfs_postorder and (self.has_reversed_stack_return or self.has_three_color_cycle_detection):
+        has_graph_context = self.uses_adjacency_structure or self.has_adjacency_iteration
+        has_cycle_or_reverse = (
+            self.has_reversed_stack_return
+            or self.has_three_color_cycle_detection
+            or (self.has_cycle_path_set and has_graph_context)
+        )
+        if self.has_topo_dfs_postorder and has_cycle_or_reverse and has_graph_context:
             self.has_topological_sort_pattern = True
+            self.has_topological_sort_dfs = True
 
     def _scan_interval_scheduling_structures(self, tree):
         """
@@ -1777,6 +2008,9 @@ def extract_features(code: str) -> Dict[str, float]:
     visitor = _StructuralVisitor()
     visitor.visit(tree)
 
+    if visitor.has_topological_sort_dfs:
+        visitor.has_backtracking_undo_pattern = False
+
     has_recursion = 1 if any(c > 0 for c in visitor.recursive_calls.values()) else 0
     recursion_branch_count = max(visitor.recursive_calls.values(), default=0)
 
@@ -1895,6 +2129,10 @@ def extract_features(code: str) -> Dict[str, float]:
         "has_zero_one_weights": float(visitor.has_zero_one_weights),
         "has_topological_sort_kahn": float(visitor.has_topological_sort_kahn),
         "has_topological_sort_dfs": float(visitor.has_topological_sort_dfs),
+        "has_dag_longest_path": float(visitor.has_dag_longest_path),
+        "has_prim_array_mst_pattern": float(visitor.has_prim_array_mst_pattern),
+        "has_prim_matrix_structure": float(visitor.has_prim_matrix_structure),
+        "has_prim_adjacency_list_structure": float(visitor.has_prim_adjacency_list_structure),
     }
 
     # Extract any top-level parameters (e.g. n = 8 for N-Queens, nums = [9, 8, 7] for Permutations, board/word for Word Search)

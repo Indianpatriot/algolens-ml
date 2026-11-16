@@ -177,6 +177,22 @@ def apply_ast_rule_overrides(code: str, features: Dict[str, float]) -> Optional[
             "Detected All-Pairs Shortest Path running repeated Bellman-Ford SSSP passes across all source vertices.",
         )
 
+    # 7c.5. Array-based Prim: minimum-key scan + visited cut + parent relaxation
+    if features.get("has_prim_array_mst_pattern", 0) == 1.0:
+        return (
+            "Prim's Algorithm",
+            0.99,
+            "Detected array-based Prim MST using minimum-key vertex selection and weighted neighbor relaxation.",
+        )
+
+    # 7c.6. DAG Longest Path: topological order + maximum distance relaxation
+    if features.get("has_dag_longest_path", 0) == 1.0:
+        return (
+            "DAG Longest Path",
+            0.99,
+            "Detected DAG longest path using topological ordering and maximum-distance edge relaxation.",
+        )
+
     # 7d. DAG Shortest Path: topological ordering followed by edge relaxation
     if (
         features.get("has_dag_relaxation_loop", 0) == 1.0

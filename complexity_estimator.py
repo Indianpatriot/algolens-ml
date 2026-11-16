@@ -105,6 +105,47 @@ def _rule_union_find(f: dict):
     return None
 
 
+def _rule_dag_longest_path(f: dict):
+    if f.get("has_dag_longest_path"):
+        return ComplexityEstimate(
+            time="O(V + E)",
+            space="O(V)",
+            reasoning=(
+                "Topological ordering visits each DAG vertex and edge once, then maximum-distance "
+                "relaxation examines each outgoing edge once. The distance vector and topological "
+                "order use O(V) auxiliary space."
+            ),
+            confidence="high",
+        )
+    return None
+
+
+def _rule_prim_array_scan(f: dict):
+    if not f.get("has_prim_array_mst_pattern"):
+        return None
+    if f.get("has_prim_matrix_structure"):
+        return ComplexityEstimate(
+            time="O(V^2)",
+            space="O(V^2)",
+            reasoning=(
+                "Array-based Prim scans all vertices to select each minimum key and scans an "
+                "adjacency-matrix row for each selected vertex, giving O(V^2) time. The input "
+                "adjacency matrix occupies O(V^2) space."
+            ),
+            confidence="high",
+        )
+    return ComplexityEstimate(
+        time="O(V^2 + E)",
+        space="O(V + E)",
+        reasoning=(
+            "Array-based Prim performs a linear minimum-key scan for each of V vertices and "
+            "examines each adjacency-list edge once, giving O(V^2 + E) time. The adjacency list, "
+            "key/parent/visited arrays, and MST output use O(V + E) space."
+        ),
+        confidence="high",
+    )
+
+
 def _rule_recursive_memoized(f: dict):
     """Recursion + memoization: complexity depends on the state space size,
     not the raw branching factor - memoization collapses repeated subproblems."""
@@ -519,6 +560,8 @@ def _rule_constant(f: dict):
 # Ordered from most specific/confident to most general. First match wins.
 _RULES = [
     _rule_binary_search,
+    _rule_dag_longest_path,
+    _rule_prim_array_scan,
     _rule_union_find,
     _rule_topological_sort,
     _rule_fast_slow_pointer,
@@ -685,6 +728,15 @@ CANONICAL_ALGORITHM_COMPLEXITY = {
         "reasoning": (
             "Single-source shortest path on a Directed Acyclic Graph: computes topological order in O(V + E), "
             "then relaxes edges incident to each vertex in topological order in O(V + E) → O(V + E) total time with O(V) space."
+        ),
+        "confidence": "high",
+    },
+    "DAG Longest Path": {
+        "time": "O(V + E)",
+        "space": "O(V)",
+        "reasoning": (
+            "Computes a topological ordering and relaxes each weighted DAG edge once using "
+            "maximum-distance updates → O(V + E) time. The distance vector and ordering use O(V) space."
         ),
         "confidence": "high",
     },
@@ -954,7 +1006,28 @@ def estimate_complexity_from_features(
     # Derive/boost complexity confidence from canonical algorithm lookup table
     canonical = None
     if algorithm:
-        if features.get("has_word_break_pattern"):
+        if features.get("has_prim_array_mst_pattern"):
+            if features.get("has_prim_matrix_structure"):
+                canonical = {
+                    "time": "O(V^2)",
+                    "space": "O(V^2)",
+                    "reasoning": (
+                        "Array-based Prim performs a linear minimum-key scan and a full adjacency-matrix "
+                        "row scan for each vertex → O(V^2) time and O(V^2) space for the matrix."
+                    ),
+                    "confidence": "high",
+                }
+            else:
+                canonical = {
+                    "time": "O(V^2 + E)",
+                    "space": "O(V + E)",
+                    "reasoning": (
+                        "Array-based Prim performs O(V) minimum-key scans and examines each adjacency-list "
+                        "edge once → O(V^2 + E) time, with O(V + E) space for the graph and MST state."
+                    ),
+                    "confidence": "high",
+                }
+        elif features.get("has_word_break_pattern"):
             canonical = CANONICAL_ALGORITHM_COMPLEXITY.get("Word Break")
         elif features.get("has_tree_pattern") and (features.get("has_queue_while_loop") or features.get("uses_queue")):
             canonical = CANONICAL_ALGORITHM_COMPLEXITY.get("Level Order Traversal")

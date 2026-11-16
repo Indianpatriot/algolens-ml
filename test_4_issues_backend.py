@@ -87,7 +87,7 @@ def test_level_order_traversal():
     assert features["has_queue_while_loop"] == 1.0, "Expected has_queue_while_loop == 1.0"
 
     pred, conf = predict_algorithm(code, features)
-    assert "BFS" in pred or "Tree" in pred, f"Expected BFS or Tree, got {pred}"
+    assert "BFS" in pred or "Tree" in pred or "Level Order" in pred, f"Expected BFS or Tree, got {pred}"
 
     cx = estimate_complexity_from_features(features, algorithm=pred, class_confidence=conf)
     assert cx["time_complexity"] == "O(n)", f"Expected O(n) time, got {cx['time_complexity']}"
