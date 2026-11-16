@@ -5,6 +5,29 @@ from complexity_estimator import estimate_complexity
 
 
 class TestAudit5DefectsBackend(unittest.TestCase):
+    def test_ast_constant_extraction_on_python_314(self):
+        code = """
+nums = [-1, 2, 3]
+word = "ABC"
+
+def solve_n_queens(n):
+    pass
+
+def coin_change(coins, amount):
+    pass
+
+solve_n_queens(4)
+coin_change([1, 2, 5], 11)
+"""
+        params = extract_top_level_parameters(code)
+
+        self.assertEqual(params["nums"], [-1, 2, 3])
+        self.assertEqual(params["word"], "ABC")
+        self.assertEqual(params["n"], 4)
+        self.assertEqual(params["coins"], [1, 2, 5])
+        self.assertEqual(params["amount"], 11)
+        self.assertIsInstance(extract_features(code), dict)
+
     # -------------------------------------------------------------------------
     # DEFECT 1: Permutations Dynamic Input Extraction & Complexity
     # -------------------------------------------------------------------------

@@ -1917,15 +1917,12 @@ def _parse_ast_list(node: ast.List) -> List[Any]:
     for elt in node.elts:
         if isinstance(elt, ast.Constant):
             result.append(elt.value)
-        elif isinstance(elt, ast.Num):
-            result.append(elt.n)
-        elif isinstance(elt, ast.Str):
-            result.append(elt.s)
         elif isinstance(elt, ast.UnaryOp) and isinstance(elt.op, ast.USub):
-            if isinstance(elt.operand, ast.Constant):
+            if (
+                isinstance(elt.operand, ast.Constant)
+                and isinstance(elt.operand.value, (int, float, complex))
+            ):
                 result.append(-elt.operand.value)
-            elif isinstance(elt.operand, ast.Num):
-                result.append(-elt.operand.n)
         elif isinstance(elt, ast.List):
             result.append(_parse_ast_list(elt))
     return result
@@ -1958,8 +1955,6 @@ def extract_top_level_parameters(code: str) -> Dict[str, Any]:
                         var_name = target.id.lower()
                         if isinstance(node.value, ast.Constant) and isinstance(node.value.value, (int, float)):
                             params[var_name] = node.value.value
-                        elif isinstance(node.value, ast.Num):
-                            params[var_name] = node.value.n
                         elif isinstance(node.value, ast.List):
                             if var_name in ("nums", "arr", "items", "candidates", "elements"):
                                 params["nums"] = _parse_ast_list(node.value)
@@ -1967,8 +1962,8 @@ def extract_top_level_parameters(code: str) -> Dict[str, Any]:
                                 params["board"] = _parse_ast_list(node.value)
                             else:
                                 params[var_name] = _parse_ast_list(node.value)
-                        elif isinstance(node.value, (ast.Constant, ast.Str)):
-                            val = node.value.value if isinstance(node.value, ast.Constant) else node.value.s
+                        elif isinstance(node.value, ast.Constant):
+                            val = node.value.value
                             if isinstance(val, str) and var_name in ("word", "target_word", "targetword"):
                                 params["word"] = val
             elif isinstance(node, ast.Call):
@@ -1982,8 +1977,6 @@ def extract_top_level_parameters(code: str) -> Dict[str, Any]:
                     for arg in node.args:
                         if isinstance(arg, ast.Constant) and isinstance(arg.value, (int, float)):
                             params["n"] = int(arg.value)
-                        elif isinstance(arg, ast.Num):
-                            params["n"] = int(arg.n)
                 elif any(k in func_name for k in ("permute", "permutations")):
                     for arg in node.args:
                         if isinstance(arg, ast.List):
@@ -1996,21 +1989,21 @@ def extract_top_level_parameters(code: str) -> Dict[str, Any]:
                     for arg in node.args:
                         if isinstance(arg, ast.List):
                             params["coins"] = _parse_ast_list(arg)
-                        elif isinstance(arg, (ast.Constant, ast.Num)):
-                            val = arg.value if isinstance(arg, ast.Constant) else arg.n
-                            if isinstance(val, (int, float)):
-                                params["amount"] = int(val)
+                        elif isinstance(arg, ast.Constant) and isinstance(arg.value, (int, float)):
+                            params["amount"] = int(arg.value)
                     for kw in node.keywords:
                         if kw.arg in ("coins", "arr") and isinstance(kw.value, ast.List):
                             params["coins"] = _parse_ast_list(kw.value)
-                        elif kw.arg in ("amount", "target") and isinstance(kw.value, (ast.Constant, ast.Num)):
-                            val = kw.value.value if isinstance(kw.value, ast.Constant) else kw.value.n
-                            params["amount"] = int(val)
+                        elif (
+                            kw.arg in ("amount", "target")
+                            and isinstance(kw.value, ast.Constant)
+                            and isinstance(kw.value.value, (int, float))
+                        ):
+                            params["amount"] = int(kw.value.value)
                 elif any(k in func_name for k in ("knapsack", "knap_sack")):
                     for arg in node.args:
-                        if isinstance(arg, (ast.Constant, ast.Num)):
-                            val = arg.value if isinstance(arg, ast.Constant) else arg.n
-                            params["capacity"] = int(val)
+                        if isinstance(arg, ast.Constant) and isinstance(arg.value, (int, float)):
+                            params["capacity"] = int(arg.value)
                         elif isinstance(arg, ast.List):
                             if "weights" not in params:
                                 params["weights"] = _parse_ast_list(arg)
@@ -2020,16 +2013,16 @@ def extract_top_level_parameters(code: str) -> Dict[str, Any]:
                     for arg in node.args:
                         if isinstance(arg, ast.List):
                             params["board"] = _parse_ast_list(arg)
-                        elif isinstance(arg, (ast.Constant, ast.Str)):
-                            val = arg.value if isinstance(arg, ast.Constant) else arg.s
-                            if isinstance(val, str):
-                                params["word"] = val
+                        elif isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                            params["word"] = arg.value
                     for kw in node.keywords:
                         if kw.arg in ("board", "grid") and isinstance(kw.value, ast.List):
                             params["board"] = _parse_ast_list(kw.value)
-                        elif kw.arg in ("word", "target", "target_word") and isinstance(kw.value, (ast.Constant, ast.Str)):
-                            val = kw.value.value if isinstance(kw.value, ast.Constant) else kw.value.s
-                            params["word"] = str(val)
+                        elif (
+                            kw.arg in ("word", "target", "target_word")
+                            and isinstance(kw.value, ast.Constant)
+                        ):
+                            params["word"] = str(kw.value.value)
 
     # Regex fallbacks (for comments like `# permute([9,8,7])` or syntax errors)
     if "n" not in params:
